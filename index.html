@@ -9,7 +9,7 @@ body{display:block}canvas{display:block;touch-action:none;position:fixed;left:0;
 
 'use strict';
 // 《星港护航》MVP —— 纯 Canvas，单文件
-const VER='v13.26';const W=390,H=844,CX=195;
+const VER='v13.27';const W=390,H=844,CX=195;
 const OUT='#1d1747';
 const FONT='"PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Source Han Sans SC","Microsoft YaHei","WenQuanYi Micro Hei",sans-serif';
 const NUMF='"Arial Black","Helvetica Neue",Arial,'+FONT;
@@ -629,7 +629,7 @@ function spawnCruiser(){const f=G.pass===2?-1:1;const hm=(G.lvl&&G.lvl.hm)||[.62
  cruiser={f,sc:.42,x:f>0?-190:W+190,y:255,tx:f>0?172:218,state:'enter',t:0,amp:1,driftY:0,dy:0,push:0,cd:0,cdMax:0,R:0,pullNeed:G.pass===2?5.2:4.2,
   parts:PARTS.map(p=>({...p,maxHp:p.hp*hm,hp:p.hp*hm,dead:false,flash:0,cool:p.id.startsWith('tur')?rnd(2,3.5):0,tele:0,ang:Math.PI/2,acc:0,accT:0,smoke:0})),hangarT:v==='carrier'?4:6,tractorT:7,beam:null,v,tcool:v==='gun'?.72:v==='carrier'?1.3:1};
  if(v==='gun'){cruiser.parts=cruiser.parts.filter(p=>p.id!=='hangar');for(const p of cruiser.parts)if(p.id.startsWith('tur')){p.hp*=1.3;p.maxHp*=1.3}}
- if(v==='carrier')cruiser.pullNeed-=1;
+ if(v==='carrier')cruiser.pullNeed-=1;if(G.lvl&&G.lvl.id==='1-3')cruiser.pullNeed+=2.5;/* v13.27 1-3 牵引更慢 */
  for(const p of cruiser.parts){if(p.id==='engT'){p.n=f>0?'左舷引擎':'右舷引擎'}if(p.id==='engB'){p.n=f>0?'右舷引擎':'左舷引擎'}}
  cruiser.parts.find(p=>p.id==='engT').sub='巡洋舰减速，向上漂离';cruiser.parts.find(p=>p.id==='engB').sub='巡洋舰减速，漂向船队！';ev('cruiserSpawn');}
 function pw(p){const c=cruiser;return [c.x+c.f*c.sc*p.lx,c.y+c.sc*p.ly]}
@@ -823,7 +823,7 @@ function update(dt){T+=dt;BTN=[];try{BGM.tick(state,sfxOn)}catch(e){}
  if(AUTO)autoPilot(dt);
  if(G.phase==='pass'&&slotShips().every(s=>s.passed)){F.tx=CX;F.ty=gate.y}
  if((AUTOPULSE||AUTO)&&!F.hangar&&F.pulseCd<=0&&(G.phase==='travel'||G.phase==='gate')&&!(TUT&&TUT.step===4&&TUT.t<1.6)){const tp=threatPoint();if(tp&&tp.score>=3)pulse(tp.x,tp.y,true)}
- if(Q.get('god')){F.hp=F.maxHp;for(const s of fleet){if(s.state==='dis'&&!s.derelict){s.state='ok';s.lostT=0}if(s.state==='ok')s.hp=s.maxHp}}/* v13.26 god 也保护难民船/僚舰 */{const A0=ark();G.arkSafe=!!(A0&&state==='play'&&(G.phase==='travel'||G.phase==='gate')&&T-(A0.hitT||-9)>3&&G.time>3);if(G.arkSafe&&F.pulseCd>0)F.pulseCd=Math.max(0,F.pulseCd-dt*.5)}F.tx=clamp(F.tx,44-OX,W+OX-44);F.ty=clamp(F.ty,90,H+(typeof BOTS!=='undefined'?BOTS:0)-30);const k=1-Math.exp(-dt/.06);F.x+=(F.tx-F.x)*k;F.y+=(F.ty-F.y)*k;F.inv-=dt;F.pulseCd=Math.max(0,F.pulseCd-dt);F.blockT-=dt;tickHangar(dt);if(F.hangar){const A=ark();if(A){F.tx=A.x;F.ty=A.y+36}}
+ if(Q.get('god')){F.hp=F.maxHp;for(const s of fleet){if(s.derelict)continue;if(s.state==='dis'||s.state==='lost'){s.state='ok';s.lostT=0}if(s.state==='ok')s.hp=s.maxHp;if(s.pax){s._gp=Math.max(s._gp||0,s.paxNow||0);s.paxNow=s._gp}if(s.lat)s.lat=null}for(const e of enemies)if(e.k==='bug'&&e.latch){e.latch=null;e.dead=true}}/* v13.26 god 也保护难民船/僚舰 */{const A0=ark();G.arkSafe=!!(A0&&state==='play'&&(G.phase==='travel'||G.phase==='gate')&&T-(A0.hitT||-9)>3&&G.time>3);if(G.arkSafe&&F.pulseCd>0)F.pulseCd=Math.max(0,F.pulseCd-dt*.5)}F.tx=clamp(F.tx,44-OX,W+OX-44);F.ty=clamp(F.ty,90,H+(typeof BOTS!=='undefined'?BOTS:0)-30);const k=1-Math.exp(-dt/.06);F.x+=(F.tx-F.x)*k;F.y+=(F.ty-F.y)*k;F.inv-=dt;F.pulseCd=Math.max(0,F.pulseCd-dt);F.blockT-=dt;tickHangar(dt);if(F.hangar){const A=ark();if(A){F.tx=A.x;F.ty=A.y+36}}
  if(has('shield')){if(T-F.lastHit>3)F.sh=Math.min(F.maxSh,F.sh+14*dt)}else if(T-F.lastHit>4&&!(G.mod&&G.mod.shieldTax))F.sh=Math.min(F.maxSh,F.sh+4*dt);if(G.mod&&G.mod.shieldTax&&F.sh>0&&!has('shield'))F.sh=Math.max(0,F.sh-2*dt);if(TUT&&F.sh<20)F.sh=20;
  const rp=has('repair');if(rp){F.hp=Math.min(F.maxHp,F.hp+2*rp*dt);const SL=slotShips();SL.forEach((r,i)=>{if(r.k!=='repair'||r.state!=='ok')return;for(const q of [SL[i-1],SL[i+1]])if(q&&q.state==='ok'&&!q.passed)q.hp=Math.min(q.maxHp,q.hp+q.maxHp*.015*dt)})}
  if((F.wlv||1)>=5&&!F.hangar&&(G.phase==='travel'||G.phase==='gate')){const dps=14*5*(1+.3*has('gun'))*DIFF.fireDmg,src={vx:0,vy:-1};for(const e of enemies){if(e.dead||e.k==='crate'||e.y>F.y-20||e.y<-20)continue;if(Math.abs(e.x-F.x)<22+e.r)hurtEnemy(e,dps*dt,false,src)}}
@@ -1292,8 +1292,9 @@ function drawFx(){drawFxBatch();for(const p of parts){const f=p.t/p.life;if(p.t<
  ctx.globalAlpha=1;}
 const CRITC=['','gold','#ffab1f','#ff6a8a'],CRITS=[0,20,23,27];
 function layoutNums(){if(state!=='play')return;for(const n of nums)if(n.txt&&!n._fx){n._fx=1;n.txt=String(n.txt).replace(/(\d+)\.\d+/g,m=>String(Math.round(+m)));const k2=String(n.txt).replace(/[\d+\-−×.%]/g,'').slice(0,2);const d=nums.find(q=>q!==n&&q._fx&&q.t<.7&&q.t<q.life&&Math.abs(q.x-n.x)<140&&Math.abs((q._ly!=null?q._ly:q.y)-n.y)<90&&String(q.txt).replace(/[\d+\-−×.%]/g,'').slice(0,2)===k2);if(d){n.t=n.life;d.txt=n.txt;d.t=Math.min(d.t,.1)}}const L=nums.filter(n=>n.txt&&n.t<n.life);if(L.length>3)for(const n of L.slice(0,L.length-3))if(n.t<n.life*.75)n.t=n.life*.75;
- const P=[];for(const n of L){let y=Math.max(n.y,262);const w=Math.min(300,(String(n.txt).length*(n.big===2?24:n.big?16:13))*.95+20);let moved=true,g=0;while(moved&&g++<8){moved=false;for(const q of P)if(Math.abs(q.y-y)<(n.big===2?32:24)&&Math.abs(q.x-n.x)<(q.w+w)/2){y=q.y+(n.big===2?32:24);moved=true}}
-  if(y>760)y=760;n._ly=n._ly==null?y:n._ly+(y-n._ly)*.6;P.push({x:n.x,y:n._ly,w})}}
+ {const nr=L.filter(n=>Math.abs(n.x-F.x)<130&&Math.abs(n.y-F.y)<170);if(nr.length>2)for(const n of nr.slice(0,nr.length-2))if(n.t<n.life*.8)n.t=n.life*.8}/* v13.27 战机附近最多 2 条 */
+ const P=[{x:F.x,y:F.y-62,w:170,res:1},{x:F.x,y:F.y-30,w:120,res:1},{x:F.x,y:F.y,w:120,res:1},{x:F.x,y:F.y+30,w:120,res:1}];/* v13.27 战机禁区 + 连击槽 */for(const n of L){let y=Math.max(n.y,262);const _hw=Math.min(150,String(n.txt).length*(n.big===2?12:n.big?8.5:7)+8),nx=clamp(n.x,46+_hw,W-8-_hw);const w=Math.min(300,(String(n.txt).length*(n.big===2?24:n.big?16:13))*.95+20);let moved=true,g=0;while(moved&&g++<8){moved=false;for(const q of P)if(Math.abs(q.y-y)<(n.big===2?32:24)&&Math.abs(q.x-nx)<(q.w+w)/2){y=q.y-(n.big===2?32:24);moved=true}}if(y<262){y=262;let g2=0,mv=true;while(mv&&g2++<8){mv=false;for(const q of P)if(Math.abs(q.y-y)<24&&Math.abs(q.x-nx)<(q.w+w)/2){y=q.y+26;mv=true}}}
+  if(y>760)y=760;n._ly=n._ly==null?y:n._ly+(y-n._ly)*.6;P.push({x:nx,y:n._ly,w})}}
 function drawNums(){layoutNums();for(const n of nums){const f=n.t/n.life;let s,al;
  if(n.txt){s=f<.15?.6+f/.15*.6:1.2-.2*f;al=f>.7?(1-f)/.3:1}
  else{const left=n.life-n.t;al=left<.2?left/.2:1;s=n.crit?(n.t<.12?1.6-.6*n.t/.12:1):(n.pop>0?1+n.pop/.12*.3:1)}
@@ -1793,7 +1794,7 @@ function arkHitFx(s){s.cab=s.cab||{};const n=ARKP.length,ppl=s.paxNow/(s.pax||30
  if(!G.arkWarned&&state==='play'){G.arkWarned=true;G.arkWarn={t:0,dur:2.8,n:Math.round(s.paxNow)};ev('arkWarn')}}
 function arkLossNum(s,loss){if(!G.arkLossTip&&G.time>3){G.arkLossTip=1;setTip('方舟掉血＝移民伤亡：护住方舟，才能多送人到星港',3.4)}s.numAcc=(s.numAcc||0)+loss;s.paxAcc=0;if(s.numAcc>=.5&&T-(s.numT||-9)>.3){const n=Math.max(1,Math.round(s.numAcc));s.numAcc-=n;s.numT=T;const p=ARKP[s.cabI||0];nums.push({x:clamp(s.x+p[0]+18,30,360),y:s.y+p[1]-14,v:0,txt:`−${n}人`,col:'#ff4a5a',t:0,life:1.1,big:1});ev('arkLoss',{n})}}
 // ---- 单一警报槽：优先级队列 + 去重；被压住的警报暂停计时，等太久就丢弃
-function alertList(){const L=[];if(G&&G.arkWarn)L.push(['ark',9]);if(notice)L.push(['notice',8]);if(banner&&banner.boss)L.push(['banner',7]);if(bc)L.push(['bc',bc.col==='gold'?5:6]);if(G&&G.topWarn&&G.topWarn.t<G.topWarn.life)L.push(['dart',4.5]);if(tip)L.push(['tip',tip.tac?4:3]);if(banner&&!banner.boss)L.push(['banner',2]);return L}
+function alertList(){const L=[];if(G&&G.arkWarn)L.push(['ark',9]);if(notice)L.push(['notice',8]);if(banner&&banner.boss)L.push(['banner',7]);if(bc)L.push(['bc',bc.col==='gold'?5:6]);if(G&&G.topWarn&&G.topWarn.t<G.topWarn.life)L.push(['dart',4.5]);if(tip)L.push(['tip',tip.pri||(tip.tac?4:3)]);if(banner&&!banner.boss)L.push(['banner',2]);return L}
 function topAlert(){const L=alertList();if(!L.length)return null;let b=L[0];for(const x of L)if(x[1]>b[1])b=x;return b[0]}
 function tickAlerts(dt){const top=topAlert();const adv=(o,k)=>{if(!o)return;if(top===k)o.t+=dt;else o.w=(o.w||0)+dt};
  if(G.arkWarn){adv(G.arkWarn,'ark');if(G.arkWarn.t>G.arkWarn.dur)G.arkWarn=null}
@@ -1915,9 +1916,9 @@ const LVDATA=(function(){
  return {chapters:[C1,C2,C3,C4]};})();
 const LVTUNE={ // v13.25：1-2..1-4 按 SKILL=human（反应延迟+位置误差）调定：1-2≈83% 1-3≈83% 1-4≈75%；1-5..1-8 仍按 mid AI
  '1-2':{stretch:1.25,fill:[.3,7],calm:[[24,32]],dmg:1.28,ehp:.9,gtN:1},
- '1-3':{stretch:1.5,fill:[.3,8],calm:[[15,25],[40,50]],dmg:1.7,ehp:1.0},
+ '1-3':{stretch:1.5,fill:[.3,8],calm:[[15,25],[40,50]],dmg:1.45,ehp:.92},
  '1-3b':{stretch:1.4,fill:[.3,7],calm:[[30,40]],dmg:1.3,ehp:.9},
- '1-4':{stretch:1.8,fill:[.3,8],dmg:1.3,ehp:1.2,hm:.8,dup:['drone']},
+ '1-4':{stretch:1.8,fill:[.3,8],dmg:1.18,ehp:1.15,hm:.8,dup:['drone']},
  '1-5':{stretch:1.5,fill:[.3,5],calm:[[50,60]],dmg:1.7,ehp:1.15},
  '1-6':{stretch:1.4,fill:[.3,7],dmg:2.75,ehp:1.3},
  '1-7':{stretch:1.7,fill:[.3,6],dmg:2.15,ehp:1.4,dup:['heavy']},
@@ -1966,7 +1967,7 @@ let LVS=LVL.load(),MAP=null,LVB=null,lvStorySeen=false,ADM=null;
 // ---------- 局内钩子 ----------
 function lvTitleSub(){const t=LVL.total(LVS),cur=LVL.all().find(l=>LVL.unlocked(l.id,LVS)&&!(LVS.lv[l.id]&&LVS.lv[l.id].clr));return cur?`下一关 ${cur.id} ${cur.name} · ${t}★`:`第 1 章已通关 · ${t}★`}
 function openCampaign(){initAudio();if(!lvStorySeen&&!AUTO&&Q.get('story')!=='0'){lvStorySeen=true;startStory(()=>openMap(),true);return}openMap()}
-function openMap(focus,anim){LVS=LVL.load();MAP={t:0,ch:1,focus:focus||null,anim:anim||null};LVB=null;state='map';ev('map')}
+function openMap(focus,anim){tip=null;LVS=LVL.load();MAP={t:0,ch:1,focus:focus||null,anim:anim||null};LVB=null;state='map';ev('map')}
 // v13.20 随机波次变体：每次开局时间抖动 ±1s、30% 的镖机换成登舰艇群、加一个随机额外波；关卡结构/数据不变
 const VARIANTS=[{n:'标准'},{n:'侧翼包抄',swap:.3},{n:'密集来袭',extra:'swarm'},{n:'重装混编',extra:'heavy'}];
 function lvVary(d){if(Q.get('novary')||AUTO&&Q.get('seed')==='0'||['1-2','1-3','1-3b'].includes(d.id))return d;const v=VARIANTS[Math.floor(Math.random()*VARIANTS.length)];
@@ -2010,7 +2011,7 @@ function openChoice3(){const ok=u=>(!u.unl||(PB.unl||[]).includes(u.unl))&&up(u.
  if(A1.length)opts.push({u:A1[0],tag:'新武装',sub:'挂到战机 / 船上',col:'#ff9f3a',ic:'武'});
  for(const u of A2){if(opts.length>=3)break;opts.push({u,tag:'增幅',sub:'强化现有能力',col:u.sch==='护航'?'#5ee06a':'#c39bff',ic:'强'})}
  for(const u of A1.slice(1)){if(opts.length>=3)break;opts.push({u,tag:'新武装',sub:'挂到战机 / 船上',col:'#ff9f3a',ic:'武'})}
- {const ownU=UPS.filter(u=>ok(u)&&up(u.id)>=1).sort((x,y)=>up(y.id)-up(x.id)||((y.lv3?1:0)-(x.lv3?1:0)));if(ownU.length&&!opts.some(o=>up(o.u.id)>=1)&&opts.length){const u=ownU[0];opts[opts.length-1]={u,tag:'升级',sub:'已有卡牌再升一级',col:'#ffd23a',ic:'升'}}}/* v13.26 保底：每次至少一张已有卡升级 */
+ {const ownU=UPS.filter(u=>ok(u)&&up(u.id)>=1).sort((x,y)=>up(y.id)-up(x.id)||((y.lv3?1:0)-(x.lv3?1:0)));if(ownU.length&&!opts.some(o=>up(o.u.id)>=1)&&opts.length){const u=ownU[0];opts[opts.length-1]={u,tag:'升级',sub:'已有卡牌再升一级',col:'#ffd23a',ic:'升'}}}/* v13.26 保底：每次至少一张已有卡升级 */{const ui=opts.findIndex(o=>up(o.u.id)>=1);if(ui>=0&&opts.length===3&&ui!==1){const tmp=opts[1];opts[1]=opts[ui];opts[ui]=tmp}}
  if(opts.length<2)return false;
  if(tip&&!tip.tac)tip=null;banner=null;notice=null;CH={t:0,lock:.3,opts,n3:1};SFX2.powerup();ev('choiceOpen',{t:+G.time.toFixed(1),n:opts.length,arm:opts.filter(o=>o.tag==='新武装').length});return true}
 function lvPickTick(){const d=G.lvl;if(!d||d.legacy||!d.picks||state!=='play'||CH||G.phase!=='travel')return;G.pk=G.pk||{};d.picks.forEach((p,i)=>{if(!G.pk[i]&&G.prog>=p&&!CH){G.pk[i]=1;openChoice3()}})}
@@ -2058,7 +2059,7 @@ function drawMap(){drawBG(1/60);MAP.t+=1/60;ctx.fillStyle='rgba(6,10,30,.35)';ct
   ctx.lineWidth=3.5;ctx.strokeStyle='#120c24';ctx.stroke();if(cur){ctx.beginPath();ctx.arc(x,y,R+6+2*Math.sin(MAP.t*5),0,7);ctx.strokeStyle='#ffe14a';ctx.lineWidth=3;ctx.stroke()}ctx.restore();
   if(un){const bb=d.kind==='boss'||d.kind==='mini';if(bb)txt(d.kind==='boss'?'BOSS':'小BOSS',x,y-9,d.kind==='boss'?11:10,d.kind==='boss'?'#ff8a9a':'#ffc46b',0,'center',900);txt(d.id,x,y+(bb?7:1),d.kind==='boss'?16:14,'#fff',0,'center',900)}
   else txt('🔒',x,y+1,16,'#aab',0,'center',400);
-  if(d.br){const sf=d.brTag==='安全',tw=54;ctx.save();rr(x-tw/2,y-R-26,tw,22,11);ctx.fillStyle=sf?'#2fae5a':'#e0a010';ctx.fill();ctx.lineWidth=2.4;ctx.strokeStyle='#120c24';ctx.stroke();ctx.restore();txt(sf?'安全':'丰厚',x,y-R-15,14,'#fff',2,'center',900);
+  if(d.br){const sf=d.brTag==='安全',tw=60,tx=x<CX?x-R-34:x+R+34,tyy=y-13;ctx.save();rr(tx-tw/2,tyy,tw,26,13);ctx.fillStyle=sf?'#1f8f48':'#c25a00';ctx.fill();ctx.lineWidth=2.4;ctx.strokeStyle='#120c24';ctx.stroke();ctx.restore();txt(sf?'安全':'丰厚',tx,tyy+13,16,'#fff',2,'center',900);
    txt(d.name,x,y+R+14,12,un?'#e8f6ff':'rgba(200,205,230,.6)',2,'center',800);if(rec&&rec.clr)drawStarRow(x,y+R+30,rec.s,11)}
   else{if(d.kind==='breather')txt('喘息',x+R+4,y-R+4,10,'#9df27a',0,'left',800);
   const right=x<CX;txt(d.name,right?x+R+10:x-R-10,y+(rec&&rec.clr?-6:2),12,un?'#e8f6ff':'rgba(200,205,230,.5)',0,right?'left':'right',800);
@@ -2115,7 +2116,7 @@ function drawLvEnd(){const E=END,d=G.lvl,r=E.res||{};ctx.fillStyle='#0d0f2e';ctx
   const items=[{k:'coin',v:`+${gold}`,l:'金币'}];if(rw.ship)items.push({k:'ship',s:rw.ship,v:'已解锁',l:STYPE[rw.ship].n});if(rw.chapter)items.push({k:'gate',v:'已点亮',l:'第 2 章星门'});
   const IW=104,x0=CX-(items.length*IW+(items.length-1)*14)/2;items.forEach((it,j)=>{const x=x0+j*(IW+14),y=430;glass(x,y,IW,120,14,.8);if(it.k==='coin'){flatCoin(x+IW/2,y+40,16)}else if(it.k==='ship'){drawHull(it.s,x+IW/2,y+42,.8)}else txt('✦',x+IW/2,y+42,34,'#9df27a',3,'center',900);txt(it.v,x+IW/2,y+82,17,it.k==='coin'?'#ffd23a':'#9df27a',3,'center',900);txt(it.l,x+IW/2,y+104,11.5,'#cfe6ff',2,'center',800)});
   if(r.stars<3)txt(r.stars<2?`送达 ≥70% 可得 ★★`:`送达 ≥90% + 挑战 可得 ★★★`,CX,566,13,'#8fe9ff',2.2,'center',800);
-  {const nx=LVL.all().filter(q=>LVL.prevs(q.id).includes(d.id));if(!nx.length&&chapterChestReady(LVL.load())){const p=.5+.5*Math.sin(T*5);ctx.save();ctx.shadowColor='#ffd23a';ctx.shadowBlur=8+10*p;glass(36,580,318,40,12,.85);ctx.restore();txt('🎁 第 1 章宝箱已解锁！点继续打开',CX,601,15,'#ffd23a',2.4,'center',900)}if(nx.length){glass(36,580,318,40,12,.6);const s=nx.length>1?`下一站二选一：${nx.map(q=>q.name).join(' / ')}`:`下一关 ${nx[0].id} ${nx[0].name}`+(/新敌人/.test(nx[0].intro||'')?' · '+nx[0].intro.replace(/^.*新敌人[：:]\s*/,'新敌：').split(' · ')[0]:nx[0].kind==='boss'||nx[0].kind==='mini'?' · BOSS':'');txt(s,CX,600,13,'#ffe14a',2,'center',900)}}
+  {const nx=LVL.all().filter(q=>LVL.prevs(q.id).includes(d.id));if(!nx.length&&!chapterChestReady(LVL.load())&&E.win&&LVL.chapterDone(1,LVL.load())){glass(36,580,318,40,12,.6);txt('第 1 章完成 · 章节宝箱已领取 ✓',CX,601,14,'#9df27a',2.2,'center',900)}if(!nx.length&&chapterChestReady(LVL.load())){const p=.5+.5*Math.sin(T*5);ctx.save();ctx.shadowColor='#ffd23a';ctx.shadowBlur=8+10*p;glass(36,580,318,40,12,.85);ctx.restore();txt('🎁 第 1 章宝箱已解锁！点继续打开',CX,601,15,'#ffd23a',2.4,'center',900)}if(nx.length){glass(36,580,318,40,12,.6);const s=nx.length>1?`下一站二选一：${nx.map(q=>q.name).join(' / ')}`:`下一关 ${nx[0].id} ${nx[0].name}`+(/新敌人/.test(nx[0].intro||'')?' · '+nx[0].intro.replace(/^.*新敌人[：:]\s*/,'新敌：').split(' · ')[0]:nx[0].kind==='boss'||nx[0].kind==='mini'?' · BOSS':'');txt(s,CX,600,13,'#ffe14a',2,'center',900)}}
   {const cr=E.win&&!LVL.all().some(q=>LVL.prevs(q.id).includes(d.id))&&chapterChestReady(LVL.load());lightBtn(40,630,310,60,cr?'打开章节宝箱 ›':'继续 ›','y',()=>{openMap(d.id,{id:d.id,s:r.stars,first:!!r.first,coins:((r.reward&&r.reward.coins)||0)+(r.bank||0)});if(cr)try{openChapterChest()}catch(e){}},24)}
  }else{txt(`${END.why||'失败'}${END.src?' · '+END.src:''}`,CX,214,18,'#ffb3bc',3,'center',900);txt(`航程 ${Math.round((E.prog||0)*100)}%`,CX,244,15,'#ffe46b',0,'center',900);
   {const tp=failTip(END);glass(36,264,318,96,14,.7);txt('💡 怎么避免',CX,284,14,'#9df27a',0,'center',900);txt(tp[0],CX,312,15,'#fff',2,'center',900);if(tp[1])txt(tp[1],CX,336,13,'#cfe6ff',0,'center',800)}
@@ -2415,7 +2416,7 @@ function juScale(x,y,w,h){const p=JU.press;if(!p)return 1;const t=T-p.t;if(t>.28
 {const _b=button;button=function(x,y,w,h){const s=juScale(x,y,w,h);if(s===1)return _b.apply(this,arguments);ctx.save();ctx.translate(x+w/2,y+h/2);ctx.scale(s,s);ctx.translate(-x-w/2,-y-h/2);try{return _b.apply(this,arguments)}finally{ctx.restore()}}}
 {const _l=lightBtn;lightBtn=function(x,y,w,h){const s=juScale(x,y,w,h);if(s===1)return _l.apply(this,arguments);ctx.save();ctx.translate(x+w/2,y+h/2);ctx.scale(s,s);ctx.translate(-x-w/2,-y-h/2);try{return _l.apply(this,arguments)}finally{ctx.restore()}}}
 /* 选卡翻牌揭示：逐张高光扫过 */
-{const _dc=drawChoice;drawChoice=function(){_dc();if(!CH||!CH.opts)return;const N3=CH.opts.length===3;CH.opts.forEach((o,i)=>{const t=CH.t-.12-i*.09;if(t<0||t>.45)return;const w=N3?120:178,x=N3?6+i*127:12+i*188,y=308,h=342;ctx.save();bev(x+5,y+5,w-10,h-10,10);ctx.clip();const sx=x-60+t/.45*(w+120);const g=ctx.createLinearGradient(sx-40,y,sx+40,y+60);g.addColorStop(0,'rgba(255,255,255,0)');g.addColorStop(.5,'rgba(255,255,255,.55)');g.addColorStop(1,'rgba(255,255,255,0)');ctx.fillStyle=g;ctx.fillRect(x,y,w,h);ctx.restore();if(t<.1&&o.u&&(o.u.rar||0)>=2){ctx.save();ctx.globalAlpha=1-t/.1;juBurst(x+w/2,y+120,60,10,'rgba(255,210,58,.8)');ctx.restore()}})}}
+{const _dc=drawChoice;drawChoice=function(){_dc();if(!CH||!CH.opts)return;const N3=CH.opts.length===3;CH.opts.forEach((o,i)=>{{const nl=up(o.u.id)+1;if(nl>=2&&N3){const w=120,x=6+i*127,y=308+(1-Math.min(1,CH.t/.25))*40;const p=1+.06*Math.sin(T*6);ctx.save();ctx.translate(x+w/2,y-2);ctx.scale(p,p);rr(-50,-14,100,28,14);ctx.fillStyle='#ffc21a';ctx.fill();ctx.lineWidth=3;ctx.strokeStyle='#1a1030';ctx.stroke();ctx.restore();txt(nl>=3?'升级→Lv3!':'升级→Lv'+nl,x+w/2,y-1,15,'#1a1030',0,'center',900)}}const t=CH.t-.12-i*.09;if(t<0||t>.45)return;const w=N3?120:178,x=N3?6+i*127:12+i*188,y=308,h=342;ctx.save();bev(x+5,y+5,w-10,h-10,10);ctx.clip();const sx=x-60+t/.45*(w+120);const g=ctx.createLinearGradient(sx-40,y,sx+40,y+60);g.addColorStop(0,'rgba(255,255,255,0)');g.addColorStop(.5,'rgba(255,255,255,.55)');g.addColorStop(1,'rgba(255,255,255,0)');ctx.fillStyle=g;ctx.fillRect(x,y,w,h);ctx.restore();if(t<.1&&o.u&&(o.u.rar||0)>=2){ctx.save();ctx.globalAlpha=1-t/.1;juBurst(x+w/2,y+120,60,10,'rgba(255,210,58,.8)');ctx.restore()}})}}
 /* 章节宝箱开箱动画 */
 {const _cc=drawChapterChest;drawChapterChest=function(sv){_cc(sv);const cc=MAP&&MAP.cc;if(!cc||cc.t>1.25)return;const t=cc.t;ctx.save();ctx.fillStyle=`rgba(6,8,26,${t<1?.92:.92*(1.25-t)/.25})`;ctx.fillRect(-OX,0,W+2*OX,H);const cy=430,sh=t<.45?Math.sin(t*60)*4*(t/.45):0;
  if(t>.45){ctx.save();ctx.translate(CX,cy-20);ctx.rotate(t*1.5);ctx.globalAlpha=Math.min(1,(t-.45)/.15)*(t>1?(1.25-t)/.25:1);for(let i=0;i<12;i++){ctx.rotate(Math.PI/6);ctx.fillStyle=i%2?'rgba(255,220,90,.35)':'rgba(255,255,255,.22)';ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(-22,-260);ctx.lineTo(22,-260);ctx.fill()}ctx.restore()}
@@ -2424,15 +2425,17 @@ function juScale(x,y,w,h){const p=JU.press;if(!p)return 1;const t=T-p.t;if(t>.28
  if(t>.5){for(let i=0;i<10;i++){const a=-Math.PI/2+(i-4.5)*.22,d=(t-.5)*420;ctx.beginPath();ctx.arc(Math.cos(a)*d,-20+Math.sin(a)*d+ (t-.5)*(t-.5)*500,7,0,7);ctx.fillStyle='#ffd23a';ctx.fill();ctx.lineWidth=2;ctx.stroke()}}
  ctx.restore();if(t>.5&&t<1.1)txt('开箱！',CX,cy-120,34,'gold',5)}}
 /* ===== v13.26 一次性提示 + Boss 阶段 + 方舟安全 ===== */
-function oneTip(k,t,d){try{const K='hh_tip_'+k;if(localStorage.getItem(K))return false;localStorage.setItem(K,1);setTip(t,d||3.2);return true}catch(e){return false}}
+function oneTip(k,t,d){try{const K='hh_tip_'+k;if(localStorage.getItem(K))return false;if(G._pend&&G._pend.k===K)return false;setTip(t,d||3.2);if(!tip||tip.text!==t)return false;tip.pri=6.5;G._pend={k:K,o:tip};return true}catch(e){return false}}
+function pendTick(){const P=G&&G._pend;if(!P)return;if(P.o.t>.8){try{localStorage.setItem(P.k,1)}catch(e){}G._pend=null}else if(tip!==P.o)G._pend=null}/* v13.27 真正显示过才算看过 */
 const AFXTIP={shield:'精英·护盾：先打掉蓝色护盾才会掉血',fast:'精英·疾速：飞得快，提前拦在它前面',split:'精英·分裂：击毁后会分出 2 架小机',regen:'精英·再生：会自己回血，集中火力速杀'};
-function tipTick(){if(!G||!G.lvl||G.lvl.legacy||state!=='play'||CH||typeof AUTO!=='undefined'&&AUTO)return;if(G._tipT&&T-G._tipT<4)return;
- const go=(k,t,d)=>{if(oneTip(k,t,d))G._tipT=T};
- if(G.time>5&&enemies.filter(e=>!e.dead&&e.tele).length>=2)return go('laser','橙色瞄准线 = 敌机马上开火！击落它或用战机挡住',3.4);
- for(const e of enemies)if(!e.dead&&e.afx&&AFXTIP[e.afx]&&enemyOnScreen(e))return go('afx_'+e.afx,AFXTIP[e.afx],3.2);
- if(G.arkSafe&&F.pulseCd>0)return go('arksafe','方舟没被打时，脉冲充能更快（绿光）',3);
+function tipTick(){if(!G||!G.lvl||G.lvl.legacy||state!=='play'||CH)return;pendTick();
  if(cruiser&&cruiser.parts&&cruiser.state&&cruiser.state!=='dead'&&cruiser.state!=='gone'){let h=0,m=0;for(const q of cruiser.parts){m+=q.maxHp||0;h+=q.dead?0:Math.max(0,q.hp||0)}const f=m?h/m:1;G._bph=G._bph||0;
-  if(G._bph<1&&f<.66){G._bph=1;notice={title:'BOSS 阶段 2',sub:'召唤编队 · 先清小怪护住方舟',col:'r',t:0,dur:2.2};addTrauma(.3)}
-  else if(G._bph<2&&f<.33){G._bph=2;notice={title:'BOSS 狂暴！',sub:'弹幕加密 · 坚持住，快打爆它',col:'r',t:0,dur:2.2};addTrauma(.4)}}}
+  if(G._bph<1&&f<.66){G._bph=1;notice={title:'BOSS 阶段 2',sub:'召唤编队 · 先清小怪护住方舟',col:'r',t:0,dur:2.2};addTrauma(.3);ev('bossPhase',{p:2})}
+  else if(G._bph<2&&f<.33){G._bph=2;notice={title:'BOSS 狂暴！',sub:'弹幕加密 · 坚持住，快打爆它',col:'r',t:0,dur:2.2};addTrauma(.4);ev('bossPhase',{p:3})}}
+ if(typeof AUTO!=='undefined'&&AUTO)return;if(G._tipT&&T-G._tipT<4)return;
+ const go=(k,t,d)=>{if(oneTip(k,t,d)){G._tipT=T;return true}return false};
+ if(G.time>3&&enemies.filter(e=>!e.dead&&e.tele).length>=2&&go(G.lvl.id==='1-7'?'laser17':'laser',G.lvl.id==='1-7'?'离子风暴：多路橙线锁定方舟！先打掉瞄准的敌机':'橙色瞄准线 = 敌机马上开火！击落它或用战机挡住',3.6))return;
+ for(const e of enemies)if(!e.dead&&e.afx&&AFXTIP[e.afx]&&enemyOnScreen(e)&&go('afx_'+e.afx,AFXTIP[e.afx],3.2))return;
+ if(G.arkSafe&&F.pulseCd>0&&go('arksafe','方舟没被打时，脉冲充能更快（绿光）',3))return}
 {const _dn2=drawNums;drawNums=function(){_dn2.apply(this,arguments);try{tipTick()}catch(e){}}}
 </script></body></html>
