@@ -2760,7 +2760,8 @@ function tut11(){if(!G||!G.xp11||state!=='play'||CH)return;const S=G.t11||(G.t11
 
 /* V21_MODULE
  * 护航战机 V2.1 · P0 切片（M0 / M1 / M2-A / M2-B）
- * 默认档 legacy_v1352 不改现网手感；?profile=v21_p0 打开实验包。
+ * 无参数打开、以及 /v21/ ，都进实验档 v21_p0。
+ * 现网对照必须写 ?profile=legacy_v1352。带其它参数且不写 profile 的链接仍是 legacy，给机器回放用。
  * 本文件不实现 M4（护卫舰招牌 / 联动卡）。
  */
 (function(){
@@ -2771,7 +2772,14 @@ const Q=window.Q||new URLSearchParams(location.search);
 function qnum(k){const v=Q.get(k);return v==null||v===''?null:+v}
 function qbool(k){const v=Q.get(k);if(v==null||v==='')return null;return v==='1'||v==='true'||v==='on'}
 
-const profileRaw=(Q.get('profile')||(Q.get('v21')==='1'?'v21_p0':'legacy_v1352'));
+function bareEntry(){
+  let path='', search='';
+  try{path=location.pathname||''; search=location.search||''}catch(e){}
+  if(/\/v21\/?$/.test(path)||/\/v21\/index\.html$/i.test(path))return true;
+  if(search===''||search==='?')return true;
+  return false;
+}
+const profileRaw=(Q.get('profile')||(Q.get('v21')==='1'?'v21_p0':(bareEntry()?'v21_p0':'legacy_v1352')));
 const profile=(profileRaw==='v21'||profileRaw==='v21_p0')?'v21_p0':'legacy_v1352';
 const isV21=profile==='v21_p0';
 
@@ -3122,6 +3130,7 @@ const cards={
     const seen=new Set();
     ch.opts=ch.opts.filter(o=>{if(!o||!o.u||seen.has(o.u.id)||PULSE_IDS[o.u.id]||up(o.u.id)>=o.u.max)return false;seen.add(o.u.id);return true});
     synergy.paint(ch);
+    try{rich.examBias(ch)}catch(e){}
     for(const o of ch.opts){
       if(!o||!o.u||up(o.u.id)<1||o.tag!=='新武装')continue;
       const face=this.faceOf(o.u);
@@ -4350,12 +4359,248 @@ function guessHitSrc(s){
   }
   return '';
 }
+/* P0″：30 张卡的数据、局外三条线性、两个战术模块。现网不读这张表。 */
+const RICH_ROWS=[
+  ['morph_spread','形态','散射','前向扇形，清群','D1','spread',1],
+  ['morph_pierce','形态','穿透','直线贯穿，打装甲和舱门','D1','pierce',1],
+  ['morph_broadside','形态','侧舷','左右侧射，打侧翼','D1','side',1],
+  ['morph_tail','形态','尾炮','后方补射','W1','rear',1],
+  ['morph_homing','形态','追踪','轻度追踪，点名拖船','W1','',1],
+  ['morph_ricochet','形态','弹射','命中后弹跳 1 次','W1','',1],
+  ['morph_beam','形态','光束','短射线，单体更高','M1','',1],
+  ['morph_drone','形态','僚机','跟射僚机，不是职能舰','W1','wing',1],
+  ['attr_ap','属性','穿甲','对装甲和舱门伤害 ×1.5','D1','',1],
+  ['attr_arc','属性','电弧','击杀时跳到邻近 1 个敌人','W1','',1],
+  ['attr_cryo','属性','冷却','命中减速','W1','',1],
+  ['attr_purge','属性','净化','对登舰额外伤害','M1','',1],
+  ['amp_rate','增幅','射速强化','射速 +12%，可叠 2 次','D1','',2],
+  ['amp_speed','增幅','弹速强化','弹速 +15%','D1','',1],
+  ['amp_range','增幅','射程强化','射程 +12%','W1','',1],
+  ['amp_magnet','增幅','吸取','拾取范围变大','W1','magnet',1],
+  ['amp_hull','增幅','稳固编队','被打时少掉约 15% 的人','W1','',1],
+  ['amp_repair','增幅','应急修理','隔一段时间补一点人数缓冲','M1','',1],
+  ['ship_shield','船','收编·护盾舰','本局护盾舰入列，不开火','D1','',1],
+  ['ship_gun','船','收编·炮舰','本局炮舰入列，齐射按住','W1','',1],
+  ['ship_medic','船','收编·医护舰','登舰时少掉人','W1','',1],
+  ['ship_repair','船','收编·维修舰','瘫痪船更快回到队列','M1','',1],
+  ['ship_salvage','船','收编·回收舰','掉落吸得更近','M1','',1],
+  ['ship_tow','船','收编·拖曳舰','失位的船拉回队列','M1','',1],
+  ['ship_shield_plus','船','护盾协同','已有护盾舰时穹顶更久','M1','',1],
+  ['ship_gun_plus','船','炮舰超载','已有炮舰时齐射更快','M1','',1],
+  ['camp_flash_boost','破营','闪光余烬','下一次破营人数 +20%','W1','',1],
+  ['camp_door_charge','破营','破门冲锋','战俘营舱门伤害 +40%','D1','',1],
+  ['camp_escort_lane','破营','救援航道','破营窗内少挨打','W1','',1],
+  ['camp_recruit_bias','破营','招降协议','下一次三选一更偏向船卡','M1','',1]
+];
+const RICH_EXAM={
+  '1-1':{spread:1.2,pierce:1.4,side:1.0,attr_ap:1.3,camp_door_charge:2,amp_rate:1.1,ship_shield:1.5},
+  '1-2':{spread:1.3,side:1.2,amp_hull:1.4,amp_magnet:1.1,ship_shield:1.6}
+};
+const RICH_COMBOS=[
+  {id:'combo_pierce_net', name:'贯穿弹网', a:'pierce', b:'spread', live:'net', on:1},
+  {id:'combo_storm', name:'协同风暴', a:'wing', b:'rate', live:'storm', on:1},
+  {id:'combo_omni', name:'全向火力', a:'side', b:'rear', live:'omni', on:1},
+  {id:'combo_thunder', name:'雷暴链', a:'morph_ricochet', b:'attr_arc', on:0},
+  {id:'combo_ice_line', name:'冰封线', a:'morph_beam', b:'attr_cryo', on:0},
+  {id:'combo_hunt', name:'猎杀群', a:'morph_homing', b:'wing', on:0},
+  {id:'combo_purge_ring', name:'净化环', a:'morph_drone', b:'attr_purge', on:0},
+  {id:'combo_ap_cannon', name:'穿甲炮', a:'pierce', b:'attr_ap', on:0}
+];
+const rich={
+  catalog:RICH_ROWS.map(r=>({id:r[0],track:r[1],name:r[2],line:r[3],gate:r[4],ups:r[5]||'',max:r[6]||1})),
+  byId:{},
+  combos:RICH_COMBOS,
+  init(){for(const c of this.catalog)this.byId[c.id]=c},
+  d1(){return this.catalog.filter(c=>c.gate==='D1')},
+  active(){
+    const week=Q.get('pool')==='week'||Q.get('pool')==='month';
+    const month=Q.get('pool')==='month';
+    return this.catalog.filter(c=>c.gate==='D1'||(week&&c.gate==='W1')||(month&&c.gate==='M1'));
+  },
+  /* 火力阶只改主炮高度，不乘攻击百分比。 */
+  atkFromTier(){return 1},
+  resolve(id){
+    const row=this.byId[id];
+    if(!row){const u=(typeof UPS!=='undefined')&&UPS.find(x=>x.id===id);return u||null}
+    if(row.ups){
+      const u=UPS.find(x=>x.id===row.ups);
+      if(!u)return null;
+      return Object.assign({}, u, {v21track:row.track, v21line:row.line, v21card:row.id});
+    }
+    return {id:row.id, name:row.name, d:[row.line, row.line], max:row.max||1, arm:0, rar:0, sch:row.track, v21track:row.track, v21line:row.line, v21card:row.id};
+  },
+  weight(level,id){const t=RICH_EXAM[level]||{};return t[id]||0},
+  examBias(ch){
+    if(!isV21||!flags.synergyEnabled||!ch||!ch.opts||!G||!G.lvl)return;
+    if(G.lvl.id!=='1-2'||(G.xpLv||0)<=1)return;
+    if(typeof up==='function'&&up('side')>=1)return;
+    if(ch.opts.some(o=>o&&o.u&&o.u.id==='side'))return;
+    const u=this.resolve('morph_broadside');
+    if(!u||up(u.id)>=u.max)return;
+    let idx=ch.opts.length-1;
+    if(ch.opts[idx]&&(ch.opts[idx].tag==='轻进化'||(ch.opts[idx].synPreview&&ch.opts[idx].synPreview.progress==='1/2'))){
+      idx=ch.opts.findIndex(o=>o&&o.tag!=='轻进化'&&!(o.synPreview&&o.synPreview.progress==='1/2'));
+    }
+    if(idx<0)return;
+    const face=cards.faceOf(u);
+    ch.opts[idx]={u, tag:'形态', sub:u.v21line||face.sub, col:'#7ee0ff', ic:'形'};
+  },
+  onPick(u){
+    if(!isV21||!u)return;
+    const id=u.v21card||u.id;
+    emit('card_picked',{id, track:u.v21track||'', game_time_s:+(((G&&G.time)||0).toFixed(2))});
+    if(id==='ship_shield'||u.id==='ship_shield'){
+      if(typeof day1!=='undefined'&&day1.grantShield)day1.grantShield('card');
+    }
+    if(id==='ship_gun'&&!(typeof day1!=='undefined'&&day1.on)&&typeof fleet!=='undefined'&&!fleet.find(s=>s&&s.k==='gun')){
+      const s=mkShip('gun'); s.v21run=1; s.fT=9; fleet.push(s);
+      emit('fleet_ship_acquired_in_run',{ship:'gun', via:'card'});
+    }
+    if(id==='amp_hull'&&F)F.v21hull=0.85;
+    if(id==='morph_homing'&&F)F.v21home=1;
+    if(typeof day1!=='undefined'&&day1.on&&day1.notePick)day1.notePick(u.id);
+  },
+  campMul(e){
+    if(!isV21||!e||!e.v21camp)return 1;
+    let m=1;
+    if(typeof up==='function'&&up('camp_door_charge')>=1)m*=1.4;
+    if(meta.mod==='breach')m*=1.25;
+    return m;
+  },
+  armMul(e){
+    if(!isV21||!e||typeof up!=='function'||up('attr_ap')<1)return 1;
+    if(e.v21camp||e.v21boss||e.k==='heavy'||e.k==='gt')return 1.5;
+    return 1;
+  }
+};
+rich.init();
+const META_KEY='xghh_v21_meta';
+const meta={
+  atk:0, rate:0, cabin:0, mod:'', open:0,
+  modules:[
+    {id:'breach', name:'破营专家', on:1, line:'舱门 +25%，破营窗 +2 秒'},
+    {id:'wide', name:'广域弹网', on:1, line:'散射多 1 道，单体 −10%'},
+    {id:'near', name:'近防优先', on:0, line:'这刀先不做'},
+    {id:'medbay', name:'医务扩充', on:0, line:'这刀先不做'}
+  ],
+  load(){
+    if(!isV21||typeof localStorage==='undefined')return;
+    try{
+      const o=JSON.parse(localStorage.getItem(META_KEY)||'{}');
+      this.atk=Math.max(0,Math.min(20,+o.atk||0));
+      this.rate=Math.max(0,Math.min(15,+o.rate||0));
+      this.cabin=Math.max(0,Math.min(12,+o.cabin||0));
+      this.mod=(o.mod==='breach'||o.mod==='wide')?o.mod:'';
+    }catch(e){}
+  },
+  save(){
+    if(!isV21||typeof localStorage==='undefined')return;
+    try{localStorage.setItem(META_KEY, JSON.stringify({atk:this.atk,rate:this.rate,cabin:this.cabin,mod:this.mod}))}catch(e){}
+  },
+  bolt(){return Math.floor((this.atk||0)/5)},
+  dmgMul(){return 1+(this.atk||0)*0.05},
+  fireBonus(){
+    let out=(this.rate||0)*0.08;
+    let inn=0;
+    try{inn=Math.min(2,(typeof up==='function'?up('amp_rate'):0)||0)*0.12}catch(e){}
+    if(out&&inn)return out+inn*0.6;
+    return out+inn;
+  },
+  add(line){
+    const cap={atk:20,rate:15,cabin:12}[line];
+    if(cap==null||this[line]>=cap)return;
+    this[line]++;
+    this.save();
+    emit('meta_upgrade',{line, level:this[line], bolt:this.bolt()});
+    try{if(typeof SFX2!=='undefined')SFX2.uiClick()}catch(e){}
+  },
+  equip(id){
+    const row=this.modules.find(m=>m.id===id&&m.on);
+    if(!row)return;
+    this.mod=this.mod===id?'':id;
+    this.save();
+    emit('module_equipped',{id:this.mod||'none'});
+  },
+  applyCabin(){
+    if(!isV21||!G||!this.cabin)return;
+    const extra=this.cabin*12;
+    G.paxCap=(G.paxCap||300)+extra;
+  },
+  chip(){
+    const a=[];
+    if(this.atk)a.push('局外火力 +'+(this.atk*5)+'%');
+    if(this.rate)a.push('射速 Lv'+this.rate);
+    if(this.cabin)a.push('舱容 +'+(this.cabin*12));
+    if(this.mod==='breach')a.push('破营专家');
+    if(this.mod==='wide')a.push('广域弹网');
+    return a.join(' · ');
+  }
+};
+if(isV21)meta.load();
+function paintJet(x,y){
+  const t=(typeof T==='number'?T:0);
+  const flick=0.72+0.28*Math.sin(t*26);
+  const len=12+7*flick;
+  ctx.save();
+  ctx.globalCompositeOperation='lighter';
+  ctx.globalAlpha=0.8;
+  ctx.fillStyle='#ff8a2a';
+  ctx.beginPath();
+  ctx.moveTo(x-4.5,y+11);
+  ctx.lineTo(x+4.5,y+11);
+  ctx.lineTo(x,y+11+len);
+  ctx.closePath();
+  ctx.fill();
+  ctx.globalAlpha=0.9;
+  ctx.fillStyle='#fff4cf';
+  ctx.beginPath();
+  ctx.moveTo(x-2,y+11);
+  ctx.lineTo(x+2,y+11);
+  ctx.lineTo(x,y+11+len*0.5);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
+function drawMetaPanel(){
+  if(!isV21||!meta.open||typeof ctx==='undefined')return;
+  ctx.save();
+  ctx.fillStyle='rgba(6,8,20,.94)';
+  ctx.fillRect(0,0,W,H);
+  txt('局外养成',CX,78,26,'#ffe46b',0,'center',900);
+  txt('火力每 5 级附带 1 级弹速。升一级再进关就能看见。',CX,108,12,'#d5def2',0,'center',800);
+  const rows=[['atk','火力',meta.atk,20,'单发伤害约 +'+(meta.atk*5)+'%'],['rate','射速',meta.rate,15,'射击间隔变短'],['cabin','舱容',meta.cabin,12,'载客上限 +'+(meta.cabin*12)]];
+  rows.forEach((r,i)=>{
+    const y=150+i*78;
+    ctx.fillStyle='rgba(20,28,58,.95)';
+    ctx.fillRect(24,y,342,68);
+    txt(r[1]+'  Lv '+r[2]+' / '+r[3],40,y+24,16,'#fff',0,'left',900);
+    txt(r[4],40,y+48,12,'#b8ffe0',0,'left',800);
+    button(286,y+16,68,36,'+1','g',()=>meta.add(r[0]),16);
+  });
+  txt('弹速子项 Lv '+meta.bolt()+'（跟着火力）',CX,392,13,'#9fd0ff',0,'center',800);
+  txt('战术模块 · 出发带 1 个',CX,422,14,'#ffe46b',0,'center',900);
+  meta.modules.forEach((m,i)=>{
+    const x=20+ (i%2)*186, y=448+Math.floor(i/2)*70;
+    const on=meta.mod===m.id;
+    ctx.fillStyle=m.on?(on?'rgba(40,90,60,.95)':'rgba(20,28,58,.95)'):'rgba(20,20,28,.7)';
+    ctx.fillRect(x,y,176,60);
+    txt(m.name,x+88,y+22,14,m.on?'#fff':'#8a90a8',0,'center',900);
+    txt(m.on?(on?'已带上':'点此装备'):'稍后',x+88,y+42,11,m.on?'#b8ffe0':'#8a90a8',0,'center',800);
+    if(m.on)BTN.push({x,y,w:176,h:60,label:'mod:'+m.id,fn:()=>meta.equip(m.id)});
+  });
+  button(70,710,250,48,'返回','b',()=>{meta.open=0},18);
+  ctx.restore();
+}
+
 /* 方案甲：v21 的 1-1 整关换成 90 秒脚本。关卡表原文仍是 legacy，现网不走这里。 */
 const day1={
   on:false, gems:[], motes:[], peak:0, early:0, firstOffer:null, result:null,
   fleetKills:0, playerKills:0, comboAt:null, blockedPulse:0,
   tier:0, tierAt:null, tierAtBoss:null, flashCleared:false, plainCleared:false,
   ship:null, combat0:null, floorForm:null, arkGone:0, log:[],
+  picks:[], afterCamp:null, afterGap:null, missAt:null, pickedAfter:0,
+  goal:'破漂浮废舰救人，不是护着后面一串船',
+  campAt:null, sawGain:0, sawTier:0,
   begin(){
     this.on=!!(isV21&&G&&G.lvl&&G.lvl.id==='1-1'&&Q.get('day1')!=='0');
     this.gems=[]; this.motes=[]; this.peak=0; this.early=0; this.firstOffer=null;
@@ -4363,23 +4608,49 @@ const day1={
     this.did={}; this._combo=0; this._force=0; this.log=[];
     this.tier=0; this.tierAt=null; this.tierAtBoss=null;
     this.flashCleared=false; this.plainCleared=false; this.ship=null; this.floorForm=null; this.arkGone=0;
+    this.picks=[]; this.afterCamp=null; this.afterGap=null; this.missAt=null; this.pickedAfter=0;
+    this.campAt=null; this.sawGain=0; this.sawTier=0;
+    this.pods=[]; this.shards=[]; this.toast=null; this.escort5=null; this.greenSpawned=0;
+    this.rescueTo=''; this._coinAt=-9; this._podWait=0;
     if(!this.on)return;
     try{opener.on=false; opener.released=true; opener.phase='off'}catch(e){}
     try{raid.on=false}catch(e){}
     TUT=null; G.xp11=0; G.hook.done=true; G.mow.done=true; G.shDisDone=true;
     G.mow.at=1e9; G.dual={end:1}; G.choiceDone=true; G.escort={done:1}; G.v21day1=1;
-    for(let i=fleet.length-1;i>=0;i--)if(fleet[i]&&fleet[i].k!=='ark')fleet.splice(i,1);
+    G.grow=false; G._dv=99;
+    try{wings.length=0}catch(e){}
+    this.solo();
     const A0=(typeof ark==='function')?ark():null;
     if(A0){A0.pax=300; A0.paxNow=300; A0.hp=A0.maxHp}
     G.paxCap=300;
     this.combat0=fleet.filter(s=>s&&s.k!=='ark').length;
     if(F){F.v21tier=0; F.wlv=F.wlv||1}
+    try{meta.applyCabin()}catch(e){}
     try{tutPlace()}catch(e){}
+    this.dock();
     G.len=200; G.crateT=1e9; G.spawnT=1e9; G.swarmT=1e9; G.kamiT=1e9;
     BRF=null; banner=null; tip=null;
     emit('level_start',{script:'1-1-camp', den:300, combat0:this.combat0});
   },
   say(text){this._force=1; try{tip=null; setTip(text,1.6)}catch(e){} this._force=0},
+  solo(){
+    if(typeof fleet==='undefined'||!fleet)return;
+    for(let i=fleet.length-1;i>=0;i--)if(fleet[i]&&fleet[i].k!=='ark')fleet.splice(i,1);
+  },
+  pinArk(){
+    const A=(typeof ark==='function')?ark():null;
+    if(!A)return;
+    const Hn=(typeof H==='number')?H:844;
+    A.x=-240; A.y=Hn+220; A.vx=0; A.vy=0; A.rot=0; A.labT=0;
+    if(A.state==='lost'||A.state==='dis')A.state='ok';
+  },
+  dock(){
+    if(!this.on)return;
+    this.solo();
+    this.pinArk();
+  },
+  campR(){return 168},
+  inRing(e){return !!(e&&F&&dist(F.x,F.y,e.x,e.y)<this.campR())},
   bee(n,kind){
     let live=0; for(const e of enemies)if(e&&!e.dead&&e.v21bee)live++;
     if(live>70)return;
@@ -4396,18 +4667,44 @@ const day1={
     if(typeof CH!=='undefined'&&CH)return;
     const opts=[];
     for(const id of ids){
-      const u=UPS.find(x=>x.id===id);
-      if(!u||up(u.id)>=u.max)continue;
+      const u=rich.resolve(id);
+      if(!u||(typeof up==='function'&&up(u.id)>=(u.max||1)))continue;
       const face=cards.faceOf(u);
-      opts.push({u, tag:face.tag, sub:'点一张，主炮马上变样', col:face.col, ic:face.ic});
+      const track=u.v21track||'';
+      opts.push({u, tag:track||face.tag, sub:u.arm?'点一张，主炮马上变样':(u.v21line||face.sub), col:track==='破营'?'#b8ffe0':(track==='属性'?'#ffd23a':face.col), ic:face.ic});
     }
     if(opts.length<2)return;
     const ix=Math.max(0,Math.min(prefer||0, opts.length-1));
     synergy.paint({opts});
     CH={t:0, lock:0.2, opts, n3:1, ot:(typeof performance!=='undefined'?performance.now():0), v21prefer:ix, v21day1:1};
     G.xpLv=(G.xpLv||0)+1; G.xp=0;
-    if(this.firstOffer==null)this.firstOffer=+(G.time||0).toFixed(2);
-    emit('card_offer',{offered_cards:opts.map(o=>o.u.id).join(','), time_since_start:+(G.time||0).toFixed(2), day1:1});
+    const t=+(G.time||0).toFixed(2);
+    if(this.firstOffer==null)this.firstOffer=t;
+    const windowOver=this.flashCleared||!!(this.did&&this.did.campF);
+    if(windowOver&&this.afterCamp==null){
+      this.afterCamp=t;
+      const ref=this.flashCleared?(this.tierAt||t):(this.missAt||t);
+      this.afterGap=+(t-ref).toFixed(2);
+    }
+    emit('card_offered',{ids:opts.map(o=>(o.u.v21card||o.u.id)), tracks:opts.map(o=>o.u.v21track||''), time_since_start:t, day1:1});
+    emit('card_offer',{offered_cards:opts.map(o=>o.u.id).join(','), time_since_start:t, day1:1});
+  },
+  notePick(id){
+    this.picks=this.picks||[];
+    this.picks.push(id);
+    if(this.afterCamp!=null&&!this.pickedAfter){
+      this.pickedAfter=1;
+      this.mark('cards_picked_after_camp',{id, t:+(((G&&G.time)||0).toFixed(2)), gap:this.afterGap});
+    }
+  },
+  grantShield(via){
+    if(this.on)return;
+    if(this.ship||(typeof fleet!=='undefined'&&fleet.find(s=>s&&(s.k==='shield'||s.k==='gun'))))return;
+    const s=mkShip('shield'); s.v21run=1; fleet.push(s);
+    this.ship='shield';
+    try{if(F)F.sh=Math.max(F.sh||0, (F.maxSh||40)*0.7)}catch(e){}
+    this.say('护盾舰入列');
+    this.mark('fleet_ship_acquired_in_run', {ship:'shield', via:via||'camp'});
   },
   cut(ship,n){
     if(!ship||!(n>0))return 0;
@@ -4431,6 +4728,7 @@ const day1={
     const hp=kind==='flash'?64:28;
     enemies.push({
       k:'drone', v21camp:1, v21kind:kind, v21open:0,
+      v21born:(G&&G.time)||0,
       v21homeX:x, v21homeY:y,
       x, y, vx:0, vy:0, hp, maxHp:hp, r:26,
       fire:99, diveAt:1e9, life:0, flash:0, orb:0, tele:0, tgt:null
@@ -4443,10 +4741,47 @@ const day1={
     const b=A.paxNow||0;
     A.paxNow=Math.min(A.pax||300, b+n);
     const shown=Math.round((A.paxNow-b)>0?(A.paxNow-b):n);
-    try{nums.push({x:clamp(A.x,70,320), y:A.y-64, v:-18, txt:'+'+shown+' 人', col:'#b8ffe0', t:0, life:1.2, big:2})}catch(e){}
+    this.sawGain=1;
     try{G.paxFlash=1.1}catch(e){}
-    for(let i=0;i<8;i++)this.motes.push({x:A.x+(i-3.5)*10, y:A.y-180-(i%3)*14});
     return shown;
+  },
+  popRescue(n, tierUp){
+    this.rescueTo='fighter';
+    this.toast={t:0, life:1.8, n:n, tier:!!tierUp};
+    if(F)F.v21hotT=(typeof T==='number')?T:0;
+    this.mark('rescue_to_fighter', {n:n, tier:tierUp?1:0});
+  },
+  launchPods(e, n, tierUp){
+    this._podN=n; this._podTier=!!tierUp; this._podWait=0; this.toast=null;
+    const base=e?e.x:CX, baseY=e?e.y:240;
+    for(let i=0;i<8;i++){
+      const a=-2.4+i*0.55;
+      this.pods.push({x:base+Math.cos(a)*8, y:baseY+Math.sin(a)*6, delay:i*0.045, t:0});
+    }
+    for(let i=0;i<10;i++){
+      const a=i/10*6.2;
+      this.shards.push({x:base, y:baseY, vx:Math.cos(a)*220, vy:Math.sin(a)*160, rot:a, t:0, life:0.42});
+    }
+    try{boomFx(base, baseY, 1.15)}catch(err){}
+    try{P({k:'ring', x:base, y:baseY, t:0, life:.5, R:86, col:'#ffe46b'})}catch(err){}
+  },
+  coin(x,y,n){
+    n=n||1;
+    if(G)G.coins=(G.coins||0)+n;
+    const now=(typeof T==='number')?T:0;
+    if(now-(this._coinAt||-9)<0.32)return;
+    this._coinAt=now;
+    try{nums.push({x:clamp(x==null?CX:x,70,320), y:Math.max(150,(y==null?240:y)-18), v:-36, txt:'+金币', col:'#ffd23a', t:0, life:0.9, big:2})}catch(e){}
+  },
+  vacuum(){
+    if(typeof pick_==='undefined')return;
+    for(let i=pick_.length-1;i>=0;i--){
+      const c=pick_[i];
+      if(!c||(c.k!=='coin'&&c.k!=='gem'))continue;
+      const n=Math.max(1, Math.round(c.val||1));
+      pick_.splice(i,1);
+      this.coin(c.x, c.y, n);
+    }
   },
   breach(e){
     if(!e||e.v21done)return;
@@ -4454,7 +4789,7 @@ const day1={
     const kind=e.v21kind||'plain';
     const n=kind==='flash'?80:40;
     const got=this.gain(n);
-    for(let i=0;i<8;i++)this.motes.push({x:e.x+(i-3.5)*8, y:e.y});
+    let tierUp=false;
     if(kind==='flash'){
       this.flashCleared=true;
       this.tier=Math.min(3,(this.tier||0)+1);
@@ -4468,31 +4803,27 @@ const day1={
         const u=UPS.find(x=>x.id==='spread');
         if(u){try{applyUp(u)}catch(err){} this.floorForm='spread'}
       }
-      this.say('火力 '+this.roman(this.tier-1)+' → '+this.roman(this.tier));
-      try{nums.push({x:CX, y:250, v:-20, txt:'火力 '+this.roman(this.tier-1)+' → '+this.roman(this.tier), col:'#ffe46b', t:0, life:1.3, big:2})}catch(err){}
+      this.sawTier=1;
+      tierUp=true;
+      try{SFX2.powerup()}catch(err){}
       this.mark('firepower_tier_up', {firepower_tier:this.tier, kind});
-      if(!this.ship&&!fleet.find(s=>s&&(s.k==='shield'||s.k==='gun'))){
-        const s=mkShip('shield'); s.v21run=1; fleet.push(s);
-        this.ship='shield';
-        try{if(F)F.sh=Math.max(F.sh||0, (F.maxSh||40)*0.7)}catch(err){}
-        this.say('护盾舰入列');
-        this.mark('fleet_ship_acquired_in_run', {ship:'shield', via:'camp'});
-      }
     }else if(kind==='plain'){
       this.plainCleared=true;
-      if(F)F.v21aspd=1.12;
+      if(F)F.v21aspd=1.04;
       this.say('射速提升');
     }else{
       this.plainCleared=true;
       this.say('人救出来了');
     }
-    this.mark('wreck_camp_cleared', {kind, pax_gained:got, firepower_tier:this.tier||0});
-    try{P({k:'ring', x:e.x, y:e.y, t:0, life:.45, R:70, col:'#b8ffe0'})}catch(err){}
+    this.solo();
+    this.launchPods(e, got||n, tierUp);
+    this.mark('wreck_camp_cleared', {kind, pax_gained:got, firepower_tier:this.tier||0, fly:'fighter'});
   },
   miss(kind, n){
     const c=this.camp(kind);
     if(c){c.v21fail=1; c.v21done=1; c.dead=true}
     const A=(typeof ark==='function')?ark():null;
+    if(kind==='flash')this.missAt=+((G.time||0).toFixed(2));
     const lost=A?this.cut(A, n):0;
     this.say(kind==='flash'?'废舰被拖走，人没救出来':'营救错过了');
     this.mark('wreck_camp_failed', {kind, pax_lost:lost||n, firepower_tier:this.tier||0});
@@ -4500,16 +4831,21 @@ const day1={
   paintCamp(e){
     if(!e||typeof ctx==='undefined')return;
     const open=!!e.v21open;
-    const pulse=.55+.45*Math.sin((typeof T==='number'?T:0)*8);
-    try{drawHull(e.v21kind==='flash'?'gun':'pax', e.x, e.y, .92, 0, true)}catch(err){}
+    const pulse=.55+.45*Math.sin((typeof T==='number'?T:0)*7);
+    try{drawHull(e.v21kind==='flash'?'gun':'pax', e.x, e.y, 1.15, 0, true)}catch(err){}
     ctx.save();
-    ctx.strokeStyle=e.v21kind==='flash'?'#d8ffe8':'#7dffe0';
-    ctx.globalAlpha=open?.95:.65+.3*pulse;
-    ctx.lineWidth=open?3.6:2.4;
-    ctx.beginPath(); ctx.arc(e.x, e.y, 32+(open?3*pulse:0), 0, 7); ctx.stroke();
+    ctx.strokeStyle='#7dffe0';
+    ctx.globalAlpha=.42+.28*pulse;
+    ctx.lineWidth=16;
+    ctx.beginPath(); ctx.arc(e.x, e.y, 58, 0, 7); ctx.stroke();
+    ctx.globalAlpha=.95;
+    ctx.lineWidth=open?7:6;
+    ctx.beginPath(); ctx.arc(e.x, e.y, 46+4*pulse, 0, 7); ctx.stroke();
     ctx.restore();
-    if(!open)txt('战俘营', e.x, e.y-42, 12, '#b8ffe0', 0, 'center', 900);
-    else if(typeof bar==='function'&&e.maxHp)bar(e.x-22, e.y+36, 44, 5, Math.max(0,e.hp)/e.maxHp, '#d8ffe8', '#1f8a62');
+    if(open&&typeof bar==='function'&&e.maxHp){
+      bar(e.x-40, e.y+42, 80, 8, Math.max(0,e.hp)/e.maxHp, '#ffe9a0', '#e07a18');
+      txt('破开牢笼', e.x, e.y+62, 15, '#fff7d0', 3, 'center', 900);
+    }
   },
   drawPaxBar(){
     if(!isV21||!G||state==='title')return;
@@ -4524,6 +4860,8 @@ const day1={
     txt(Math.round(now)+'/'+den, x+w-8, y+h/2+.5, 11, '#fff', 2.4, 'right', 900);
     const tier=(this.on?this.tier:(F&&F.v21tier))||0;
     txt('火力 '+this.roman(tier), CX, y+h+16, 12, tier?'#ffe46b':'#d5def2', 0, 'center', 900);
+    const chip=meta.chip();
+    if(chip)txt(chip, CX, y+h+32, 11, '#d5def2', 0, 'center', 800);
   },
   checkLine(){
     if(!isV21||state!=='play'||!G||(G.time||0)<5)return;
@@ -4543,7 +4881,7 @@ const day1={
     }
     if(e.k==='tug')this.tugDead=true;
     if(e.v21bee||e.v21boss||e.v21right||e.v21gun||e.k==='tug')this.playerKills++;
-    if(e.v21bee)this.gems.push({x:e.x, y:e.y});
+    if(e.v21bee||e.v21boss)this.coin(e.x, e.y, 1);
   },
   tick(dt){
     if(!this.on||state!=='play'||!G)return;
@@ -4553,45 +4891,58 @@ const day1={
     let alive=0; for(const e of enemies)if(e&&!e.dead&&e.k!=='crate')alive++;
     this.peak=Math.max(this.peak, alive);
     if(t<=10)this.early=Math.max(this.early, alive);
-    if(!this.ship){
-      for(let i=fleet.length-1;i>=0;i--)if(fleet[i]&&fleet[i].k!=='ark')fleet.splice(i,1);
-    }
+    this.dock();
+    if(this.escort5==null&&t>=5)this.escort5=fleet.filter(s=>s&&s.k!=='ark').length;
     if(F)F.wlv=1+(this.tier||0);
+    this.vacuum();
     if(typeof pick_!=='undefined'){
       for(let i=pick_.length-1;i>=0;i--)if(pick_[i]&&pick_[i].pw==='over')pick_.splice(i,1);
     }
-    for(const g of this.gems){
-      const dx=F.x-g.x, dy=(F.y-20)-g.y, L=Math.hypot(dx,dy)||1;
-      g.x+=dx/L*520*(dt||0); g.y+=dy/L*520*(dt||0);
-      if(L<28){g.dead=1; try{xpAdd(1)}catch(e){}}
+    const fx=F?F.x:CX, fy=F?F.y-10:((typeof H==='number'?H:844)-160);
+    for(const p of this.pods){
+      p.t+=(dt||0);
+      if(p.t<(p.delay||0))continue;
+      const dx=fx-p.x, dy=fy-p.y, L=Math.hypot(dx,dy)||1;
+      p.x+=dx/L*680*(dt||0); p.y+=dy/L*680*(dt||0);
+      if(L<24)p.dead=1;
     }
-    this.gems=this.gems.filter(g=>!g.dead);
-    const Ahome=(typeof ark==='function')?ark():null;
-    for(const m of this.motes){
-      const tx=Ahome?Ahome.x:CX, ty=Ahome?Ahome.y-16:220;
-      const dx=tx-m.x, dy=ty-m.y, L=Math.hypot(dx,dy)||1;
-      m.x+=dx/L*640*(dt||0); m.y+=dy/L*640*(dt||0);
-      if(L<22)m.dead=1;
+    if(this.pods.length&&this.pods.some(p=>p.dead)&&!this.toast)this.popRescue(this._podN||0, this._podTier);
+    this.pods=this.pods.filter(p=>!p.dead);
+    if(this.pods.length&&!this.toast){
+      this._podWait+=(dt||0);
+      if(this._podWait>1.1)this.popRescue(this._podN||0, this._podTier);
     }
-    this.motes=this.motes.filter(m=>!m.dead);
+    for(const s of this.shards){s.t+=(dt||0); s.x+=s.vx*(dt||0); s.y+=s.vy*(dt||0); s.rot+=(dt||0)*8}
+    this.shards=this.shards.filter(s=>s.t<s.life);
+    if(this.toast)this.toast.t+=(dt||0);
     const once=(k,at,fn)=>{if(this.did[k]||t<at)return; this.did[k]=1; fn()};
-    once('hi',0.4,()=>{try{nums.push({x:CX, y:260, v:-28, txt:'300 人', col:'#ffe46b', t:0, life:1.3, big:2})}catch(e){}});
-    once('row',2,()=>{this.bee(15,'row'); this.say('拖动战机，自动开火')});
+    once('goal',0.35,()=>{
+      this.say(this.goal);
+      try{broadcast('破废舰救人','不是护着后面一串船 · 过关看人数','#b8ffe0')}catch(e){}
+    });
+    once('hi',0.4,()=>{try{nums.push({x:CX, y:300, v:-22, txt:'过关看人数 · 300', col:'#ffe46b', t:0, life:1.8, big:2})}catch(e){}});
+    once('row',2,()=>{this.bee(15,'row'); this.say('飞向冷绿战俘营')});
+    once('campW',2.2,()=>{
+      this.spawnCamp('flash', 88, 300);
+      this.campAt=+((G.time||0).toFixed(2));
+      this.say('冷绿废舰是战俘营，飞过去破舱');
+      try{SFX2.warn()}catch(e){}
+      try{edgeWarn(true, 300, '战俘营', '#7dffe0')}catch(e){}
+    });
     once('c1',6,()=>{this.offer(['spread','pierce','side'],0)});
     once('v1',7.2,()=>{this.bee(36,'v')});
+    once('campO',8,()=>{
+      const c=this.camp('flash'); if(c)c.v21open=1;
+      this.say('打它破舱');
+      try{SFX2.warn()}catch(e){}
+    });
     once('v2',11,()=>{this.bee(36,'v')});
     once('c2',14,()=>{
       const have=up('spread')&&!up('pierce')?'pierce':up('pierce')&&!up('spread')?'spread':up('side')&&!up('rear')?'rear':'pierce';
       this.offer(['wing', have, 'rear'], 0);
     });
     once('pack',16,()=>{this.bee(36,'row')});
-    once('campW',18,()=>{
-      this.say('废舰里有人，飞过去破舱');
-      this.spawnCamp('flash', 52, 198);
-      try{edgeWarn(true, 210, '战俘营', '#7dffe0')}catch(e){}
-    });
     once('pack2',20,()=>{this.bee(32,'row')});
-    once('campO',22,()=>{const c=this.camp('flash'); if(c)c.v21open=1; this.say('破舱救人')});
     once('c3',24,()=>{
       let id='pierce';
       if(up('spread')&&!up('pierce'))id='pierce';
@@ -4600,14 +4951,17 @@ const day1={
       else if(up('rear')&&!up('side'))id='side';
       this.offer(['wing','side',id], 2);
     });
-    once('loot',26.5,()=>{for(let i=0;i<8;i++)this.gems.push({x:36+i*42, y:-8-(i%3)*12})});
-    once('campF',34,()=>{if(!this.flashCleared)this.miss('flash', 120)});
+    once('loot',26.5,()=>{this.coin(CX, 220, 8)});
+    once('campF',34,()=>{if(meta.mod==='breach')return; if(!this.flashCleared)this.miss('flash', 120)});
+    once('campF2',36,()=>{if(meta.mod!=='breach'||this.flashCleared)return; this.miss('flash', 120)});
+    once('wide',36,()=>{if(state!=='play')return; this.offer(['attr_ap','amp_speed','camp_door_charge'], 0)});
     once('plainW',44,()=>{
       if(state!=='play')return;
       const kind=this.flashCleared?'plain':'retry';
       this.say(kind==='plain'?'还有一艘小废舰':'再给一次，只加人');
-      this.spawnCamp(kind, W-56, 214);
-      try{edgeWarn(false, 230, '战俘营', '#7dffe0')}catch(e){}
+      this.spawnCamp(kind, W-72, 300);
+      try{SFX2.warn()}catch(e){}
+      try{edgeWarn(false, 300, '战俘营', '#7dffe0')}catch(e){}
     });
     once('plainO',48,()=>{
       const c=this.camp(this.flashCleared?'plain':'retry');
@@ -4660,21 +5014,73 @@ const day1={
       e.x=e.v21homeX; e.y=e.v21homeY; e.vx=0; e.vy=0; e.fire=99; e.diveAt=1e9; e.life=0; e.tele=0; e.tgt=null;
     }
     for(const s of fleet)if(s&&s.k==='gun')s.fT=9;
+    this.dock();
     this.checkLine();
+  },
+  drawPod(p){
+    ctx.save(); ctx.translate(p.x,p.y);
+    ctx.fillStyle='#f7f1e4'; ctx.beginPath(); ctx.arc(0,-4,3.3,0,7); ctx.fill();
+    ctx.fillStyle='#7ecbff'; ctx.fillRect(-3.4,0,6.8,8);
+    ctx.fillStyle='#ffe9a0'; ctx.fillRect(-5.2,-1,10.4,3.2);
+    ctx.restore();
   },
   draw(){
     if(!this.on||typeof ctx==='undefined')return;
-    ctx.save(); ctx.fillStyle='#b8ff9a';
-    for(const g of this.gems){ctx.beginPath(); ctx.arc(g.x,g.y,4.2,0,7); ctx.fill()}
-    ctx.fillStyle='#b8ffe0';
-    for(const m of this.motes){ctx.beginPath(); ctx.arc(m.x,m.y,3.4,0,7); ctx.fill()}
+    const c=enemies.find(e=>e&&!e.dead&&e.v21camp&&!e.v21done);
+    ctx.save();
+    for(const s of this.shards){
+      const a=1-s.t/s.life;
+      ctx.save(); ctx.globalAlpha=Math.max(0,a); ctx.translate(s.x,s.y); ctx.rotate(s.rot);
+      ctx.fillStyle='#fff6d0'; ctx.fillRect(-7,-1.6,14,3.2); ctx.restore();
+    }
+    for(const p of this.pods)if(p.t>=(p.delay||0))this.drawPod(p);
     ctx.restore();
-    const c=enemies.find(e=>e&&!e.dead&&e.v21camp&&!e.v21open);
-    if(c&&F){
+    if(c){
+      const R=this.campR();
+      const near=this.inRing(c);
+      const age=(G.time||0)-(c.v21born||G.time||0);
       ctx.save();
-      ctx.strokeStyle='#7dffe0'; ctx.lineWidth=2; ctx.setLineDash([8,6]);
-      ctx.beginPath(); ctx.moveTo(F.x, F.y-24); ctx.lineTo(c.x, c.y); ctx.stroke();
+      ctx.strokeStyle='#b8ffe0'; ctx.lineWidth=3; ctx.setLineDash([10,7]);
+      ctx.beginPath(); ctx.arc(c.x, c.y, R, 0, 7); ctx.stroke();
       ctx.setLineDash([]);
+      if(F){
+        const dx=c.x-F.x, dy=c.y-F.y, L=Math.hypot(dx,dy)||1;
+        const x1=c.x-dx/L*46, y1=c.y-dy/L*46;
+        ctx.strokeStyle='#ffe46b'; ctx.lineWidth=4;
+        ctx.beginPath(); ctx.moveTo(F.x, F.y-28); ctx.lineTo(x1, y1); ctx.stroke();
+        ctx.fillStyle='#ffe46b';
+        ctx.beginPath(); ctx.moveTo(x1, y1);
+        ctx.lineTo(x1-dy/L*8, y1+dx/L*8); ctx.lineTo(x1+dy/L*8, y1-dx/L*8); ctx.closePath(); ctx.fill();
+      }
+      ctx.restore();
+      if(!near&&age>0.6)txt('停在圈内解救', c.x, c.y+78, 18, '#f3fff8', 4, 'center', 900);
+      if(age<6){
+        const lx=clamp(c.x+(c.x<CX?108:-108), 120, (typeof W==='number'?W:390)-120);
+        txt('战俘营', lx, c.y+8, 36, '#f4fff8', 6, 'center', 900);
+      }
+      ctx.save();
+      ctx.fillStyle='rgba(8,36,24,.94)';
+      ctx.fillRect(18, 128, (typeof W==='number'?W:390)-36, 40);
+      ctx.strokeStyle='#ffe46b'; ctx.lineWidth=2;
+      ctx.strokeRect(18, 128, (typeof W==='number'?W:390)-36, 40);
+      ctx.restore();
+      txt('去解救战俘营', CX, 148, 22, '#fff', 4, 'center', 900);
+    }else if((state==='play'||state==='pause')&&!this.flashCleared){
+      ctx.save();
+      ctx.fillStyle='rgba(6,18,16,.9)';
+      ctx.fillRect(16, 142, (typeof W==='number'?W:390)-32, 36);
+      ctx.restore();
+      txt('过关看人数', CX, 160, 16, '#d8ffe8', 0, 'center', 900);
+    }else if(state==='play'||state==='pause'){
+      txt('过关看人数', CX, 148, 13, '#9fd7ff', 0, 'center', 800);
+    }
+    if(this.toast&&this.toast.t<this.toast.life&&F){
+      const a=this.toast.t<0.12?this.toast.t/0.12:this.toast.t>this.toast.life-0.35?(this.toast.life-this.toast.t)/0.35:1;
+      ctx.save(); ctx.globalAlpha=Math.max(0,a);
+      txt('+'+(this.toast.n||0)+' 移民', CX, F.y-92, 36, '#f4fff8', 6, 'center', 900);
+      if(this.toast.tier)txt('火力↑', CX, F.y-132, 32, '#ffe46b', 6, 'center', 900);
+      ctx.strokeStyle='#ffe46b'; ctx.lineWidth=4;
+      ctx.beginPath(); ctx.arc(F.x, F.y, 36+8*Math.sin((typeof T==='number'?T:0)*14), 0, 7); ctx.stroke();
       ctx.restore();
     }
   },
@@ -4736,6 +5142,67 @@ wrap('lose',function(orig,args){
 wrap('drawArkHud',function(orig){
   if(isV21){try{day1.drawPaxBar()}catch(e){} return}
   return orig.call(this);
+});
+wrap('newRun',function(orig,args){
+  const r=orig.apply(this,args);
+  try{if(isV21)meta.applyCabin()}catch(e){}
+  return r;
+});
+wrap('drawBG',function(orig,args){
+  const r=orig.apply(this,args);
+  if(!(isV21&&(state==='play'||state==='pause')))return r;
+  ctx.save();
+  ctx.fillStyle='rgba(6,8,22,.46)';
+  ctx.fillRect(0,0,W,H);
+  ctx.restore();
+  return r;
+});
+wrap('drawHazFx',function(orig){
+  if(!isV21)return orig.call(this);
+  if(typeof cruiser!=='undefined'&&cruiser&&(cruiser.state==='fight'||cruiser.state==='enter'||cruiser.state==='critical')){
+    const a=.06+.04*Math.sin((typeof T==='number'?T:0)*5);
+    try{vignette('rgba(255,40,60,A)',a)}catch(e){}
+  }
+});
+wrap('tickHaz',function(orig,args){
+  if(isV21)return;
+  return orig.apply(this,args);
+});
+wrap('drawWorld',function(orig,args){
+  if(!isV21||!F)return orig.apply(this,args);
+  const sh=F.sh;
+  F.sh=0;
+  try{return orig.apply(this,args)}
+  finally{F.sh=sh}
+});
+wrap('updateConvoy',function(orig,args){
+  if(day1.on)day1.solo();
+  const r=orig.apply(this,args);
+  if(day1.on)day1.dock();
+  return r;
+});
+wrap('drawChain',function(orig){
+  if(day1.on)return;
+  return orig.call(this);
+});
+wrap('drawShip',function(orig,args){
+  if(day1.on)return;
+  return orig.apply(this,args);
+});
+wrap('drawArkThreat',function(orig){
+  if(day1.on)return;
+  return orig.call(this);
+});
+wrap('drawArkPillTop',function(orig){
+  if(day1.on)return;
+  return orig.call(this);
+});
+wrap('spr',function(orig,args){
+  const k=args[0], x=args[1], y=args[2], sc=args[3]==null?1:args[3];
+  if(isV21&&k==='fighter'&&sc>=0.3&&F&&!F.hangar&&(state==='play'||state==='pause')&&Math.abs(x-F.x)<1.5){
+    try{paintJet(x,y)}catch(e){}
+  }
+  return orig.apply(this,args);
 });
 wrap('drawArkWarn',function(orig){
   if(isV21)return;
@@ -4805,7 +5272,11 @@ wrap('update',function(orig,args){
       cards.flush();
       day1.tick(step);
       if(!day1.on)day1.checkLine();
-      if(F&&F.v21aspd&&F.fireT>0)F.fireT=Math.max(0, F.fireT-(step||0)*0.12);
+      if(F&&F.v21aspd>1&&F.fireT>0)F.fireT=Math.max(0, F.fireT-(step||0)*(F.v21aspd-1));
+      if(F&&F.fireT>0){
+        const bonus=meta.fireBonus();
+        if(bonus)F.fireT=Math.max(0, F.fireT-(step||0)*bonus);
+      }
       if(F&&F.v21form&&T-F.v21form.t<1.1)F.muz=Math.max(F.muz||0,.04);
       if(iSample(dt))emit('performance_sample',{fps:(window._perf&&_perf.fps)||0,enemy_count:enemies.filter(e=>!e.dead).length,projectile_count:ebul.length,render_scale:(window.__px&&__px.dpr)||0});
     }
@@ -4877,6 +5348,10 @@ wrap('startLevel',function(orig,args){
 wrap('spawnTravel',function(orig,args){
   if(day1.on)return;
   if(opener.hold())return;
+  return orig.apply(this,args);
+});
+wrap('spawnDerelict',function(orig,args){
+  if(day1.on)return null;
   return orig.apply(this,args);
 });
 wrap('startGate',function(orig,args){
@@ -4978,7 +5453,7 @@ wrap('takeChoice',function(orig,args){
       }
       emit('card_pick',{card_id:u.id,card_level:up(u.id),evolved:!!(u.arm&&up(u.id)>=2)});
       if(isV21&&u.arm)cards.noteVisual(u);
-      if(isV21){synergy.onPick(u);opener.onPicked(u)}
+      if(isV21){synergy.onPick(u);rich.onPick(u);opener.onPicked(u)}
     }
   }catch(e){}
   return r;
@@ -4988,8 +5463,10 @@ wrap('hurtEnemy',function(orig,args){
   const e=args[0];
   const was=e&&e.dead;
   if(e&&e.v21camp&&!e.dead){
-    const near=e.v21kind==='flash'?(F&&F.x<130):(F&&F.x>260);
-    if(!e.v21open||!near)return;
+    if(!e.v21open||!day1.inRing(e))return;
+  }
+  if(isV21&&e&&args.length>1&&typeof args[1]==='number'){
+    args[1]=args[1]*rich.armMul(e)*rich.campMul(e)*meta.dmgMul()*rich.atkFromTier();
   }
   if(e&&e.v21dayTug&&!e.dead&&!(F&&F.x<120))return;
   if(e&&e.v21right&&!e.dead&&!(F&&F.x>260))return;
@@ -5052,7 +5529,19 @@ wrap('failTip',function(orig,args){
 
 wrap('fire',function(orig,args){
   const n=pbul.length;
+  const main0=!!args[3];
+  if(isV21&&main0&&args.length>2){
+    let d=args[2]||14;
+    d*=meta.dmgMul()*rich.atkFromTier();
+    if(meta.mod==='wide')d*=0.9;
+    args[2]=d;
+  }
   const r=orig.apply(this,args);
+  const markHot=()=>{
+    if(!(day1.on&&day1.tier>=1))return;
+    for(let i=n;i<pbul.length;i++)if(pbul[i])pbul[i].v21hot=1;
+  };
+  markHot();
   if(!isV21||typeof up!=='function')return r;
   const main=!!args[3];
   const wingShot=args[4]==='wing';
@@ -5074,6 +5563,27 @@ wrap('fire',function(orig,args){
     synergy.fan(args[0],args[1],args[2]||14);
     synergy.omni(args[0],args[1],args[2]||14);
   }
+  if(isV21&&main){
+    const bolt=1+meta.bolt()*0.04;
+    const spd=(typeof up==='function'&&up('amp_speed')>=1)?1.15:1;
+    const mul=bolt*spd;
+    if(mul!==1){
+      for(let i=n;i<pbul.length;i++){
+        const b=pbul[i];
+        if(!b)continue;
+        b.vx*=mul; b.vy*=mul;
+      }
+    }
+    if(meta.mod==='wide'&&typeof up==='function'&&up('spread')>=1&&pbul.length<PBUL_CAP){
+      const x=args[0], y=args[1], dmg=(args[2]||14)*0.55;
+      const ang=-Math.PI/2+0.42;
+      pbul.push({x,y,vx:Math.cos(ang)*1000,vy:Math.sin(ang)*1000,dmg,pierce:0,life:.7,hit:[],st:'gs',morph:1,fat:1,wide:1});
+    }
+    if(F&&F.v21home){
+      for(let i=n;i<pbul.length;i++)if(pbul[i]&&!pbul[i].home){pbul[i].home=1;break}
+    }
+  }
+  markHot();
   return r;
 });
 wrap('spawnDrone',function(orig,args){
@@ -5087,14 +5597,15 @@ wrap('drawPBul',function(orig){
   if(!isV21)return;
   ctx.save();
   for(const b of pbul){
-    if(!b||!(b.fat||b.syn||b.evo||b.lance))continue;
+    if(!b||!(b.fat||b.syn||b.evo||b.lance||b.v21hot))continue;
     const sp=Math.hypot(b.vx,b.vy)||1;
     const ux=b.vx/sp, uy=b.vy/sp;
-    const len=b.net?30:(b.lance?24:(b.storm?18:14));
-    const col=b.st==='rear'?'#ff9ad0':(b.st==='side'?'#7ee0ff':(b.st==='turret'?'#ffe14a':(b.net?'#ffe14a':(b.storm?'#bff6ff':(b.st==='hv'?'#9fd0ff':(b.st==='wing'?'#9dff8a':'#ffb15a'))))));
+    const hot=!!b.v21hot;
+    const len=hot?26:(b.net?30:(b.lance?24:(b.storm?18:14)));
+    const col=hot?'#ffe14a':(b.st==='rear'?'#ff9ad0':(b.st==='side'?'#7ee0ff':(b.st==='turret'?'#ffe14a':(b.net?'#ffe14a':(b.storm?'#bff6ff':(b.st==='hv'?'#9fd0ff':(b.st==='wing'?'#9dff8a':'#ffb15a')))))));
     ctx.strokeStyle=col;
     ctx.globalAlpha=0.95;
-    ctx.lineWidth=b.net?5:(b.lance?3.6:2.8);
+    ctx.lineWidth=hot?5.4:(b.net?5:(b.lance?3.6:2.8));
     ctx.beginPath();
     ctx.moveTo(b.x,b.y);
     ctx.lineTo(b.x-ux*len,b.y-uy*len);
@@ -5122,6 +5633,15 @@ wrap('drawHUD',function(orig){
 wrap('drawTitle',function(orig){
   const r=orig.apply(this,arguments);
   try{trialMark(78)}catch(e){}
+  if(!isV21)return r;
+  try{
+    if(meta.open){
+      BTN.length=0;
+      drawMetaPanel();
+    }else{
+      button(8,96,72,32,'养成','y',()=>{meta.open=1},14);
+    }
+  }catch(e){}
   return r;
 });
 wrap('drawPause',function(orig){
@@ -5251,6 +5771,8 @@ window.__test={
   pickCard(i){return test.pickCard(i)},
   get report(){return window.__testReport||null}
 };
+V21.rich=rich;
+V21.meta=meta;
 if(window.__game){
   __game.v21=V21;
   __game.profile=profile;
@@ -5267,6 +5789,14 @@ if(test.on){
     weapon_form_changed:[],synergy_previewed:[],synergy_activated:[]
   };
   console.log('test_mode profile='+profile+' dbg_ui='+(typeof dbgOn==='function'&&dbgOn()?'1':'0'));
+}
+/* 无参数和 /v21/ 直接开 1-1。带 ?level= 的链接仍走页面自己的进关，避免和测试抢开局。 */
+if(isV21&&bareEntry()&&!Q.get('level')){
+  const iv=setInterval(function(){
+    if(typeof state==='undefined'||state!=='title')return;
+    clearInterval(iv);
+    try{startLevel('1-1')}catch(e){}
+  },80);
 }
 })();
 /* V21_MODULE_END */
