@@ -3300,7 +3300,7 @@ const ledger={
     for(const e of this.events)m[e.source]=(m[e.source]||0)+(e.amount||0);
     let b='',n=0;
     for(const k in m)if(m[k]>n){n=m[k];b=k}
-    const nm={bullet:'炮击',impact:'撞击/自爆',leak:'漏过底线',camp_lost:'战俘营失守',boarder:'登舰',tow:'拖曳',disabled_decay:'瘫痪流失',lost_ship:'失船',environment:'环境',unknown:'未归类'};
+    const nm={bullet:'炮击',impact:'撞击/自爆',leak:'漏过底线',camp_lost:'逃生舱漂走',boarder:'登舰',tow:'拖曳',disabled_decay:'瘫痪流失',lost_ship:'失船',environment:'环境',unknown:'未归类'};
     return b?((nm[b]||b)+' '+Math.round(n)+' 人'):'';
   },
   classify(src,prev,now){
@@ -4548,7 +4548,7 @@ function guessHitSrc(s){
   return '';
 }
 /* P0″：卡池和局外三条的数据。拼接时用 build/v21_pool.json 覆盖标记里的内容。 */
-const V21_POOL=/*V21_POOL_JSON*/{"cards":[{"id":"morph_spread","track":"形态","name":"散射","line":"前向扇形，清群","gate":"D1","ups":"spread","max":1},{"id":"morph_pierce","track":"形态","name":"穿透","line":"直线贯穿，打装甲和舱门","gate":"D1","ups":"pierce","max":1},{"id":"morph_broadside","track":"形态","name":"侧舷","line":"左右侧射，打侧翼","gate":"D1","ups":"side","max":1},{"id":"morph_tail","track":"形态","name":"尾炮","line":"后方补射","gate":"W1","ups":"rear","max":1},{"id":"morph_homing","track":"形态","name":"追踪","line":"轻度追踪，点名拖船","gate":"W1","ups":"","max":1},{"id":"morph_ricochet","track":"形态","name":"弹射","line":"命中后弹跳 1 次","gate":"W1","ups":"","max":1},{"id":"morph_beam","track":"形态","name":"光束","line":"短射线，单体更高","gate":"M1","ups":"","max":1},{"id":"morph_drone","track":"形态","name":"僚机","line":"跟射僚机，不是职能舰","gate":"W1","ups":"wing","max":1},{"id":"morph_fork","track":"形态","name":"叉射","line":"左右两道斜弹，看得见分开","gate":"D1","ups":"","max":1},{"id":"morph_helix","track":"形态","name":"螺旋","line":"弹道拧着往前走","gate":"D1","ups":"","max":1},{"id":"morph_lance","track":"形态","name":"长矛","line":"正中一发又长又亮","gate":"D1","ups":"","max":1},{"id":"morph_ring","track":"形态","name":"环弹","line":"一圈同时飞出去","gate":"D1","ups":"","max":1},{"id":"morph_rain","track":"形态","name":"弹雨","line":"头顶落下一排细弹","gate":"D1","ups":"","max":1},{"id":"morph_crescent","track":"形态","name":"月弧","line":"前方一道弯弧","gate":"D1","ups":"","max":1},{"id":"attr_ap","track":"属性","name":"穿甲","line":"对装甲和舱门伤害 ×1.5","gate":"D1","ups":"","max":1},{"id":"attr_atk","track":"属性","name":"攻击力","line":"主炮伤害 +18%","gate":"D1","ups":"","max":1},{"id":"attr_arc","track":"属性","name":"电弧","line":"击杀时跳到邻近 1 个敌人","gate":"W1","ups":"","max":1},{"id":"attr_cryo","track":"属性","name":"冷却","line":"命中减速","gate":"W1","ups":"","max":1},{"id":"attr_purge","track":"属性","name":"净化","line":"对登舰额外伤害","gate":"M1","ups":"","max":1},{"id":"amp_rate","track":"增幅","name":"射速强化","line":"射速 +12%，可叠 2 次","gate":"D1","ups":"","max":2},{"id":"amp_speed","track":"增幅","name":"弹速强化","line":"弹速 +15%","gate":"D1","ups":"","max":1},{"id":"amp_range","track":"增幅","name":"射程强化","line":"射程 +12%","gate":"W1","ups":"","max":1},{"id":"amp_magnet","track":"增幅","name":"吸取","line":"拾取范围变大","gate":"W1","ups":"magnet","max":1},{"id":"amp_hull","track":"增幅","name":"稳固编队","line":"被打时少掉约 15% 的人","gate":"W1","ups":"","max":1},{"id":"amp_repair","track":"增幅","name":"应急修理","line":"隔一段时间补一点人数缓冲","gate":"M1","ups":"","max":1},{"id":"ship_shield","track":"船","name":"收编·护盾舰","line":"本局护盾舰入列，不开火","gate":"D1","ups":"","max":1},{"id":"ship_gun","track":"船","name":"收编·炮舰","line":"本局炮舰入列，齐射按住","gate":"W1","ups":"","max":1},{"id":"ship_medic","track":"船","name":"收编·医护舰","line":"登舰时少掉人","gate":"W1","ups":"","max":1},{"id":"ship_repair","track":"船","name":"收编·维修舰","line":"瘫痪船更快回到队列","gate":"M1","ups":"","max":1},{"id":"ship_salvage","track":"船","name":"收编·回收舰","line":"掉落吸得更近","gate":"M1","ups":"","max":1},{"id":"ship_tow","track":"船","name":"收编·拖曳舰","line":"失位的船拉回队列","gate":"M1","ups":"","max":1},{"id":"ship_shield_plus","track":"船","name":"护盾协同","line":"已有护盾舰时穹顶更久","gate":"M1","ups":"","max":1},{"id":"ship_gun_plus","track":"船","name":"炮舰超载","line":"已有炮舰时齐射更快","gate":"M1","ups":"","max":1},{"id":"camp_flash_boost","track":"破营","name":"闪光余烬","line":"下一次破营人数 +20%","gate":"W1","ups":"","max":1},{"id":"camp_door_charge","track":"破营","name":"破门冲锋","line":"战俘营舱门伤害 +40%","gate":"D1","ups":"","max":1},{"id":"camp_escort_lane","track":"破营","name":"救援航道","line":"破营窗内少挨打","gate":"W1","ups":"","max":1},{"id":"camp_recruit_bias","track":"破营","name":"招降协议","line":"下一次三选一更偏向船卡","gate":"M1","ups":"","max":1}],"lines":[{"id":"gun","name":"主炮伤害","cap":5,"cost":30,"note":"主炮再重 8%"},{"id":"hold","name":"破营速度","cap":3,"cost":40,"note":"圈内少停 0.3 秒"},{"id":"start","name":"起始火力","cap":1,"cost":60,"note":"下局开局就是火力 II"}]}/*V21_POOL_JSON_END*/;
+const V21_POOL=/*V21_POOL_JSON*/{"cards":[{"id":"morph_spread","track":"形态","name":"散射","line":"前向扇形，清群","gate":"D1","ups":"spread","max":1},{"id":"morph_pierce","track":"形态","name":"穿透","line":"直线贯穿，打装甲和舱门","gate":"D1","ups":"pierce","max":1},{"id":"morph_broadside","track":"形态","name":"侧舷","line":"左右侧射，打侧翼","gate":"D1","ups":"side","max":1},{"id":"morph_tail","track":"形态","name":"尾炮","line":"后方补射","gate":"W1","ups":"rear","max":1},{"id":"morph_homing","track":"形态","name":"追踪","line":"轻度追踪，点名拖船","gate":"W1","ups":"","max":1},{"id":"morph_ricochet","track":"形态","name":"弹射","line":"命中后弹跳 1 次","gate":"W1","ups":"","max":1},{"id":"morph_beam","track":"形态","name":"光束","line":"短射线，单体更高","gate":"M1","ups":"","max":1},{"id":"morph_drone","track":"形态","name":"僚机","line":"跟射僚机，不是职能舰","gate":"W1","ups":"wing","max":1},{"id":"morph_fork","track":"形态","name":"叉射","line":"左右两道斜弹，看得见分开","gate":"D1","ups":"","max":1},{"id":"morph_helix","track":"形态","name":"螺旋","line":"弹道拧着往前走","gate":"D1","ups":"","max":1},{"id":"morph_lance","track":"形态","name":"长矛","line":"正中一发又长又亮","gate":"D1","ups":"","max":1},{"id":"morph_ring","track":"形态","name":"环弹","line":"一圈同时飞出去","gate":"D1","ups":"","max":1},{"id":"morph_rain","track":"形态","name":"弹雨","line":"头顶落下一排细弹","gate":"D1","ups":"","max":1},{"id":"morph_crescent","track":"形态","name":"月弧","line":"前方一道弯弧","gate":"D1","ups":"","max":1},{"id":"attr_ap","track":"属性","name":"穿甲","line":"对装甲和舱门伤害 ×1.5","gate":"D1","ups":"","max":1},{"id":"attr_atk","track":"属性","name":"攻击力","line":"主炮伤害 +18%","gate":"D1","ups":"","max":1},{"id":"attr_arc","track":"属性","name":"电弧","line":"击杀时跳到邻近 1 个敌人","gate":"W1","ups":"","max":1},{"id":"attr_cryo","track":"属性","name":"冷却","line":"命中减速","gate":"W1","ups":"","max":1},{"id":"attr_purge","track":"属性","name":"净化","line":"对登舰额外伤害","gate":"M1","ups":"","max":1},{"id":"amp_rate","track":"增幅","name":"射速强化","line":"射速 +12%，可叠 2 次","gate":"D1","ups":"","max":2},{"id":"amp_speed","track":"增幅","name":"弹速强化","line":"弹速 +15%","gate":"D1","ups":"","max":1},{"id":"amp_range","track":"增幅","name":"射程强化","line":"射程 +12%","gate":"W1","ups":"","max":1},{"id":"amp_magnet","track":"增幅","name":"吸取","line":"拾取范围变大","gate":"W1","ups":"magnet","max":1},{"id":"amp_hull","track":"增幅","name":"稳固编队","line":"被打时少掉约 15% 的人","gate":"W1","ups":"","max":1},{"id":"amp_repair","track":"增幅","name":"应急修理","line":"隔一段时间补一点人数缓冲","gate":"M1","ups":"","max":1},{"id":"ship_shield","track":"船","name":"收编·护盾舰","line":"本局护盾舰入列，不开火","gate":"D1","ups":"","max":1},{"id":"ship_gun","track":"船","name":"收编·炮舰","line":"本局炮舰入列，齐射按住","gate":"W1","ups":"","max":1},{"id":"ship_medic","track":"船","name":"收编·医护舰","line":"登舰时少掉人","gate":"W1","ups":"","max":1},{"id":"ship_repair","track":"船","name":"收编·维修舰","line":"瘫痪船更快回到队列","gate":"M1","ups":"","max":1},{"id":"ship_salvage","track":"船","name":"收编·回收舰","line":"掉落吸得更近","gate":"M1","ups":"","max":1},{"id":"ship_tow","track":"船","name":"收编·拖曳舰","line":"失位的船拉回队列","gate":"M1","ups":"","max":1},{"id":"ship_shield_plus","track":"船","name":"护盾协同","line":"已有护盾舰时穹顶更久","gate":"M1","ups":"","max":1},{"id":"ship_gun_plus","track":"船","name":"炮舰超载","line":"已有炮舰时齐射更快","gate":"M1","ups":"","max":1},{"id":"camp_flash_boost","track":"破营","name":"闪光余烬","line":"下一次破营人数 +20%","gate":"W1","ups":"","max":1},{"id":"camp_door_charge","track":"破营","name":"破门冲锋","line":"逃生舱门伤害 +40%","gate":"D1","ups":"","max":1},{"id":"camp_escort_lane","track":"破营","name":"救援航道","line":"破营窗内少挨打","gate":"W1","ups":"","max":1},{"id":"camp_recruit_bias","track":"破营","name":"招降协议","line":"下一次三选一更偏向船卡","gate":"M1","ups":"","max":1}],"lines":[{"id":"gun","name":"主炮伤害","cap":5,"cost":30,"note":"主炮再重 8%"},{"id":"hold","name":"破营速度","cap":3,"cost":40,"note":"圈内少停 0.3 秒"},{"id":"start","name":"起始火力","cap":1,"cost":60,"note":"下局开局就是火力 II"}]}/*V21_POOL_JSON_END*/;
 const RICH_ROWS=(V21_POOL.cards||[]).map(function(c){return [c.id,c.track,c.name,c.line,c.gate,c.ups||'',c.max||1]});
 const RICH_EXAM={
   '1-1':{spread:1.2,pierce:1.4,side:1.0,attr_ap:1.3,camp_door_charge:2,amp_rate:1.1,ship_shield:1.5},
@@ -4996,7 +4996,7 @@ const day1={
   tier:0, tierAt:null, tierAtBoss:null, flashCleared:false, plainCleared:false,
   ship:null, combat0:null, floorForm:null, arkGone:0, log:[],
   picks:[], afterCamp:null, afterGap:null, missAt:null, pickedAfter:0,
-  goal:'打破废舰，救出移民',
+  goal:'接回漂浮逃生舱，救出移民',
   need:150,
   campAt:null, sawGain:0, sawTier:0,
   begin(){
@@ -5008,7 +5008,7 @@ const day1={
     this.flashCleared=false; this.plainCleared=false; this.ship=null; this.floorForm=null; this.arkGone=0;
     this.picks=[]; this.afterCamp=null; this.afterGap=null; this.missAt=null; this.pickedAfter=0;
     this.campAt=null; this.sawGain=0; this.sawTier=0;
-    this.pods=[]; this.shards=[]; this.toast=null; this.escort5=null; this.greenSpawned=0;
+    this.pods=[]; this.shards=[]; this.deliveries=[]; this._barWait=0; this.toast=null; this.escort5=null; this.greenSpawned=0;
     this.rescueTo=''; this._coinAt=-9; this._podWait=0;
     this.need=150; this.startPax=0; this.saved=[]; this.misses=[];
     this.impactN=0; this.leakN=0; this.leakBy={}; this._slipN=0; this.dilemma=0; this.fork=null;
@@ -5082,17 +5082,18 @@ const day1={
     prefer=prefer==='right'?'right':'left';
     const camps=enemies.filter(e=>e&&!e.dead&&!e.v21done&&e.v21camp);
     if(camps.length>=2){
-      const ordered=camps.slice().sort((a,b)=>a.x-b.x);
+      const sx=function(c){return c.v21holdX!=null?c.v21holdX:c.x};
+      const ordered=camps.slice().sort((a,b)=>sx(a)-sx(b));
       const pick=prefer==='right'?ordered[ordered.length-1]:ordered[0];
       const lockedAlive=this.lockId&&camps.some(c=>c.v21id===this.lockId);
       if(!lockedAlive){
         this.lockId=pick.v21id;
-        this.fork={t:G.time||0, id:pick.v21id, x:pick.v21homeX||pick.x, y:pick.v21holdY||pick.y};
+        this.fork={t:G.time||0, id:pick.v21id, x:sx(pick), y:pick.v21holdY!=null?pick.v21holdY:pick.y};
       }
     }
     const bonus=enemies.find(e=>e&&!e.dead&&!e.v21done&&e.v21bonus);
     if(bonus){
-      const gx=bonus.v21homeX!=null?bonus.v21homeX:bonus.x;
+      const gx=bonus.v21holdX!=null?bonus.v21holdX:(bonus.v21homeX!=null?bonus.v21homeX:bonus.x);
       const hy=bonus.v21holdY!=null?bonus.v21holdY:bonus.y;
       return {x:gx, y:hy+48};
     }
@@ -5107,7 +5108,7 @@ const day1={
     }
     const boss=enemies.find(e=>e&&!e.dead&&e.v21boss);
     if(camp){
-      const gx=camp.v21homeX!=null?camp.v21homeX:camp.x;
+      const gx=camp.v21holdX!=null?camp.v21holdX:(camp.v21homeX!=null?camp.v21homeX:camp.x);
       const hy=camp.v21holdY!=null?camp.v21holdY:camp.y;
       return {x:gx, y:hy+58};
     }
@@ -5449,7 +5450,7 @@ const day1={
     const miss=(this.misses||[]).map(m=>(m.name||m.id)+' -'+m.n);
     const parts=[];
     if(miss.length)parts.push('漏了 '+miss.join('、'));
-    else parts.push('营都救下了');
+    else parts.push('逃生舱都接回了');
     parts.push('被撞掉 '+Math.round(this.impactN||0)+' 移民');
     parts.push('漏过底线 '+Math.round(this.leakN||0)+' 移民');
     return parts.join(' · ');
@@ -5479,14 +5480,14 @@ const day1={
     return parts.length?('漏怪 '+parts.join('、')):'漏怪 没有漏过底线';
   },
   routeLine(){
-    const left=this.medic?('左路维修 +'+Math.round(this.medicPax||0)+(this.medBlocked?(' · 医务挡住 '+Math.round(this.medBlocked)):'')):'左路医务 没有';
-    const bonus=(this.bonusGot||0)>0?('加时营 '+this.bonusGot+' 座 +'+Math.round(this.bonusPax||0)):'加时营 没有';
+    const left=this.medic?('医护逃生舱 +'+Math.round(this.medicPax||0)+(this.medBlocked?(' · 医务挡住 '+Math.round(this.medBlocked)):'')):'医护逃生舱 没有';
+    const bonus=(this.bonusGot||0)>0?('限时逃生舱 '+this.bonusGot+' 座 +'+Math.round(this.bonusPax||0)):'限时逃生舱 没有';
     return [left, bonus];
   },
   settleRows(){
     const rows=[];
     const miss=this.misses||[];
-    if(!miss.length)rows.push('营都救下了');
+    if(!miss.length)rows.push('逃生舱都接回了');
     else for(const m of miss)rows.push((m.name||m.id)+' -'+m.n);
     rows.push(this.leakLine());
     const route=this.routeLine();
@@ -5552,28 +5553,27 @@ const day1={
     if(F)F.v21hotT=(typeof T==='number')?T:0;
     this.mark('rescue_to_fighter', {n:n, tier:tierUp?1:0});
   },
-  launchPods(e, n, tierUp){
-    this._podN=n; this._podTier=!!tierUp; this._podWait=0; this.toast=null;
-    const base=e?e.x:CX, baseY=e?e.y:240;
-    const crowd=16;
-    for(let i=0;i<crowd;i++){
-      const a=-2.7+i*(5.4/(crowd-1));
-      const spread=12+(i%4)*7;
-      this.pods.push({
-        x:base+Math.cos(a)*spread,
-        y:baseY+Math.sin(a)*spread*0.55,
-        delay:i*0.03,
-        t:0,
-        crowd:1
-      });
+  /* 人数先记在账上，顶栏先按住。舱修好、飞到中下方，再把这批人放上条。 */
+  queueHull(e, n, tierUp, label){
+    const Hn=(typeof H==='number')?H:844;
+    const shown=Math.max(0, n|0);
+    this._barWait=(this._barWait||0)+shown;
+    this._podN=shown; this._podTier=!!tierUp; this._podWait=0; this._podLabel=label||'';
+    this.deliveries=this.deliveries||[];
+    const k=(e&&(e.v21reward==='power'||e.v21reward==='gun'||e.v21kind==='flash'))?'gun':'pax';
+    this.deliveries.push({
+      x:e&&e.x!=null?e.x:CX, y:e&&e.y!=null?e.y:240,
+      n:shown, tier:!!tierUp, label:label||'', k:k,
+      rot:e&&e.v21tilt!=null?e.v21tilt*0.2:0.25,
+      phase:'fix', t:0, fix:0.5,
+      tx:CX, ty:Hn-210
+    });
+    const base=e&&e.x!=null?e.x:CX, baseY=e&&e.y!=null?e.y:240;
+    for(let i=0;i<10;i++){
+      const a=i/10*6.283;
+      const sp=90+(i%3)*40;
+      this.shards.push({x:base, y:baseY, vx:Math.cos(a)*sp, vy:Math.sin(a)*sp*0.55, rot:a, t:0, life:0.42});
     }
-    for(let i=0;i<16;i++){
-      const a=i/16*6.283;
-      const sp=160+ (i%3)*70;
-      this.shards.push({x:base, y:baseY, vx:Math.cos(a)*sp, vy:Math.sin(a)*sp*0.72, rot:a, t:0, life:0.55});
-    }
-    try{boomFx(base, baseY, 1.15)}catch(err){}
-    try{P({k:'ring', x:base, y:baseY, t:0, life:.5, R:86, col:'#ffe46b'})}catch(err){}
   },
   coin(x,y,n){
     n=n||1;
@@ -5602,6 +5602,7 @@ const day1={
     const reward=e.v21reward||'gun';
     let tierUp=false;
     let label='';
+    let medicExtra=0;
     if(reward==='gun'){
       const fromTier=this.tier||0;
       const prev=this.roman(fromTier);
@@ -5637,8 +5638,8 @@ const day1={
     }else if(reward==='crowd'){
       this.plainCleared=true;
       label='人更多 · 医务入列';
-      this.say('人多的一侧救下来了');
-      this.grantMedics(e);
+      this.say('医护逃生舱接回来了');
+      medicExtra=this.grantMedics(e)||0;
     }else if(reward==='power'){
       const fromTier=this.tier||0;
       const prev=this.roman(fromTier);
@@ -5658,7 +5659,7 @@ const day1={
       this.plainCleared=true;
       this.bonusGot=(this.bonusGot||0)+1;
       this.bonusPax=(this.bonusPax||0)+got;
-      label='限时救援 +'+got;
+      label='限时逃生舱 +'+got;
       this.say('火力快→多救人');
       try{nums.push({x:clamp(e.x,70,320), y:Math.max(160, e.y-48), v:-22, txt:'火力快→多救人', col:'#ffe46b', t:0, life:1.3, big:2})}catch(err){}
     }else{
@@ -5673,7 +5674,7 @@ const day1={
     e.dead=true;
     this.noteCrisis('camp', 'cleared', {id:id, n:got, reward:reward});
     this.solo();
-    this.launchPods(e, got, tierUp);
+    this.queueHull(e, got+(medicExtra||0), tierUp, label);
     this.breakFeel(e);
     this.mark('wreck_camp_cleared', {kind:id, pax_gained:got, reward, firepower_tier:this.tier||0, fly:'fighter'});
   },
@@ -5742,8 +5743,8 @@ const day1={
     if(e.v21arrived&&!e.v21entered)this.neverIn=(this.neverIn||0)+1;
     if(id==='a'||e.v21kind==='flash')this.missAt=+(((G&&G.time)||0).toFixed(2));
     const Hn=(typeof H==='number')?H:844;
-    try{nums.push({x:clamp(e.x,70,320), y:clamp(e.y,140,Hn-80), v:-16, txt:'战俘营失守 -'+n, col:'#ff4a5a', t:0, life:1.45, big:2})}catch(err){}
-    this.say('战俘营失守 -'+n);
+    try{nums.push({x:clamp(e.x,70,320), y:clamp(e.y,140,Hn-80), v:-16, txt:'漂浮逃生舱漂走 -'+n, col:'#ff4a5a', t:0, life:1.45, big:2})}catch(err){}
+    this.say('漂浮逃生舱漂走 -'+n);
     try{
       ledger.add({
         ship_id:id, source:'camp_lost', enemy_id:name, amount:n,
@@ -5775,9 +5776,28 @@ const day1={
     if(c)this.loseCamp(c, 'drift');
     else this.mark('wreck_camp_failed', {kind, pax_lost:n||0, how:'drift'});
   },
+  campLabel(e){
+    if(!e)return '漂浮逃生舱';
+    if(e.v21bonus||e.v21reward==='bonus')return '限时逃生舱';
+    if(e.v21reward==='power')return '火力型逃生舱';
+    if(e.v21reward==='crowd')return '医护逃生舱';
+    return e.v21name||'漂浮逃生舱';
+  },
   paintCamp(e){
     if(!e||typeof ctx==='undefined')return;
-    try{drawHull(e.v21kind==='flash'?'gun':'pax', e.x, e.y, 1.15, 0, true)}catch(err){}
+    const tilt=e.v21tilt!=null?e.v21tilt:0.4;
+    const rot=e.v21arrived?tilt*0.18:tilt;
+    const hull=(e.v21reward==='power'||e.v21kind==='flash')?'gun':'pax';
+    try{drawHull(hull, e.x, e.y, e.v21bonus?1.02:1.28, rot, true)}catch(err){}
+    ctx.save();
+    ctx.translate(e.x, e.y); ctx.rotate(rot);
+    ctx.strokeStyle='rgba(28,24,22,.92)'; ctx.lineWidth=2.4;
+    ctx.beginPath(); ctx.moveTo(-16,-8); ctx.lineTo(4,12); ctx.lineTo(18,2); ctx.stroke();
+    ctx.fillStyle='rgba(12,10,10,.62)'; ctx.fillRect(8,-16,12,7);
+    ctx.strokeStyle='rgba(90,86,80,.85)'; ctx.lineWidth=1.6;
+    ctx.strokeRect(-22,6,14,5);
+    ctx.restore();
+    if(!e.v21bonus)txt('废舰残骸', e.x, e.y+36, 11, '#b7c0ce', 2, 'center', 800);
     if(!(e.v21open&&e.v21arrived))return;
     const pairedOff=!!(e.v21pair&&this._pairPick&&e.v21id!==this._pairPick);
     const need=e.v21need!=null?e.v21need:(pairedOff?4.2:(this.holdNeed||4.2));
@@ -5800,7 +5820,7 @@ const day1={
       return '#'+[r,g,bl].map(v=>v.toString(16).padStart(2,'0')).join('');
     };
     const col=closing?'#ff4a3a':mix('#fff7d0','#ff4a3a',heat);
-    const R=79, lw=14+wob*7;
+    const R=72, lw=7+wob*3;
     ctx.save();
     ctx.lineCap='round';
     ctx.strokeStyle=closing&&Math.sin(t*14)>0?'#ffd0c8':'rgba(255,247,208,.28)';
@@ -5843,7 +5863,7 @@ const day1={
     return '停在圈里';
   },
   openGuide(t, cleared){
-    if((t||0)<2.4)return '废舰从上面下来，飞进圈里';
+    if((t||0)<2.4)return '漂浮逃生舱从侧面飘来';
     if((t||0)<5&&!cleared)return '去圈里，停住救人';
     return '';
   },
@@ -5938,13 +5958,13 @@ const day1={
     if(this._script)return this._script;
     const W0=(typeof W==='number')?W:390;
     const camps=[
-      {id:'a', t:2.4, x:CX, y:236, n:42, reward:'gun', name:'正前废舰·一', openIn:0.45, life:9, vy:74},
-      {id:'b', t:14, x:CX+34, y:248, n:42, reward:'rate', name:'正前废舰·二', openIn:0.4, life:9, vy:74},
-      {id:'c', t:27, x:70, y:286, n:50, reward:'crowd', name:'人多的废舰', openIn:0.3, life:8.2, vy:70, pair:1},
-      {id:'d', t:27.05, x:W0-70, y:286, n:48, reward:'power', name:'强火力废舰', openIn:0.3, life:8.2, vy:70, pair:1},
-      {id:'e', t:40, x:CX-26, y:228, n:42, reward:'rate', name:'正前废舰·三', openIn:0.4, life:9, vy:74},
-      {id:'f', t:54, x:CX+16, y:218, n:42, reward:'gun', name:'正前废舰·四', openIn:0.4, life:9, vy:74},
-      {id:'g', t:67.5, x:CX, y:206, n:42, reward:'gun', name:'封锁废舰', openIn:0.35, life:8.6, vy:82}
+      {id:'a', t:2.4, x:CX, y:236, n:42, reward:'gun', name:'漂浮逃生舱', from:'left', openIn:0.45, life:9, vy:74},
+      {id:'b', t:14, x:CX+34, y:248, n:42, reward:'rate', name:'漂浮逃生舱', from:'right', openIn:0.4, life:9, vy:74},
+      {id:'c', t:27, x:70, y:286, n:50, reward:'crowd', name:'医护逃生舱', from:'left', openIn:0.3, life:8.2, vy:70, pair:1},
+      {id:'d', t:27.05, x:W0-70, y:286, n:48, reward:'power', name:'火力型逃生舱', from:'right', openIn:0.3, life:8.2, vy:70, pair:1},
+      {id:'e', t:40, x:CX-26, y:228, n:42, reward:'rate', name:'漂浮逃生舱', from:'right', openIn:0.4, life:9, vy:74},
+      {id:'f', t:54, x:CX+16, y:218, n:42, reward:'gun', name:'漂浮逃生舱', from:'left', openIn:0.4, life:9, vy:74},
+      {id:'g', t:67.5, x:CX, y:206, n:42, reward:'gun', name:'漂浮逃生舱', from:'left', openIn:0.35, life:8.6, vy:82}
     ];
     this.jitterCamps(camps);
     this._script={
@@ -5966,14 +5986,26 @@ const day1={
     return this._script;
   },
   spawnPlan(spec){
+    const W0=(typeof W==='number')?W:390;
+    const from=spec.from==='right'?'right':(spec.from==='top'?'top':'left');
+    const holdX=spec.x, holdY=spec.y;
+    const travel=Math.max(0.8, ((holdY||0)+46)/Math.max(40, spec.vy||74));
+    let x=holdX, y=-46, speed=spec.vy||74;
+    if(from==='left'||from==='right'){
+      x=from==='left'?-78:W0+78;
+      y=holdY;
+      speed=Math.abs(holdX-x)/travel;
+    }
     const e={
       k:'drone', v21camp:1, v21kind:(spec.reward==='gun'||spec.reward==='power')?'flash':'plain',
       v21id:spec.id, v21name:spec.name, v21n:spec.n, v21reward:spec.reward,
       v21open:0, v21openAt:(G.time||0)+(spec.openIn||0.4), v21dieAt:1e9,
-      v21born:(G&&G.time)||0, v21homeX:spec.x, v21homeY:-46, v21holdY:spec.y,
-      v21vy:spec.vy||74, v21life:spec.life||8.4, v21pair:spec.pair?1:0,
+      v21born:(G&&G.time)||0, v21from:from,
+      v21holdX:holdX, v21homeX:x, v21homeY:y, v21holdY:holdY,
+      v21vx:speed, v21vy:spec.vy||74, v21life:spec.life||8.4, v21pair:spec.pair?1:0,
+      v21tilt:from==='right'?-1.35:1.35,
       v21prog:0, v21arrived:0, v21sink:0,
-      x:spec.x, y:-46, vx:0, vy:0, hp:9999, maxHp:9999, r:26,
+      x:x, y:y, vx:0, vy:0, hp:9999, maxHp:9999, r:26,
       fire:99, diveAt:1e9, life:0, flash:0, orb:0, tele:0, tgt:null
     };
     enemies.push(e);
@@ -5981,25 +6013,25 @@ const day1={
     this.mark('wreck_camp_spotted', {kind:spec.id, x:spec.x, y:spec.y, n:spec.n, reward:spec.reward});
     this.noteCrisis('camp', 'spawn', {id:spec.id, n:spec.n, reward:spec.reward});
     try{SFX2.warn()}catch(err){}
-    try{edgeWarn(spec.x<CX, spec.y, '战俘营', '#7dffe0')}catch(err){}
-    this.say((spec.name||'战俘营')+' · 从上方下来，飞过去停进圈里');
+    try{edgeWarn(from!=='right', holdY, '漂浮逃生舱', '#7dffe0')}catch(err){}
+    this.say((spec.name||'漂浮逃生舱')+' · 从侧面飘来，落位后再进圈');
     return e;
   },
   /* 左营的人带医务：当场维修带回 4 人，并挡住后面 8 点漏怪扣人。人比右路少，但盾让漏怪更稳。 */
   grantMedics(from){
-    if(this.medic)return;
+    if(this.medic)return 0;
     this.medic=1;
     this.medShield=8;
     const shown=this.gain(4, 'medic');
     this.medicPax=shown;
     const x=from&&from.x!=null?from.x:CX;
     const y=from&&from.y!=null?from.y:260;
-    try{nums.push({x:clamp(x,80,310), y:Math.max(168, y-64), v:-16, txt:'维修 +'+shown, col:'#9dffc8', t:0, life:1.35, big:2})}catch(err){}
-    try{nums.push({x:clamp(x,80,310), y:Math.max(150, y-96), v:-12, txt:'医务护盾', col:'#e8fff4', t:0, life:1.35, big:2})}catch(err){}
+    try{nums.push({x:clamp(x,80,310), y:Math.max(150, y-36), v:-12, txt:'医务护盾', col:'#e8fff4', t:0, life:1.35, big:2})}catch(err){}
     this.say('医务入列，漏怪会少掉人');
     this.mark('medic_joined', {repair:shown, shield:this.medShield});
+    return shown||0;
   },
-  /* 火力路线把 4.2 秒压到 2.5 秒。省下的时间在原地再开一座限时救援，走开就没了。 */
+  /* 火力路线把 4.2 秒压到 2.5 秒。省下的时间在原地再开一座限时逃生舱，走开就没了。 */
   spawnBonus(from){
     const n=10;
     const x=from&&from.x!=null?from.x:CX;
@@ -6008,9 +6040,9 @@ const day1={
     const id='bonus'+((this._bonusN=(this._bonusN||0)+1));
     enemies.push({
       k:'drone', v21camp:1, v21bonus:1, v21kind:'plain',
-      v21id:id, v21name:'限时救援', v21n:n, v21reward:'bonus',
+      v21id:id, v21name:'限时逃生舱', v21n:n, v21reward:'bonus',
       v21open:1, v21openAt:t, v21dieAt:t+3.2,
-      v21born:t, v21homeX:x, v21homeY:y, v21holdY:y,
+      v21born:t, v21from:'pad', v21holdX:x, v21homeX:x, v21homeY:y, v21holdY:y,
       v21vy:0, v21life:3.2, v21pair:0, v21need:1.15,
       v21prog:0, v21arrived:1, v21sink:0,
       x, y, vx:0, vy:0, hp:9999, maxHp:9999, r:22,
@@ -6018,7 +6050,7 @@ const day1={
     });
     this.say('火力快→多救人');
     try{nums.push({x:clamp(x,70,320), y:Math.max(150,y-36), v:-24, txt:'火力快→多救人', col:'#ffe46b', t:0, life:1.35, big:2})}catch(err){}
-    try{nums.push({x:clamp(x,70,320), y:Math.max(176,y-8), v:-14, txt:'限时救援 +'+n, col:'#fff6d2', t:0, life:1.2, big:2})}catch(err){}
+    try{nums.push({x:clamp(x,70,320), y:Math.max(176,y-8), v:-14, txt:'限时逃生舱 +'+n, col:'#fff6d2', t:0, life:1.2, big:2})}catch(err){}
   },
   slip(n){
     const W0=(typeof W==='number')?W:390;
@@ -6061,6 +6093,26 @@ const day1={
       for(let i=pick_.length-1;i>=0;i--)if(pick_[i]&&pick_[i].pw==='over')pick_.splice(i,1);
     }
     const fx=F?F.x:CX, fy=F?F.y-10:((typeof H==='number'?H:844)-160);
+    const Hdock=(typeof H==='number')?H:844;
+    for(const s of this.deliveries||[]){
+      s.t+=(dt||0);
+      if(s.phase==='fix'){
+        if(s.t>=(s.fix||0.5)){s.phase='fly'; s.t=0}
+      }else{
+        const dx=(s.tx!=null?s.tx:CX)-s.x, dy=(s.ty!=null?s.ty:Hdock-210)-s.y;
+        const L=Math.hypot(dx,dy)||1;
+        const step=460*(dt||0);
+        if(L<=step+16){s.x+=dx; s.y+=dy; s.done=1}
+        else{s.x+=dx/L*step; s.y+=dy/L*step; s.rot=Math.atan2(dy,dx)+Math.PI/2}
+      }
+    }
+    const landed=(this.deliveries||[]).filter(function(s){return s.done});
+    for(const s of landed){
+      this._barWait=Math.max(0,(this._barWait||0)-(s.n||0));
+      this.barKick=1;
+      this.popRescue(s.n||0, !!s.tier, s.label||'');
+    }
+    this.deliveries=(this.deliveries||[]).filter(function(s){return !s.done});
     for(const p of this.pods){
       p.t+=(dt||0);
       if(p.t<(p.delay||0))continue;
@@ -6080,6 +6132,7 @@ const day1={
     }
     let nowP=0;
     try{nowP=curPax()}catch(e){}
+    nowP=Math.max(0, nowP-(this._barWait||0));
     const bk=Math.min(1,(dt||0)*4.5);
     this.barShown=(this.barShown||0)+(nowP-(this.barShown||0))*bk;
     if(Math.abs(nowP-(this.barShown||0))<0.35)this.barShown=nowP;
@@ -6107,7 +6160,7 @@ const day1={
     const plan=this.script();
     sched('goal',0.35,()=>{
       this.say(this.goal);
-      try{broadcast('打破废舰，救出移民','救回 0 / 需要 150','#b8ffe0')}catch(e){}
+      try{broadcast('接回漂浮逃生舱，救出移民','救回 0 / 需要 150','#b8ffe0')}catch(e){}
       try{nums.push({x:CX, y:280, v:-18, txt:'救回 0 / 需要 150', col:'#ffe46b', t:0, life:1.6, big:2})}catch(e){}
     });
     plan.bees.forEach((w,i)=>{sched('bee'+i,w.t,()=>{this.bee(w.n,w.kind,w)})});
@@ -6119,12 +6172,25 @@ const day1={
       if(!e||!e.v21camp||e.v21done)continue;
       if(e.dead)continue;
       if(!e.v21arrived){
-        const y0=e.v21homeY==null?-46:e.v21homeY;
-        e.v21homeY=Math.min(e.v21holdY, y0+(e.v21vy||74)*(dt||0));
-        if(e.v21homeY>=(e.v21holdY||0)-0.4){
+        if(e.v21from==='left'||e.v21from==='right'){
+          const dest=e.v21holdX!=null?e.v21holdX:e.x;
+          const dir=e.v21from==='left'?1:-1;
+          const nx=(e.v21homeX!=null?e.v21homeX:e.x)+dir*(e.v21vx||70)*(dt||0);
           e.v21homeY=e.v21holdY;
-          e.v21arrived=1;
-          e.v21dieAt=t+(e.v21life||8.4);
+          if((dir>0&&nx>=dest-0.4)||(dir<0&&nx<=dest+0.4)){
+            e.v21homeX=dest;
+            e.v21arrived=1;
+            e.v21dieAt=t+(e.v21life||8.4);
+          }else e.v21homeX=nx;
+        }else{
+          const y0=e.v21homeY==null?-46:e.v21homeY;
+          e.v21homeY=Math.min(e.v21holdY, y0+(e.v21vy||74)*(dt||0));
+          if(e.v21homeY>=(e.v21holdY||0)-0.4){
+            e.v21homeY=e.v21holdY;
+            if(e.v21holdX!=null)e.v21homeX=e.v21holdX;
+            e.v21arrived=1;
+            e.v21dieAt=t+(e.v21life||8.4);
+          }
         }
       }
       if(e.v21pair&&this._pairPick&&e.v21id!==this._pairPick){
@@ -6155,14 +6221,14 @@ const day1={
         if(e.v21bonus){
           e.v21fail=1; e.v21done=1; e.dead=true;
           this.bonusMiss=(this.bonusMiss||0)+1;
-          this.say('限时救援离开了');
+          this.say('限时逃生舱离开了');
         }else this.loseCamp(e,'drift');
       }
     }
     if(live.filter(e=>!e.dead&&!e.v21done).length>=2&&!this.dilemma){
       this.dilemma=1;
       this.say('左右各一座，只能顾一边');
-      try{broadcast('只能顾一边','左右各一座战俘营','#ffe46b')}catch(e){}
+      try{broadcast('只能顾一边','左右各一座漂浮逃生舱','#ffe46b')}catch(e){}
     }
     sched('boss',68,()=>{
       this.tierAtBoss=this.tier||0;
@@ -6233,6 +6299,17 @@ const day1={
       ctx.save(); ctx.globalAlpha=Math.max(0,a); ctx.translate(s.x,s.y); ctx.rotate(s.rot);
       ctx.fillStyle='#fff6d0'; ctx.fillRect(-7,-1.6,14,3.2); ctx.restore();
     }
+    for(const s of this.deliveries||[]){
+      const u=s.phase==='fix'?Math.max(0, Math.min(1, s.t/Math.max(0.05, s.fix||0.5))):1;
+      const k=s.k||'pax';
+      try{drawHull(k, s.x, s.y, 1.22, s.rot||0, u<0.98)}catch(err){}
+      if(u>0.04&&u<0.98){
+        ctx.save(); ctx.globalAlpha=u;
+        try{drawHull(k, s.x, s.y, 1.22, s.rot||0, false)}catch(err){}
+        ctx.restore();
+      }
+      txt(s.phase==='fix'?'修复中':'飞向方舟', s.x, Math.max(150, s.y-48), 16, s.phase==='fix'?'#d7ffe8':'#ffe46b', 3, 'center', 900);
+    }
     for(const p of this.pods)if(p.t>=(p.delay||0))this.drawPod(p);
     ctx.restore();
     if(c){
@@ -6243,8 +6320,12 @@ const day1={
         if(!camp.v21arrived){
           ctx.strokeStyle='#9aa3b5'; ctx.lineWidth=2.5; ctx.setLineDash([4,8]);
           ctx.beginPath(); ctx.arc(camp.x, camp.y, R, 0, 7); ctx.stroke();
-          ctx.beginPath(); ctx.arc(camp.x, camp.y, R-16, 0, 7); ctx.stroke();
           ctx.setLineDash([]);
+          if(camp.v21holdX!=null){
+            ctx.strokeStyle='rgba(184,255,220,.55)'; ctx.lineWidth=2; ctx.setLineDash([6,7]);
+            ctx.beginPath(); ctx.arc(camp.v21holdX, camp.v21holdY, R, 0, 7); ctx.stroke();
+            ctx.setLineDash([]);
+          }
         }else if(!metering){
           ctx.strokeStyle='#d7ffe8'; ctx.lineWidth=3;
           ctx.beginPath(); ctx.arc(camp.x, camp.y, R, 0, 7); ctx.stroke();
@@ -6262,7 +6343,7 @@ const day1={
         ctx.restore();
         const Hn=(typeof H==='number')?H:844;
         const ly=Math.min(Hn-48, camp.y+this.campR()+20);
-        txt(camp.v21bonus?'限时救援':'战俘营', camp.x, ly, camp.v21bonus?22:22, camp.v21bonus?'#ffe46b':'#f4fff8', 4, 'center', 900);
+        txt(this.campLabel(camp), camp.x, ly, 18, camp.v21bonus?'#ffe46b':'#f4fff8', 4, 'center', 900);
         const cue=this.campCue(camp);
         if(cue)txt(cue, camp.x, Math.min(Hn-22, ly+28), 16, camp.v21arrived?(camp.v21bonus?'#ffe46b':'#f3fff8'):'#d5dbe8', 3, 'center', 900);
       }
@@ -6273,7 +6354,7 @@ const day1={
       ctx.strokeRect(18, 136, (typeof W==='number'?W:390)-36, 40);
       ctx.restore();
       const lead=this.openGuide(G&&G.time, this.sawTier);
-      txt(camps.length>=2?'只能顾一边':(lead||'去解救战俘营'), CX, 156, lead?24:22, '#fff', 4, 'center', 900);
+      txt(camps.length>=2?'只能顾一边':(lead||'去接漂浮逃生舱'), CX, 156, lead?24:22, '#fff', 4, 'center', 900);
     }else{
       const lead=this.openGuide(G&&G.time, this.sawTier);
       if(lead){
@@ -6852,14 +6933,14 @@ wrap('failTip',function(orig,args){
     const sec=day1.holdNeed||4.2;
     const n=day1.leftRing||0;
     const missed=day1.neverIn||0;
-    const line=n?('你有 '+n+' 座营进圈后又离开'):('有 '+missed+' 座营到了，你没飞进圈');
+    const line=n?('你有 '+n+' 座逃生舱进圈后又离开'):('有 '+missed+' 座逃生舱到了，你没飞进圈');
     return ['在圈内停 '+sec+' 秒才能破营', line];
   }
   const t=orig.apply(this,args);
   if(isV21&&t&&/脉冲/.test((t[0]||'')+(t[1]||'')))return ['先拆开火的敌人','近防只清贴身的登舰艇，弹幕要躲开'];
   if(t&&/护住方舟/.test((t[0]||'')+(t[1]||''))&&G&&G.v21day1){
     const n=day1.leftRing||0;
-    const line=n?('你有 '+n+' 座营进圈后又离开'):('有 '+(day1.neverIn||0)+' 座营到了，你没飞进圈');
+    const line=n?('你有 '+n+' 座逃生舱进圈后又离开'):('有 '+(day1.neverIn||0)+' 座逃生舱到了，你没飞进圈');
     return ['在圈内停 '+(day1.holdNeed||4.2)+' 秒才能破营', line];
   }
   return t;
@@ -7426,7 +7507,7 @@ V21.drawEnd=function(){
     txt('救回 '+Math.round(saved)+' / 需要 '+need+' · 火力 '+day1.roman(day1.tier||0),CX,y0+16,13,'#ffe46b',0,'center',900);
     rows.forEach(function(ln,i){
       const yy=y0+34+i*lh;
-      const col=ln.indexOf('星级线')===0?'#9fd8ff':(ln.indexOf('左路')===0||ln.indexOf('加时营')===0?'#ffe46b':(ln.indexOf('漏怪')===0?'#d5def2':'#ffb4bc'));
+      const col=ln.indexOf('星级线')===0?'#9fd8ff':(ln.indexOf('医护逃生舱')===0||ln.indexOf('限时逃生舱')===0?'#ffe46b':(ln.indexOf('漏怪')===0?'#d5def2':'#ffb4bc'));
       txt(ln,CX,yy,12,col,0,'center',800);
     });
     ctx.restore();
