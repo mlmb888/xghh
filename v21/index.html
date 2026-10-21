@@ -3775,7 +3775,8 @@ const synergy={
     }catch(e){}
     const line='连携成立 · '+r.name;
     this.lastLine=line;
-    try{nums.push({x:clamp(F.x,80,310), y:F.y-84, v:-8, txt:line, col:'#ffe46b', t:0, life:1.3, big:2})}catch(e){}
+    this.float={txt:line, life:1.2, size:34, pin:1.2};
+    try{nums.push({x:CX, y:188, v:0, txt:line, col:'#ffe46b', t:0, life:1.2, big:2, pin:1.2, v21read:1})}catch(e){}
     try{if(typeof day1!=='undefined'&&day1.on)day1.say(line)}catch(e){}
     try{feel.withJuice(()=>{synergy.demo(r)})}catch(e){}
     F.v21syn={id:r.id, name:r.name, t:T};
@@ -5597,9 +5598,11 @@ const day1={
     let tierUp=false;
     let label='';
     if(reward==='gun'){
-      const prev=this.roman(this.tier||0);
+      const fromTier=this.tier||0;
+      const prev=this.roman(fromTier);
       this.flashCleared=true;
       this.tier=Math.min(3,(this.tier||0)+1);
+      this.shapeFlash={from:fromTier, to:this.tier, t:(typeof T==='number'?T:0)};
       this.tierAt=+((G.time||0).toFixed(2));
       if(F){
         F.v21tier=this.tier;
@@ -5632,9 +5635,11 @@ const day1={
       this.say('人多的一侧救下来了');
       this.grantMedics(e);
     }else if(reward==='power'){
-      const prev=this.roman(this.tier||0);
+      const fromTier=this.tier||0;
+      const prev=this.roman(fromTier);
       this.plainCleared=true;
       this.tier=Math.min(3,(this.tier||0)+1);
+      this.shapeFlash={from:fromTier, to:this.tier, t:(typeof T==='number'?T:0)};
       this.tierAt=+((G.time||0).toFixed(2));
       if(F){F.v21tier=this.tier; F.wlv=Math.min(4,(F.wlv||1)+1); F.v21flashUntil=(typeof T==='number'?T:0)+0.18}
       this.holdNeed=2.5;
@@ -6474,11 +6479,23 @@ wrap('update',function(orig,args){
     cardHold=CH; CH=null;
     args[0]=0;
   }
+  const pins=[];
+  try{
+    if(isV21&&typeof nums!=='undefined'){
+      for(const n of nums) if(n&&n.pin&&n.t<n.pin)pins.push(n, n.y);
+    }
+  }catch(e){}
   let snap=null;
   try{
     if(typeof fleet!=='undefined'&&fleet&&G)snap=fleet.map(s=>{if(s)s._v21frameLoss=0;return {s,p:s.paxNow||0,st:s.state,counted:countedShip(s)}});
   }catch(e){}
   const r=orig.apply(this,args);
+  try{
+    for(let i=0;i<pins.length;i+=2){
+      const n=pins[i];
+      if(n&&n.t<n.pin)n.y=pins[i+1];
+    }
+  }catch(e){}
   if(cardHold){CH=cardHold; CH.t+=(dt||0)}
   try{
     if(isV21){
@@ -7130,6 +7147,19 @@ function v21Cards(){
     },16);
   }
 }
+wrap('drawNums',function(orig){
+  const held=[];
+  if(isV21&&typeof nums!=='undefined'){
+    for(const n of nums){
+      if(!n||!n.v21read)continue;
+      held.push(n, n.txt);
+      n.txt='';
+    }
+  }
+  const r=orig.call(this);
+  for(let i=0;i<held.length;i+=2)held[i].txt=held[i+1];
+  return r;
+});
 wrap('drawChoice',function(orig){
   if(!isV21||typeof CH==='undefined'||!CH||!CH.opts)return orig.call(this);
   try{v21Cards()}catch(e){return orig.call(this)}
@@ -7149,6 +7179,82 @@ function trialMark(y){
     txt('V2.1 试玩',CX,y,12,'#ffe46b',0,'center',800);
     ctx.restore();
   }catch(e){}
+}
+function paintShapeIcon(tier, x, y){
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.lineCap='round';
+  if((tier|0)<=0){
+    ctx.strokeStyle='#9eb6d6';
+    ctx.lineWidth=2;
+    ctx.beginPath();
+    ctx.moveTo(0, 8);
+    ctx.lineTo(0, -10);
+    ctx.stroke();
+  }else if((tier|0)===1){
+    ctx.strokeStyle='#ff5410';
+    ctx.lineWidth=3.2;
+    ctx.beginPath();
+    ctx.moveTo(-6, 8); ctx.lineTo(-6, -12);
+    ctx.moveTo(6, 8); ctx.lineTo(6, -12);
+    ctx.stroke();
+  }else if((tier|0)===2){
+    ctx.strokeStyle='#6ec0ff';
+    ctx.lineWidth=2.4;
+    ctx.beginPath();
+    ctx.moveTo(0, 7); ctx.lineTo(-9, -6);
+    ctx.moveTo(0, 7); ctx.lineTo(0, -12);
+    ctx.moveTo(0, 7); ctx.lineTo(9, -6);
+    ctx.stroke();
+  }else{
+    ctx.strokeStyle='#ff7a18';
+    ctx.lineWidth=4;
+    ctx.beginPath();
+    ctx.moveTo(0, 10);
+    ctx.lineTo(0, -14);
+    ctx.stroke();
+    ctx.strokeStyle='#fffef6';
+    ctx.lineWidth=1.4;
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+function paintShapeFlash(){
+  if(!isV21||!day1.on||!day1.shapeFlash||typeof T!=='number'||!F)return;
+  const f=day1.shapeFlash;
+  const age=T-(f.t||0);
+  if(!(age>=0&&age<0.72))return;
+  const blink=0.72+0.28*Math.abs(Math.sin(age*22));
+  const x=F.x, y=Math.max(188, F.y-86);
+  ctx.save();
+  ctx.globalAlpha=blink;
+  ctx.fillStyle='rgba(8,10,24,.94)';
+  ctx.fillRect(x-62, y-16, 124, 34);
+  ctx.strokeStyle='#ffe46b';
+  ctx.lineWidth=2;
+  ctx.strokeRect(x-62, y-16, 124, 34);
+  ctx.globalAlpha=1;
+  paintShapeIcon(f.from, x-34, y+1);
+  ctx.fillStyle='#ffe46b';
+  ctx.fillRect(x-5, y-1, 10, 3);
+  paintShapeIcon(f.to, x+30, y+1);
+  ctx.restore();
+}
+function paintSynergyHold(){
+  if(!isV21||!F||!F.v21syn||typeof T!=='number')return;
+  const age=T-F.v21syn.t;
+  const hold=(synergy.float&&synergy.float.life)||1.2;
+  if(!(age>=0&&age<hold))return;
+  const size=(synergy.float&&synergy.float.size)||34;
+  ctx.save();
+  ctx.globalAlpha=1;
+  ctx.fillStyle='rgba(20,12,4,.94)';
+  ctx.fillRect(24, 156, 342, 58);
+  ctx.strokeStyle='#ffe46b';
+  ctx.lineWidth=3;
+  ctx.strokeRect(24, 156, 342, 58);
+  txt('连携成立 · '+F.v21syn.name, CX, 186, size, '#ffe46b', 0, 'center', 900);
+  ctx.restore();
 }
 function paintTierHalo(){
   if(!isV21||!F||typeof T!=='number')return;
@@ -7227,12 +7333,8 @@ V21.draw=function(){
     txt((F.v21form.lv>=2?'轻进化 · ':'形态 · ')+F.v21form.name+' LV'+F.v21form.lv,CX,F.y-58,13,'#ffd23a',0,'center',900);
     ctx.restore();
   }
-  if(F&&F.v21syn&&T-F.v21syn.t<2.6){
-    const a=1-Math.max(0,(T-F.v21syn.t-1.6));
-    ctx.save();ctx.globalAlpha=Math.max(0,a);
-    txt('连携成立 · '+F.v21syn.name,CX,F.y-76,15,'#fff',0,'center',900);
-    ctx.restore();
-  }
+  paintSynergyHold();
+  paintShapeFlash();
   paintTierHalo();
   paintPaxTop();
 };
