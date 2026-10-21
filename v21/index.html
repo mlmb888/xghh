@@ -795,8 +795,8 @@ function explode(){const c=cruiser;G.reactorKill=1;const rp=c.parts.find(p=>p.id
  bc=null;broadcast('巡洋舰·已击毁！','跃迁门解除封锁');c.state='dead';ev('explosion',{n});}
 // ---------- 输入 ----------
 function lp(e){const r=cv.getBoundingClientRect();const k=geoFor(state,state==='pause'||state==='end'||state==='dying'||(typeof CH!=='undefined'&&CH)||(typeof BRF!=='undefined'&&BRF));const g=GEO[k]||{SC,OX,OY};return [(e.clientX-r.left)/g.SC-g.OX,(e.clientY-r.top)/g.SC-g.OY]}
-cv.addEventListener('pointerdown',e=>{initAudio();userTapped=true;tapT=T;const [x,y]=lp(e);
- if(state==='end'&&END&&T-(END.showT||0)<1){e.preventDefault();return}
+cv.addEventListener('pointerdown',e=>{initAudio();userTapped=true;tapT=T;const held=window._ptrDown;window._ptrDown=1;const [x,y]=lp(e);
+ if(state==='end'&&END&&(END._needRelease||held||T-(END.showT||0)<1)){e.preventDefault();return}
  for(const b of BTN){if(b.label==='脉冲')continue;/* v13.34 脉冲不抢拖拽：船队下移后战机常压在脉冲区 */if(x>=b.x&&x<=b.x+b.w&&y>=b.y-4&&y<=b.y+b.h+6){SFX2.uiClick();b.fn();e.preventDefault();return;}}
  if(state==='story'){storyNext();e.preventDefault();return}
  if(state==='station'&&ST&&ST.tab==='fleet'&&y>=118&&y<118+fleet.length*50&&x<380){const i=Math.floor((y-118)/50);if(fleet[i]&&!(fleet[i].state==='lost'&&x>260)){ST.drag={id:e.pointerId,i,to:i,sy:y,y,oy:y-(118+i*50),t0:performance.now(),on:x>320};if(ST.drag.on){try{navigator.vibrate&&navigator.vibrate(12)}catch(_){}}try{cv.setPointerCapture(e.pointerId)}catch(_){}}e.preventDefault();return}
@@ -804,7 +804,7 @@ cv.addEventListener('pointerdown',e=>{initAudio();userTapped=true;tapT=T;const [
   if(!drag){const P=window._pbp||{px:334,py:752,R:38};const onPulse=Math.hypot(x-P.px,y-P.py)<=(P.R+8);drag={id:e.pointerId,sx:x,sy:y,fx:F.tx,fy:F.ty,t0:performance.now(),moved:false,mouse:e.pointerType==='mouse',pulse:onPulse};try{cv.setPointerCapture(e.pointerId)}catch(_){}}}e.preventDefault();},{passive:false});
 cv.addEventListener('pointermove',e=>{const SD=state==='station'&&ST&&ST.drag;if(SD&&e.pointerId===SD.id){const [,y]=lp(e);SD.y=y;if(!SD.on&&Math.abs(y-SD.sy)>10&&performance.now()-SD.t0<280){ST.drag=null;return}if(SD.on)SD.to=clamp(Math.round((y-SD.oy-118)/50),0,fleet.length-1);e.preventDefault();return}if(!drag||e.pointerId!==drag.id)return;const [x,y]=lp(e);if(Math.abs(x-drag.sx)+Math.abs(y-drag.sy)>8)drag.moved=true;if(G&&drag.moved){G.moved=true;G.lastMove=T}
  if(!(drag.pulse&&!drag.moved)&&!(F&&F.hangar)){F.tx=clamp(drag.fx+(x-drag.sx)*1.2,18,W-18);F.ty=clamp(drag.fy+(y-drag.sy)*1.2,G&&G.phase==='gate'?272:150,H+Math.max(0,BOTS||0)-30)}},{passive:false});/* v13.34 船队下移后战机可跟到更低 */
-const endDrag=e=>{const SD=state==='station'&&ST&&ST.drag;if(SD&&e.pointerId===SD.id){ST.drag=null;if(SD.on&&SD.to!==SD.i){const s=fleet.splice(SD.i,1)[0];fleet.splice(SD.to,0,s);SFX2.uiConfirm();ev('reorder',{from:SD.i,to:SD.to})}return}if(!drag||e.pointerId!==drag.id)return;const dtm=performance.now()-drag.t0;
+const endDrag=e=>{window._ptrDown=0;if(typeof END!=='undefined'&&END)END._needRelease=0;const SD=state==='station'&&ST&&ST.drag;if(SD&&e.pointerId===SD.id){ST.drag=null;if(SD.on&&SD.to!==SD.i){const s=fleet.splice(SD.i,1)[0];fleet.splice(SD.to,0,s);SFX2.uiConfirm();ev('reorder',{from:SD.i,to:SD.to})}return}if(!drag||e.pointerId!==drag.id)return;const dtm=performance.now()-drag.t0;
  if(state==='play'&&!drag.moved&&dtm<180&&drag.pulse)manualPulse();
  else if(drag.mouse&&!drag.moved&&dtm<250&&state==='play'&&!drag.pulse)manualPulse();
  drag=null;};
@@ -845,7 +845,7 @@ function fire(x,y,dmg,main,sty){const OD=main&&F.odT>0,WL=main?(F.wlv||1):0;cons
  if(main){F.shotN=(F.shotN||0)+1;const rl=up('rear'),sl=up('side');if(rl){const n=rl>=2?3:1;for(let k=0;k<n;k++){const ag=Math.PI/2+(k-(n-1)/2)*.25;pbul.push({x,y,vx:Math.cos(ag)*V*.8,vy:Math.sin(ag)*V*.8,dmg:dmg*.7,pierce:PC,life:.9,hit:[],st,home:rl>=3?1:0})}}if(sl&&(sl>=2||F.shotN%2===0)){for(const ag of [0,Math.PI])pbul.push({x,y,vx:Math.cos(ag)*V*.8,vy:Math.sin(ag)*V*.8,dmg:dmg*.6,pierce:PC,life:.9,hit:[],st,home:sl>=3?1:0})}}}
 // ---------- 主循环 ----------
 function update(dt){T+=dt;BTN=[];try{BGM.tick(state,sfxOn)}catch(e){}
- if(state==='dying'){G.dieT-=dt;updateFx(dt*.3);for(const e of EW)e.t+=dt;if(G.dieT<=0){state='end';END.showT=T}return}
+ if(state==='dying'){G.dieT-=dt;updateFx(dt*.3);for(const e of EW)e.t+=dt;if(G.dieT<=0){state='end';END.showT=T;if(window._ptrDown)END._needRelease=1}return}
  if(state==='story'){updStory(dt);return}
  if(state!=='play'){audioIdle();return}
  for(const w of EW)w.t+=dt;EW=EW.filter(w=>w.t<w.life);
@@ -1135,13 +1135,13 @@ function finishRun(win){const prog=win?1:runProg(),pax=win?curPax():0;if(win)add
 const RESU=[['repair',300,'维修舰'],['chain',900,'改装「脉冲连爆」'],['nightmare',1500,'噩梦航线']];
 function resNext(){const r=PB.res||0;const n=RESU.find(x=>!PB.unl.includes(x[0])&&r<x[1]);if(n)return `距解锁「${n[2]}」还差 ${n[1]-r} 人`;const lv=Math.floor(r/1000)+1;return `距星港 Lv.${lv+1} 还差 ${lv*1000-r} 人`}
 function nextUnlock(){if(!PB.unl.includes('repair'))return '到达航道 2 → 解锁 维修舰（开局可选）';if(!PB.unl.includes('chain'))return `再完成 ${Math.max(1,3-PB.runs)} 局 → 解锁 改装「脉冲连爆」`;if(!PB.unl.includes('nightmare'))return '完成一次远航 → 解锁 噩梦航线';return '全部解锁 · 冲击更高分数！'}
-function lose(why){if(state!=='play')return;const src=why==='方舟被击毁'?((G.arkLast&&G.time-G.arkLast.t<3&&G.arkLast.src)||topSrc()||'敌方炮火'):why==='战机被击落'?(F.lastSrc||'敌方炮火'):null;
+function lose(why){if(state!=='play')return;ADM=null;const src=why==='方舟被击毁'?((G.arkLast&&G.time-G.arkLast.t<3&&G.arkLast.src)||topSrc()||'敌方炮火'):why==='战机被击落'?(F.lastSrc||'敌方炮火'):null;
  END={win:false,why,src,lostPax:curPax(),pass:G.pass,t:G.time,doing:doingNow(),tip:tipFor(why,src),lost:G.log.filter(l=>l.ev==='lost'),gap:gapLine()};if(G.lvl)lvLose();else finishRun(false);
  state='dying';G.dieT=1.6;flash=.3;addTrauma(.9);vib([60,40,90]);const A=ark();const fx=why==='方舟被击毁'&&A?A:F;
  for(let i=0;i<5;i++)later.push({t:i*.12,fn:()=>{boomFx(fx.x+rnd(-26,26),fx.y+rnd(-20,20),1.4);SFX2.boom()}});
  ev('lose',{why,src});setTimeout(()=>SFX2.lose(),700)}
 function quickRetry(){initAudio();newRun((G&&G.grow)?[]:((G&&G.sel&&G.sel.length)?G.sel:['gun']));ev('retry')}
-function win(){END={win:true,lost:G.log.filter(l=>l.ev==='lost')};finishRun(true);state='end';END.showT=T;SFX2.win();vib([20,40,20]);ev('win')}
+function win(){ADM=null;END={win:true,lost:G.log.filter(l=>l.ev==='lost')};finishRun(true);state='end';END.showT=T;SFX2.win();vib([20,40,20]);ev('win')}
 // ---------- 绘制：船体 ----------
 const GREYH={};function greyHull(k){if(GREYH[k])return GREYH[k];const B=150,K=3,a=document.createElement('canvas');a.width=a.height=B*K;const ac=a.getContext('2d');ac.scale(K,K);
  const old=ctx;ctx=ac;try{drawHull(k,B/2,B/2,1,0,false)}finally{ctx=old}const g=document.createElement('canvas');g.width=g.height=B*K;const gc=g.getContext('2d');gc.filter='grayscale(1) brightness(.7)';gc.drawImage(a,0,0);return GREYH[k]=g}
@@ -2034,7 +2034,7 @@ function lvVary(d){if(Q.get('novary')||AUTO&&Q.get('seed')==='0'||['1-2','1-3','
  let ev=d.ev.map(e=>{const o=Object.assign({},e);if(o.type!=='tip'&&!o.fill)o.t=Math.max(1,+(o.t+(Math.random()*2-1)).toFixed(2));if(v.swap&&o.type==='drone'&&!o.fill&&Math.random()<v.swap)o.type='swarm';return o});
  if(v.extra&&d.len){ev.push({t:+(d.len*(.35+Math.random()*.3)).toFixed(2),type:v.extra})}
  ev.sort((a,b)=>a.t-b.t);return Object.assign({},d,{ev,variant:v.n})}
-function startLevel(id){const d=LVL.get(id);if(!d||!LVL.unlocked(id,LVS)&&!Q.get('level'))return false;lvApplyCost();LVS=LVL.load();if(!LVL.canPlay(LVS,id)){tip={text:'能源核心不足：等待回复或看广告补充',t:0,d:2};SFX2.uiDeny();return false}initAudio();LVB=null;MAP=null;lvDiff(d);
+function startLevel(id){ADM=null;const d=LVL.get(id);if(!d||!LVL.unlocked(id,LVS)&&!Q.get('level'))return false;lvApplyCost();LVS=LVL.load();if(!LVL.canPlay(LVS,id)){tip={text:'能源核心不足：等待回复或看广告补充',t:0,d:2};SFX2.uiDeny();return false}initAudio();LVB=null;MAP=null;lvDiff(d);
  if(d.legacy){newRun([]);G.lvl=d;if(d.id==='1-1')G.xp11=1}
  else{newRun(['gun']);G.lvl=lvVary(d);TUT=null;BRF=null;banner=null;
   const sup=LVL.fleetFor(d,LVS);fleet=[mkShip('ark'),mkShip('pax')];for(const k of sup)fleet.push(mkShip(k));F.sh=F.maxSh;lvApplyPrep(sup);
@@ -2131,7 +2131,7 @@ function drawMap(){drawBG(1/60);MAP.t+=1/60;ctx.fillStyle='rgba(6,10,30,.35)';ct
   BTN.push({x:x-R-4,y:y-R-4,w:2*R+8,h:2*R+8,label:'lv:'+d.id,fn:()=>{if(!un){setTip('先通关上一关',1.2);SFX2.uiDeny();return}LVB={id:d.id,t:0};SFX2.uiConfirm()}})});
  {const fk=['A','B'].find(g=>{const G2=L.filter(d=>d.br===g);return G2.length&&G2.every(d=>LVL.unlocked(d.id,sv)&&!(sv.lv[d.id]&&sv.lv[d.id].clr))});if(fk){const G2=L.filter(d=>d.br===fk),i0=L.indexOf(G2[0]),i1=L.indexOf(G2[1]);const y=MAPPOS[i0][1];txt('二选一',(MAPPOS[i0][0]+MAPPOS[i1][0])/2,y-8,14,'#ffe14a',3,'center',900);txt('通关任一条即可前进',(MAPPOS[i0][0]+MAPPOS[i1][0])/2,y+14,11,'#cfe6ff',2,'center',800)}}
  // 底部
- ctx.fillStyle='rgba(10,14,44,.92)';ctx.fillRect(-40,784,W+80,120);ctx.fillStyle=CO;ctx.fillRect(-40,782,W+80,3);lbPill(10,796,96,'★',LVL.total(sv),'#ffd23a');{const nx=L.find(q=>LVL.unlocked(q.id,sv)&&!(sv.lv[q.id]&&sv.lv[q.id].clr));if(nx)button(116,792,160,44,`出发 ${nx.id}`,'y',()=>{LVB={id:nx.id,t:0};SFX2.uiConfirm()},20)}lightBtn(284,792,96,44,'📺 核心 +1','',()=>adMock(lvAd),14);
+ ctx.fillStyle='rgba(10,14,44,.92)';ctx.fillRect(-40,784,W+80,120);ctx.fillStyle=CO;ctx.fillRect(-40,782,W+80,3);lbPill(10,796,96,'★',LVL.total(sv),'#ffd23a');{const nx=L.find(q=>LVL.unlocked(q.id,sv)&&!(sv.lv[q.id]&&sv.lv[q.id].clr));if(nx)button(116,792,160,44,`出发 ${nx.id}`,'y',()=>{LVB={id:nx.id,t:0};SFX2.uiConfirm()},20)}lightBtn(284,792,96,44,'📺 核心 +1','',()=>{adMock.arm=1;adMock(lvAd)},14);
  {const A=MAP.anim;if(A&&A.coins&&MAP.t<2.4&&MAP.t>.8){const k=clamp((MAP.t-.8)/1.2,0,1),i0=L.findIndex(q=>q.id===A.id),p=MAPPOS[i0]||[CX,400];txt(`+${A.coins}`,p[0]+(318-p[0])*k,p[1]+(30-p[1])*k,16,'#ffd23a',3,'center',900)}
   const f=MAP.fly;if(f){f.t+=1/60;const k=clamp(f.t/.8,0,1);txt(`+${f.c}`,f.x+(318-f.x)*k,f.y+(30-f.y)*k,16,'#ffd23a',3,'center',900);if(k>=1)MAP.fly=null}}
  drawChapterChest(sv);
@@ -2184,7 +2184,7 @@ function drawLvEnd(){const E=END,d=G.lvl,r=E.res||{};ctx.fillStyle='#0d0f2e';ctx
   {const pg=clamp(E.prog||0,0,1);bar(70,248,250,16,pg,'#fff07a','#ffb21a');txt(`航程 ${Math.round(pg*100)}%`,CX,282,17,'#ffe46b',2.4,'center',900)}/* v13.28 航程条：一眼看出差多少 */
   {const tp=failTip(END);const v21tip=!!(G&&G.v21day1);glass(36,308,318,v21tip?112:150,16,.7);txt('💡 怎么避免',CX,334,16,'#9df27a',2.4,'center',900);ctx.font=`900 20px ${FONT}`;const f0=Math.max(14,Math.min(20,Math.floor(20*296/Math.max(1,ctx.measureText(tp[0]).width))));txt(tp[0],CX,374,f0,'#fff',3,'center',900);if(tp[1]){ctx.font=`800 14px ${FONT}`;const f1=Math.max(11,Math.min(14,Math.floor(14*296/Math.max(1,ctx.measureText(tp[1]).width))));txt(tp[1],CX,410,f1,'#cfe6ff',2,'center',800)}}
   if(END.rec&&!(G&&G.v21day1)){ctx.font=`800 14px ${FONT}`;const fr=Math.max(11,Math.min(14,Math.floor(14*316/Math.max(1,ctx.measureText(END.rec).width))));txt(END.rec,CX,482,fr,'#8fe9ff',2,'center',800)}if(r.bank&&!(G&&G.v21day1))txt(`按进度获得 +${Math.round(r.bank*clamp((t-.4)/.8,0,1))} 金币`,CX,516,16,'#ffd23a',2.4,'center',900);
-  const v21try=!!(G&&G.v21day1);const yTry=v21try?536:630,yAd=v21try?624:552;if(E.canRevive)lightBtn(44,yAd,302,54,'📺 看广告复活','y',()=>adMock(lvRevive),17);if(E.costPending)txt('离开本页将消耗 1 个能源核心',CX,v21try?600:618,11,'#ffb3bc',0,'center',800);if(t>.9)lightBtn(40,yTry,310,60,'再试一次','g',()=>startLevel(d.id),24);else{glass(40,yTry,310,60,12,.3);txt('再试一次',CX,yTry+30,20,'rgba(255,255,255,.35)',0,'center',900)}}
+  const v21try=!!(G&&G.v21day1);const yTry=v21try?536:630,yAd=v21try?624:552;if(E.canRevive)lightBtn(44,yAd,302,54,'📺 看广告复活','y',()=>{adMock.arm=1;adMock(lvRevive)},17);if(E.costPending)txt('离开本页将消耗 1 个能源核心',CX,v21try?600:618,11,'#ffb3bc',0,'center',800);if(t>.9)lightBtn(40,yTry,310,60,'再试一次','g',()=>startLevel(d.id),24);else{glass(40,yTry,310,60,12,.3);txt('再试一次',CX,yTry+30,20,'rgba(255,255,255,.35)',0,'center',900)}}
  if(E.win)lightBtn(130,702,130,36,'再玩一次 ↻','',()=>startLevel(d.id),13);else lightBtn(120,700,150,36,'返回星图','',()=>{lvApplyCost();openMap(d.id)},13);drawAdMock()}
 // 调试/测试入口：?level=1-3 直接进关
 window.__game.lv={LVL,LVDATA,vary:d=>lvVary(d),get save(){return LVS},start:id=>startLevel(id),openMap,get map(){return MAP},get brief(){return LVB},get lvl(){return G&&G.lvl},chal:()=>G&&G.lvl?lvChal(G.lvl):null,revive:()=>lvRevive(),lose:w=>lose(w),ad:()=>lvAd(),applyCost:()=>lvApplyCost(),reload(){LVS=LVL.load()},get end(){return END}};
@@ -2193,8 +2193,8 @@ if(Q.get('level')){const id=Q.get('level');const iv=setInterval(()=>{if(state===
 // ---------- 能源核心 / 广告复活（广告为模拟按钮）----------
 function lvApplyCost(){if(END&&END.lv&&END.costPending){END.costPending=false;LVS=LVL.load();LVL.spend(LVS,END.id);LVL.save(LVS);ev('coreSpend',{id:END.id})}}
 function lvRevive(){if(!END||!END.canRevive||!G)return;END.costPending=false;G.revived=1;const A=ark();if(A){A.state='ok';A.hp=A.maxHp*.5}F.hp=Math.max(F.hp,F.maxHp*.6);F.inv=3;ebul.length=0;for(const e of enemies)if(!e.dead&&e.k!=='crate'&&e.k!=='gt'){e.dead=true;boomFx(e.x,e.y,.5)}END=null;state='play';G.dieT=0;P({k:'ring',x:CX,y:600,t:0,life:.6,R:260,col:'#8fe9ff'});SFX2.powerup();ev('adRevive')}
-function adMock(cb){ADM={t0:performance.now(),cb}}
-function drawAdMock(){if(!ADM)return;const e=(performance.now()-ADM.t0)/1000,D=5;BTN.length=0;ctx.fillStyle='rgba(0,0,0,.92)';ctx.fillRect(0,0,W,H);txt('广告播放中（模拟）',CX,360,20,'#fff',0,'center',900);txt('正式版接入激励视频',CX,392,12,'#8fb8d8',0,'center',700);
+function adMock(cb){if(!adMock.arm){try{const g=window.__test&&(__test.adLog||(__test.adLog={starts:0,user:0,blocked:0}));if(g)g.blocked++}catch(e){}return}adMock.arm=0;ADM={t0:performance.now(),cb,user:1};try{const g=window.__test&&(__test.adLog||(__test.adLog={starts:0,user:0,blocked:0}));if(g){g.starts++;g.user++}}catch(e){}}
+function drawAdMock(){if(!ADM||!ADM.user){ADM=null;return}const e=(performance.now()-ADM.t0)/1000,D=5;BTN.length=0;ctx.fillStyle='rgba(0,0,0,.92)';ctx.fillRect(0,0,W,H);txt('广告播放中（模拟）',CX,360,20,'#fff',0,'center',900);txt('正式版接入激励视频',CX,392,12,'#8fb8d8',0,'center',700);
  const left=Math.max(0,D-e);txt(left>0?`${Math.ceil(left)} 秒后获得奖励`:'奖励已发放',CX,450,15,'#ffd23a',0,'center',900);
  if(e>=3)lightBtn(270,40,100,34,left>0?'跳过 ›':'关闭 ✕','',()=>{const c=ADM.cb;ADM=null;c&&c()},13);else txt(`${Math.ceil(3-e)}s 后可跳过`,318,58,11,'#8fb8d8',0,'center',700);
  if(e>=D+.6){const c=ADM.cb;ADM=null;c&&c()}}
@@ -3377,8 +3377,17 @@ const feel={
     Math.random=function(){s=(s*1.7+0.13)%1;return s<0?s+1:s};
     try{fn()}finally{Math.random=rnd}
   },
+  fxBump(kind){
+    try{
+      const t=window.__test;
+      if(!t)return;
+      const log=t.fxLog||(t.fxLog={flash:0,shake:0,hitstop:0,boom:0});
+      log[kind]=(log[kind]||0)+1;
+    }catch(err){}
+  },
   hitSpark(e){
     if(!e)return;
+    this.fxBump('flash');
     const x=e.x, y=e.y;
     this.withJuice(()=>{
       try{P({k:'flashc',x,y,t:0,life:.05,R:16})}catch(err){}
@@ -3389,6 +3398,8 @@ const feel={
   },
   killBoom(e){
     if(!e)return;
+    this.fxBump('flash');
+    this.fxBump('boom');
     const x=e.x, y=e.y;
     const hp=e.maxHp||0;
     const heavy=e.k==='heavy'||e.k==='kami'||e.k==='tug'||e.k==='gt';
@@ -3410,6 +3421,8 @@ const feel={
     });
   },
   burst(x,y){
+    this.fxBump('shake');
+    this.fxBump('hitstop');
     try{P({k:'ring',x,y,t:0,life:.32,R:86,col:'#ffe46b'})}catch(err){}
     try{burst(x,y,14,'#ffd23a',240,.45,3)}catch(err){}
     let n=0;
@@ -4793,8 +4806,9 @@ const day1={
     this.pods=[]; this.shards=[]; this.toast=null; this.escort5=null; this.greenSpawned=0;
     this.rescueTo=''; this._coinAt=-9; this._podWait=0;
     this.need=150; this.startPax=0; this.saved=[]; this.misses=[];
-    this.impactN=0; this.leakN=0; this.dilemma=0; this.fork=null;
+    this.impactN=0; this.leakN=0; this._slipN=0; this.dilemma=0; this.fork=null;
     this.holdNeed=4.2; this.leftRing=0; this.neverIn=0; this._allowEnd=0; this.crises=[];
+    this._pairPick=null; this.pairDoom=null;
     this.tierPopupAt=null; this.cardPopupAt=null; this.comboPopupAt=null;
     this.pendingRescue=null; this.staggerBad=0; this._pop=[];
     this.barShown=0; this.barKick=0; this.rescueMul=1; this.powerMul=1;
@@ -4972,15 +4986,20 @@ const day1={
     }
     return d;
   },
+  leakCost(e){
+    const hp=(e&&e.maxHp)||1;
+    if(e&&e.v21slip&&hp>=8)return 3;
+    if(e&&e.v21slip)return 2;
+    if(hp>=8)return 2;
+    return 1;
+  },
   ram(e,src,n){
     if(!e||e.v21hit)return;
-    const lost=(this.impactN||0)+(this.leakN||0);
     e.v21hit=1; e.dead=true; e.hitArk=1;
-    if(lost>=60)return;
     const A=(typeof ark==='function')?ark():null;
     const Hn=(typeof H==='number')?H:844;
-    const take=Math.min(n, 60-lost);
-    if(A)this.cut(A, take, src, {x:e.x, y:Math.min(e.y, Hn-80)});
+    const take=n!=null?n:this.leakCost(e);
+    if(A&&take>0)this.cut(A, take, src, {x:e.x, y:Math.min(e.y, Hn-80)});
   },
   popupBlock(kind){
     const t=(G&&G.time)||0;
@@ -5175,6 +5194,8 @@ const day1={
       this._holdSlow=now+90;
       this._holdReal=now+360;
     }
+    try{feel.fxBump('shake')}catch(err){}
+    try{feel.fxBump('flash')}catch(err){}
     try{addTrauma(0.4)}catch(err){}
     try{kick(0,3)}catch(err){}
     try{vib([20,40,20])}catch(err){}
@@ -5192,7 +5213,7 @@ const day1={
     const id=e.v21id||e.v21kind||'camp';
     const name=e.v21name||id;
     this.misses=this.misses||[];
-    this.misses.push({id, name, n, how:how||'drift'});
+    this.misses.push({id, name, n, how:how||'drift', t:+(((G&&G.time)||0).toFixed(2))});
     if(e.v21arrived&&!e.v21entered)this.neverIn=(this.neverIn||0)+1;
     if(id==='a'||e.v21kind==='flash')this.missAt=+(((G&&G.time)||0).toFixed(2));
     const Hn=(typeof H==='number')?H:844;
@@ -5207,6 +5228,23 @@ const day1={
     this.mark('wreck_camp_failed', {kind:id, pax_lost:n, how:how||'drift', firepower_tier:this.tier||0});
     this.noteCrisis('camp', 'lost', {id:id, n:n, how:how||'drift'});
   },
+  /* 选了左右一对里的一边之后，另一边最迟到 36 秒失守，来不及赶回去再停一轮。 */
+  commitPair(e){
+    if(!e||!e.v21pair||this._pairPick)return;
+    this._pairPick=e.v21id;
+    const now=(G&&G.time)||0;
+    const doom=+Math.max(36, now).toFixed(2);
+    this.pairDoom=doom;
+    if(typeof enemies!=='undefined'){
+      for(const o of enemies){
+        if(!o||o.dead||o.v21done||!o.v21pair||o.v21id===e.v21id)continue;
+        o.v21doomAt=doom;
+        o.v21doomSpan=Math.max(0.4, +(doom-now).toFixed(2));
+        o.v21dieAt=Math.min(o.v21dieAt==null?doom:o.v21dieAt, doom);
+      }
+    }
+    this.say('另一边撑不住了');
+  },
   miss(kind, n){
     const c=this.camp(kind);
     if(c)this.loseCamp(c, 'drift');
@@ -5216,15 +5254,17 @@ const day1={
     if(!e||typeof ctx==='undefined')return;
     try{drawHull(e.v21kind==='flash'?'gun':'pax', e.x, e.y, 1.15, 0, true)}catch(err){}
     if(!(e.v21open&&e.v21arrived))return;
-    const need=this.holdNeed||4.2;
+    const pairedOff=!!(e.v21pair&&this._pairPick&&e.v21id!==this._pairPick);
+    const need=pairedOff?4.2:(this.holdNeed||4.2);
     const prog=Math.max(0, Math.min(need, e.v21prog||0));
-    const p=prog/need;
-    const left=Math.max(0, need-prog);
+    const life=e.v21dieAt!=null&&G?((e.v21dieAt-(G.time||0))):99;
+    const span=Math.max(0.4, e.v21doomSpan||need);
+    const left=pairedOff?Math.max(0, life):Math.max(0, need-prog);
+    const p=pairedOff?Math.max(0, Math.min(1, 1-Math.max(0, life)/span)):(prog/need);
     const inside=this.inRing(e);
     const t=(typeof T==='number')?T:0;
-    const life=e.v21dieAt!=null&&G?((e.v21dieAt-(G.time||0))):99;
     const closing=life<2.2;
-    const urgent=inside&&left<=1.6;
+    const urgent=pairedOff?life<2.2:(inside&&left<=1.6);
     const wob=urgent?(0.5+0.5*Math.sin(t*16)):0;
     const heat=inside?Math.max(0, Math.min(1, 1-left/need)):0;
     const mix=(a,b,u)=>{
@@ -5250,12 +5290,19 @@ const day1={
     }
     ctx.restore();
     const label=left.toFixed(1);
-    const size=urgent?40:30;
+    const size=urgent?28:24;
+    const pw=urgent?96:84, ph=urgent?40:34;
+    const W0=(typeof W==='number')?W:390;
+    let py=Math.max(172, e.y-R-ph-8);
+    const px=Math.max(8, Math.min(W0-pw-8, e.x-pw/2));
     ctx.save();
-    ctx.fillStyle='rgba(8,10,18,.82)';
-    ctx.beginPath(); ctx.arc(e.x, e.y, urgent?26:22, 0, 7); ctx.fill();
+    ctx.fillStyle='rgba(8,10,18,.94)';
+    rr(px, py, pw, ph, 8); ctx.fill();
+    ctx.lineWidth=3;
+    ctx.strokeStyle=urgent||closing?col:'#fff7d0';
+    rr(px, py, pw, ph, 8); ctx.stroke();
     ctx.restore();
-    txt(label, e.x, e.y+1, size, urgent||closing?col:'#fff7d0', 4, 'center', 900);
+    txt(label, px+pw/2, py+ph/2+1, size, urgent||closing?col:'#fff7d0', 4, 'center', 900);
   },
   drawPaxBar(){
     if(!isV21||!G||state==='title')return;
@@ -5387,25 +5434,27 @@ const day1={
     return e;
   },
   slip(n){
-    const Hn=(typeof H==='number')?H:844;
     const W0=(typeof W==='number')?W:390;
     n=n||4;
     for(let i=0;i<n;i++){
-      const left=i%2===0;
+      const u=n<=1?0.5:i/(n-1);
+      const x=28+(W0-56)*u;
       enemies.push({
         k:'drone', v21bee:1, v21slip:1, v21show:1,
-        x:left?18+(i*8):(W0-18-(i*8)), y:Hn-214-(i%3)*14,
-        vx:0, vy:240, hp:4, maxHp:4, r:9, tgt:null,
+        x:clamp(x,18,W0-18), y:-16-(i%3)*20,
+        vx:(u-0.5)*24, vy:148, hp:4, maxHp:4, r:9, tgt:null,
         fire:99, life:0, flash:0, orb:0, diveAt:1e9, tele:0, hunt:0
       });
     }
-    if(F){
-      enemies.push({
-        k:'drone', v21bee:1, v21slip:1, v21show:1,
-        x:F.x, y:F.y-18, vx:0, vy:30, hp:40, maxHp:40, r:9, tgt:null,
-        fire:99, life:0, flash:0, orb:0, diveAt:1e9, tele:0, hunt:0
-      });
-    }
+    const side=(this._slipN||0)%2?1:-1;
+    this._slipN=(this._slipN||0)+1;
+    const fx=F?F.x:CX;
+    enemies.push({
+      k:'drone', v21bee:1, v21slip:1, v21show:1,
+      x:clamp(fx+side*86,24,W0-24), y:-36,
+      vx:side*-8, vy:118, hp:12, maxHp:12, r:11, tgt:null,
+      fire:99, life:0, flash:0, orb:0, diveAt:1e9, tele:0, hunt:0
+    });
   },
   tick(dt){
     if(!this.on||state!=='play'||!G)return;
@@ -5450,7 +5499,7 @@ const day1={
     const W0=(typeof W==='number')?W:390;
     for(const e of enemies){
       if(!e||e.dead||!e.v21bee)continue;
-      if(e.y>=Hn-16)this.ram(e,'漏过底线', e.v21slip?3:1);
+      if(e.y>=Hn-16)this.ram(e,'漏过底线', this.leakCost(e));
     }
     for(const s of this.shards){s.t+=(dt||0); s.x+=s.vx*(dt||0); s.y+=s.vy*(dt||0); s.rot+=(dt||0)*8}
     this.shards=this.shards.filter(s=>s.t<s.life);
@@ -5471,7 +5520,6 @@ const day1={
     plan.camps.forEach((c)=>{sched('camp'+c.id,c.t,()=>{if(state!=='play')return; this.spawnPlan(c)})});
     plan.cards.forEach((c,i)=>{sched('card'+i,c.t,()=>{if(state!=='play')return false; return this.offer(c.ids,c.prefer,c.tags)})});
     const live=[];
-    const need=this.holdNeed||4.2;
     for(const e of enemies){
       if(!e||!e.v21camp||e.v21done)continue;
       if(e.dead)continue;
@@ -5484,13 +5532,22 @@ const day1={
           e.v21dieAt=t+(e.v21life||8.4);
         }
       }
+      if(e.v21pair&&this._pairPick&&e.v21id!==this._pairPick){
+        const doom=e.v21doomAt!=null?e.v21doomAt:(this.pairDoom!=null?this.pairDoom:36);
+        e.v21doomAt=doom;
+        if(e.v21doomSpan==null)e.v21doomSpan=Math.max(0.4, doom-t);
+        e.v21dieAt=Math.min(e.v21dieAt==null?doom:e.v21dieAt, doom);
+      }
       e.x=e.v21homeX; e.y=e.v21homeY;
       live.push(e);
       if(!e.v21open&&t>=(e.v21openAt||0)&&e.y>24)e.v21open=1;
       const inside=!!(e.v21open&&e.v21arrived&&this.inRing(e));
       if(e.v21arrived&&inside)e.v21entered=1;
+      const pairedOff=!!(e.v21pair&&this._pairPick&&e.v21id!==this._pairPick);
+      const need=pairedOff?4.2:(this.holdNeed||4.2);
       if(inside){
         e.v21prog=(e.v21prog||0)+(dt||0);
+        if(e.v21pair&&!this._pairPick&&e.v21prog>=0.35)this.commitPair(e);
         if(e.v21prog>=need){this.breach(e); continue}
       }else if(e.v21entered){
         if(!e.v21exited){
@@ -5593,7 +5650,7 @@ const day1={
         if(!near&&age>0.6)txt('停在圈内解救', camp.x, camp.y+78, 18, '#f3fff8', 4, 'center', 900);
         if(age<6){
           const lx=clamp(camp.x+(camp.x<CX?108:-108), 120, (typeof W==='number'?W:390)-120);
-          txt('战俘营', lx, camp.y+8, 36, '#f4fff8', 6, 'center', 900);
+          txt('战俘营', lx, camp.y+54, 26, '#f4fff8', 5, 'center', 900);
         }
       }
       ctx.save();
@@ -6494,6 +6551,7 @@ addEventListener('pointerup',function(){
 addEventListener('pointercancel',function(){V21._ptr=0},true);
 
 window.__test={
+  fxLog:{flash:0,shake:0,hitstop:0,boom:0},
   get on(){return test.on},
   get autopick(){return test.autopick},
   cards(){return test.cardList()},
