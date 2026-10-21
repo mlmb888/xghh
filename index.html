@@ -12,7 +12,7 @@ const LOBBYBG={2:"data:image/webp;base64,UklGRpTRAQBXRUJQVlA4IIjRAQAQgwWdASrQAgA
 
 'use strict';
 // 《星港护航》MVP —— 纯 Canvas，单文件
-const VER='v13.38';const W=390,H=844,CX=195;
+const VER='v13.39';const W=390,H=844,CX=195;
 const OUT='#1d1747';
 const FONT='"PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Source Han Sans SC","Microsoft YaHei","WenQuanYi Micro Hei",sans-serif';
 const NUMF='"Arial Black","Helvetica Neue",Arial,'+FONT;
@@ -983,7 +983,7 @@ function updateEnemies(dt){const L=okShips();const A=ark();for(const e of enemie
    if(e.fire<=0&&enemyOnScreen(e)&&ebul.length<(cruiser?70:45)){e.fire=droneFireBase(G.pass)+rnd(0,.5);const aa=teleShot(e);e.tele=false;const v=150+15*G.pass;ebul.push({x:e.x,y:e.y,vx:Math.cos(aa)*v,vy:Math.sin(aa)*v,r:7,d:G.pass===1?3:4,src:'镖机炮火'});SFX2.enemyFire()}}else e.tele=false;}
  else{const a=Math.atan2(t.y-e.y,t.x-e.x)+Math.sin(e.life*5+e.ph)*.6;e.vx+=(Math.cos(a)*62-e.vx)*Math.min(1,dt*3);e.vy+=(Math.sin(a)*62-e.vy)*Math.min(1,dt*3);if(dist(e.x,e.y,t.x,t.y)<120&&t.state)t.targeted=1;if(e.k==='bug'&&!G._boardWarn&&t.state&&dist(e.x,e.y,t.x,t.y)<260){G._boardWarn=1;broadcast('⚠ 登舰艇来袭！','拦住它们，别贴上船','#ff6a6a');try{SFX2.warn&&SFX2.warn()}catch(e){}ev('boardWarn',{})}}/* v13.35 登舰前提前大字预警 */
  e.x+=e.vx*dt;e.y+=e.vy*dt;
- for(const s of L)if(dist(e.x,e.y,s.x,s.y)<e.r+s.r){if(e.k==='bug'){if(enemies.filter(o=>o.latch===s&&!o.dead).length>=3){e.vx*=-1;e.vy=-Math.abs(e.vy)-40;break}e.latch=s;const a=Math.atan2(e.y-s.y,e.x-s.x);e.lox=Math.cos(a)*s.r*.8;e.loy=Math.sin(a)*s.r*.8;SFX2.hitArmor();if(!G._boardTip){G._boardTip=1;setTip('登舰艇附体！靠近用脉冲清掉，或撞开它们',3.2);ev('boardTip',{ship:s.n})}/* v13.34 登舰提示改在战斗中弹出 */}else{hurtShip(s,8,'镖机');e.dead=true;boomFx(e.x,e.y,.8)}break}
+ for(const s of L)if(dist(e.x,e.y,s.x,s.y)<e.r+s.r){if(e.k==='bug'){if(enemies.filter(o=>o.latch===s&&!o.dead).length>=3){e.vx*=-1;e.vy=-Math.abs(e.vy)-40;break}e.latch=s;const a=Math.atan2(e.y-s.y,e.x-s.x);e.lox=Math.cos(a)*s.r*.8;e.loy=Math.sin(a)*s.r*.8;SFX2.hitArmor();if(!G._boardTip){G._boardTip=1;setTip('登舰艇附体！靠近用脉冲清掉，或撞开它们',3.2);ev('boardTip',{ship:s.n})}/* v13.34 登舰提示改在战斗中弹出 */}else{if(e.dive&&s.k==='ark'&&s.pax&&state==='play'){const n=2+Math.floor(Math.random()*2);s.paxNow=Math.max(0,s.paxNow-n);s.hp=Math.max(s.maxHp*.3,s.hp-s.maxHp*.025);s.flash=.25;G.paxFlash=.8;nums.push({x:clamp(s.x,60,330),y:s.y-50,v:-30,txt:`−${n}人`,col:'#ff4f5f',t:0,life:1.3,big:1});addTrauma(.5);try{SFX2.hitArmor()}catch(_){}e.hitArk=1;ev('diveHit',{n})}else hurtShip(s,8,'镖机');e.dead=true;boomFx(e.x,e.y,.8)}break}/* v13.39 俯冲镖机撞方舟=直接死人 */
  if(!e.dead&&!e.latch&&dist(e.x,e.y,F.x,F.y)<e.r+16){hurtF(e.k==='bug'?4:7,e);hurtEnemy(e,999)}}
  enemies=enemies.filter(e=>!e.dead&&e.x>-150&&e.x<W+150&&e.y<H+60);}
 function segHit(x1,y1,x2,y2,cx,cy,r){const dx=x2-x1,dy=y2-y1,l=dx*dx+dy*dy||1;const t=clamp(((cx-x1)*dx+(cy-y1)*dy)/l,0,1);return dist(x1+dx*t,y1+dy*t,cx,cy)<r}
@@ -1884,7 +1884,7 @@ function frame(now){const raw=(now-last)/1000,dt=Math.min(.033,raw);last=now;{co
  if(state==='play'&&!degraded&&SPEED===1&&!FREEZE){slowAcc=raw>.02?slowAcc+raw:Math.max(0,slowAcc-raw*.5);if(slowAcc>2){degraded=true;PCAP=140;ev('degrade')}}
  try{if(SPEED>1&&state==='play'&&!FREEZE&&raw<.028)for(let i=1;i<SPEED&&state==='play';i++){update(1/60);updCam(1/60)}update(udt);updCam(udt);ctx.setTransform(SC*DPR,0,0,SC*DPR,OX*SC*DPR,OY*SC*DPR);ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='low';ctx.clearRect(0,0,W,H);/* v13.35 美术图集改 3x，缩小采样用高质量平滑（最近邻在 2.3~3.5x 时边缘锯齿发毛）*/
   if(state==='title')drawTitle();else if(state==='story')drawStory();else if(state==='pick')drawPick();else if(state==='station')drawStation();else if(state==='fork')drawFork();else if(state==='map'){drawMap();drawAdMock()}else if(state==='prep')drawPrep();
-  else if(state!=='load'){drawWorld(state==='play'?udt:0);if(state==='play'||state==='pause')drawEBul();drawHUD();if(state==='play')drawDissolve();if(state==='pause')drawPause();if(state==='play'&&BRF)drawBrief();if(state==='play'&&CH)drawChoice();if(state==='dying')drawDying();if(state==='end'){updateFx(udt);drawEnd();}}if((state==='play'||state==='pause')&&typeof drawTopFX==='function')try{drawTopFX()}catch(e){}drawSoundHint();if(Q.get('dbg')&&window.__px){const p=__px;ctx.save();ctx.font='600 11px monospace';ctx.textAlign='left';ctx.textBaseline='top';const s=`${(window._perf||{}).fps||0}fps ${(window._perf||{}).ms||0}ms dpr=${p.dpr} css=${p.css} canvas=${p.canvas} k=${p.k} ${VER}`;ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(2,H-16,ctx.measureText(s).width+6,14);ctx.fillStyle='#7fff9a';ctx.fillText(s,5,H-15);ctx.restore()}}
+  else if(state!=='load'){drawWorld(state==='play'?udt:0);if(state==='play'||state==='pause')drawEBul();drawHUD();if(state==='play')drawDissolve();if(state==='pause')drawPause();if(state==='play'&&BRF)drawBrief();if(state==='play'&&CH)drawChoice();if(state==='dying')drawDying();if(state==='end'){updateFx(udt);drawEnd();}}if((state==='play'||state==='pause')&&typeof drawTopFX==='function')try{drawTopFX()}catch(e){}drawSoundHint();if(Q.get('dbg')&&window.__px){const p=__px;ctx.save();ctx.font='600 11px monospace';ctx.textAlign='left';ctx.textBaseline='top';const s=`${(window._perf||{}).fps||0}fps ${(window._perf||{}).ms||0}ms dpr=${p.dpr} css=${p.css} canvas=${p.canvas} k=${p.k} ${VER}`;const mw=ctx.measureText(s).width;ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(W-mw-8,60,mw+6,14);ctx.fillStyle='#7fff9a';ctx.fillText(s,W-mw-5,61);ctx.restore()}}
  catch(e){console.error(e);}
  requestAnimationFrame(frame);}
 makeBG();loadStory();loadArt(()=>{});loadSprites(()=>{state='title';if(AUTO&&!Q.get('level'))setTimeout(()=>{if(state==='title')goPick()},Q.get('dbg')?1500:300);ev('ready')});
@@ -2121,7 +2121,7 @@ function drawChapterChest(sv){const rdy=chapterChestReady(sv),cc=MAP.cc;if(!rdy&
  rows.forEach((r,i)=>{const a=clamp((cc.t-1.1-i*.3)/.3,0,1);if(a<=0)return;ctx.save();ctx.globalAlpha=a;glass(52,300+i*76,286,64,14,.8);txt(r[0],86,332+i*76,26,'#fff',0,'center');txt(r[1],112,332+i*76,15,r[2],2,'left',900);ctx.restore()});
  if(cc.t>1.9)lightBtn(95,546,200,54,'太棒了','g',()=>{MAP.cc=null},20)}
 function drawLvEnd(){const E=END,d=G.lvl,r=E.res||{};ctx.fillStyle='#0d0f2e';ctx.fillRect(0,0,W,H);drawBG(0);ctx.fillStyle='rgba(6,10,30,.72)';ctx.fillRect(0,0,W,H);
- const t=T-(E.showT||T);ctx.save();rr(20,102,354,646,22);ctx.fillStyle=CO;ctx.fill();rr(16,96,354,646,22);ctx.fillStyle='rgba(29,36,99,.96)';ctx.fill();ctx.lineWidth=4;ctx.strokeStyle=CO;ctx.stroke();ctx.restore();/* v13.36 大厅风结算面板 */
+ const t=T-(E.showT||T);ctx.save();rr(20,102,354,672,22);ctx.fillStyle=CO;ctx.fill();rr(16,96,354,672,22);ctx.fillStyle='rgba(29,36,99,.96)';ctx.fill();ctx.lineWidth=4;ctx.strokeStyle=CO;ctx.stroke();ctx.restore();/* v13.36 大厅风结算面板 */
  txt(`${d.id} ${d.name}`,CX,118,15,'#9fd8ff',0,'center',800);{const rc=E.win?['#ffcf4a','#b56a00']:['#ff6b7a','#7a1020'];ctx.save();ctx.fillStyle=rc[1];ctx.beginPath();ctx.moveTo(30,146);ctx.lineTo(60,146);ctx.lineTo(60,186);ctx.lineTo(30,186);ctx.lineTo(42,166);ctx.closePath();ctx.moveTo(360,146);ctx.lineTo(330,146);ctx.lineTo(330,186);ctx.lineTo(360,186);ctx.lineTo(348,166);ctx.closePath();ctx.fill();ctx.lineWidth=3.5;ctx.strokeStyle='#120c24';ctx.stroke();ctx.fillStyle=rc[0];ctx.fillRect(52,138,286,46);ctx.fillStyle='rgba(255,255,255,.35)';ctx.fillRect(52,138,286,12);ctx.strokeRect(52,138,286,46);ctx.restore();txt(E.win?'关卡完成！':'护航失败',CX,162,28,'#fff',4,'center',900)}
  if(E.win){for(let i=0;i<3;i++){const k=clamp((t-.3-i*.35)/.25,0,1),on=i<r.stars;const sc=on?(k<1?1.6-.6*k:1):1;ctx.save();ctx.translate(CX+(i-1)*84,262-(i===1?16:0));ctx.scale(sc,sc);comicStar(0,0,i===1?40:33,on&&k>0?'#ffd21a':'#3a3f6e');ctx.restore();if(on&&k>0&&k<.2&&!E['sfx'+i]){E['sfx'+i]=1;SFX2.chime(i)}}
   txt(`${E.pax}/${E.den}`,CX,350,54,E.pct>=.9?'#9df27a':E.pct>=.7?'#ffe46b':'#ffb3bc',6,'center',900,NUMF);txt('移民平安抵达',CX,392,15,'#cfe6ff',2.4,'center',800);if(G&&(G.graze||0)>0)txt(`擦弹 ${G.graze} 次 · 脉冲充能 +${(G.graze*(up('graze')?.7:.35)).toFixed(1)}s`,CX,414,12,'#9fd8ff',0,'center',800);
@@ -2136,7 +2136,7 @@ function drawLvEnd(){const E=END,d=G.lvl,r=E.res||{};ctx.fillStyle='#0d0f2e';ctx
   {const tp=failTip(END);glass(36,308,318,150,16,.7);txt('💡 怎么避免',CX,334,16,'#9df27a',2.4,'center',900);ctx.font=`900 20px ${FONT}`;const f0=Math.max(14,Math.min(20,Math.floor(20*296/Math.max(1,ctx.measureText(tp[0]).width))));txt(tp[0],CX,374,f0,'#fff',3,'center',900);if(tp[1]){ctx.font=`800 14px ${FONT}`;const f1=Math.max(11,Math.min(14,Math.floor(14*296/Math.max(1,ctx.measureText(tp[1]).width))));txt(tp[1],CX,410,f1,'#cfe6ff',2,'center',800)}}
   if(END.rec){ctx.font=`800 14px ${FONT}`;const fr=Math.max(11,Math.min(14,Math.floor(14*316/Math.max(1,ctx.measureText(END.rec).width))));txt(END.rec,CX,482,fr,'#8fe9ff',2,'center',800)}if(r.bank)txt(`按进度获得 +${Math.round(r.bank*clamp((t-.4)/.8,0,1))} 金币`,CX,516,16,'#ffd23a',2.4,'center',900);
   if(E.canRevive)lightBtn(44,552,302,54,'📺 看广告复活','y',()=>adMock(lvRevive),17);if(E.costPending)txt('离开本页将消耗 1 个能源核心',CX,618,11,'#ffb3bc',0,'center',800);if(t>.9)lightBtn(40,630,310,60,'再试一次','g',()=>startLevel(d.id),24);else{glass(40,630,310,60,12,.3);txt('再试一次',CX,660,20,'rgba(255,255,255,.35)',0,'center',900)}}
- if(E.win)lightBtn(130,702,130,36,'再玩一次 ↻','',()=>startLevel(d.id),13);else lightBtn(130,702,130,36,'返回星图','',()=>{lvApplyCost();openMap(d.id)},13);drawAdMock()}
+ if(E.win)lightBtn(130,702,130,36,'再玩一次 ↻','',()=>startLevel(d.id),13);else lightBtn(120,700,150,36,'返回星图','',()=>{lvApplyCost();openMap(d.id)},13);drawAdMock()}
 // 调试/测试入口：?level=1-3 直接进关
 window.__game.lv={LVL,LVDATA,vary:d=>lvVary(d),get save(){return LVS},start:id=>startLevel(id),openMap,get map(){return MAP},get brief(){return LVB},get lvl(){return G&&G.lvl},chal:()=>G&&G.lvl?lvChal(G.lvl):null,revive:()=>lvRevive(),lose:w=>lose(w),ad:()=>lvAd(),applyCost:()=>lvApplyCost(),reload(){LVS=LVL.load()},get end(){return END}};
 if(Q.get('level')){const id=Q.get('level');const iv=setInterval(()=>{if(state==='title'){clearInterval(iv);startLevel(id)}},100)}
@@ -2210,10 +2210,10 @@ function txt(t,x,y,size,fill='#fff',sw,align='center',weight=900,font=FONT){size
 function button(x,y,w,h,label,col,fn,size=18,sub){const c=CBC[col]||CBC.y,r=Math.min(14,h*.42);
  ctx.save();rr(x,y+5,w,h,r);ctx.fillStyle=CO;ctx.fill();
  rr(x,y,w,h,r);ctx.fillStyle=c[1];ctx.fill();
- ctx.save();ctx.clip();ctx.fillStyle=c[2];ctx.fillRect(x,y+h*.72,w,h);rr(x+5,y+4,w-10,h*.36,r*.7);ctx.fillStyle=c[0];ctx.fill();ctx.fillStyle='rgba(255,255,255,.75)';rr(x+10,y+6,Math.min(18,w*.15),5,2.5);ctx.fill();ctx.restore();
+ ctx.save();ctx.clip();ctx.fillStyle=c[2];ctx.fillRect(x,y+h*.72,w,h);rr(x+6,y+4,w-12,h*.22,r*.6);ctx.fillStyle=c[0];ctx.fill();ctx.fillStyle='rgba(255,255,255,.75)';rr(x+10,y+6,Math.min(18,w*.15),5,2.5);ctx.fill();ctx.restore();
  rr(x,y,w,h,r);ctx.lineWidth=3.2;ctx.strokeStyle=CO;ctx.stroke();ctx.restore();
  const tc=col==='y'?'#fff':'#fff';
- if(sub){txt(label,x+w/2,y+h/2-size*.32,size,tc);txt(sub,x+w/2,y+h/2+size*.5,Math.max(12,size*.48),'#fff',2.5,'center',800)}else txt(label,x+w/2,y+h/2+1,size,tc);
+ if(sub){txt(label,x+w/2,y+h*.44,size,tc);txt(sub,x+w/2,y+h*.8,Math.max(14,size*.44),'#fff',2.5,'center',800)}else txt(label,x+w/2,y+h*.56,size,tc);/* v13.39 文字落在按钮主体，避开高光 */
  if(fn)BTN.push({x,y,w,h,fn,label:String(label)})}
 function panel(x,y,w,h,col='d',c=10,alpha=1){const cc=CBC[col]||CBC.d,r=Math.max(8,c+4);ctx.save();ctx.globalAlpha*=alpha;
  rr(x+3,y+4,w,h,r);ctx.fillStyle='rgba(18,12,36,.55)';ctx.fill();
@@ -2556,7 +2556,7 @@ drawTitle=function(){/* v13.36 弹壳战机式大厅：顶栏资源 / 侧边小�
   ctx.save();rr(44,642,200,7,3.5);ctx.fillStyle='#0d1238';ctx.fill();rr(44,642,200*Math.max(.04,done/Ls.length),10,5);ctx.fillStyle='#8cf56a';ctx.fill();ctx.restore();txt(`${done}/${Ls.length}`,252,646,12,'#fff',2,'left',900,NUMF);
   ctx.save();ctx.beginPath();ctx.arc(326,616,24,0,7);ctx.fillStyle='#3a1030';ctx.fill();ctx.lineWidth=3;ctx.strokeStyle='#ff3b4f';ctx.stroke();ctx.clip();if(hasA('cruiser'))aspr('cruiser',326,618,.26);ctx.restore();txt('BOSS',326,644,10,'#ff8a9a',2,'center',900)}
  // 出发（体力消耗）
- {const n=lbNext(),cost=n?LVL.costOf(n.id):0;const p=1+.025*Math.sin(T*4);ctx.save();ctx.translate(CX,700);ctx.scale(p,p);ctx.translate(-CX,-700);button(70,666,250,66,'出 发','y',()=>{if(n&&PB.runs&&typeof openPrep==='function'&&!Q.get('dbg'))openPrep(n.id);else openCampaign()},32,cost?`⚡ ${cost}`:'⚡ 免费');ctx.restore()}
+ {const n=lbNext(),cost=n?LVL.costOf(n.id):0;const p=1+.025*Math.sin(T*4);ctx.save();ctx.translate(CX,700);ctx.scale(p,p);ctx.translate(-CX,-700);button(70,666,250,66,'出 发','y',()=>{if(n&&PB.runs&&typeof openPrep==='function'&&!Q.get('dbg'))openPrep(n.id);else openCampaign()},28,cost?`⚡ ${cost}`:'⚡ 免费');ctx.restore()}
  // 底部 5 页签
  ctx.fillStyle='rgba(10,14,44,.95)';ctx.fillRect(-40,764,W+80,H);ctx.fillStyle=CO;ctx.fillRect(-40,762,W+80,3);
  const dock=()=>{if(PB.runs){PK={opts:['gun','shield','salvage','repair'],sel:[],need:1,t:0,dock:1};state='pick';ev('pick')}else tip={text:'通关一局后开放机库',t:0,d:2}};
@@ -2565,9 +2565,39 @@ drawTitle=function(){/* v13.36 弹壳战机式大厅：顶栏资源 / 侧边小�
  if(Q.get('dbg'))BTN.push({x:0,y:800,w:6,h:30,label:'无尽模式',fn:goPick});
  txt(VER,W-6,580,11,'rgba(216,212,255,.45)',0,'right',600)}
 /* v13.35 1-1 早期张力：开局几秒就有一队镖机俯冲方舟，教会"不护航=掉人" */
-{const DV={'1-1':[7,18],'1-2':[6,22],'1-3':[8,26]};const _u=update;update=function(dt){_u(dt);try{if(state!=='play'||!G||!G.lvl||AUTO)return;const S=DV[G.lvl.id];if(!S)return;G._dv=G._dv||0;const off=(TUT&&G.lvl.id==='1-1')?9:0;if(G._dv<S.length&&G.time>=S[G._dv]+off){const A=ark();if(!A)return;G._dv++;const n=G._dv===1?4:5;for(let i=0;i<n;i++){const x=clamp(A.x+(i-(n-1)/2)*26,30,W-30);spawnDrone(x,-30-Math.abs(i-(n-1)/2)*26,0,120)}edgeWarn(A.x<CX,140,'镖机→方舟');if(G._dv===1)setTip('敌机俯冲方舟！挡在前面打掉它们',3)}}catch(e){}}}/* v13.36 1-2/1-3 也加早期方舟压力 */
+{const DV={'1-1':[5,16],'1-2':[6,22],'1-3':[8,26]};const _u=update;update=function(dt){_u(dt);try{if(state==='play'&&G){const A=ark();for(const e of enemies){if(!e.dive)continue;if(e.dead){if(!e._gd){e._gd=1;if(!e.hitArk){nums.push({x:clamp(e.x,50,340),y:e.y,v:-40,txt:'守护！',col:'#8cf56a',t:0,life:.9,big:1});ev('guardPop',{})}}continue}if(A){if(e._px==null){e._px=e.x;e._py=e.y;e._vx=0}const dx=A.x-e._px;e._vx+=(clamp(dx*1.8,-160,160)-e._vx)*Math.min(1,dt*3);e._px+=e._vx*dt;e._py+=150*dt;e.x=e._px;e.y=e._py;e.vx=e._vx;e.vy=150}}}if(state!=='play'||!G||!G.lvl||AUTO)return;const S=DV[G.lvl.id];if(!S)return;G._dv=G._dv||0;const off=(TUT&&G.lvl.id==='1-1')?3:0;if(G._dv<S.length&&G.time>=S[G._dv]+off){const A=ark();if(!A)return;G._dv++;const n=G._dv===1?4:5;for(let i=0;i<n;i++){const x=clamp(A.x+(i-(n-1)/2)*26,30,W-30);spawnDrone(x,-30-Math.abs(i-(n-1)/2)*26,0,120);const e=enemies[enemies.length-1];if(e){e.dive=1;e.noFire=1}}edgeWarn(A.x<CX,140,'镖机→方舟');if(G._dv===1)setTip('敌机俯冲方舟！挡在前面打掉它们',3)}}catch(e){}}}/* v13.36 1-2/1-3 也加早期方舟压力 */
 /* v13.35 Boss 入场前 3 秒、横幅后 1 秒内不弹选卡 */
-{const _o=openChoice3;openChoice3=function(...a){try{if(G&&state==='play'&&!AUTO){const soon=G.phase==='travel'&&G.len>0&&G.prog<1&&(1-G.prog)*G.len<3.2;const ban=banner&&banner.boss&&banner.t<(banner.dur||3)+1;if(soon||ban)return false}}catch(e){}return _o.apply(this,a)}}
+{const _o=openChoice3;openChoice3=function(...a){try{if(G&&state==='play'&&!AUTO){if(cruiser&&(cruiser.dead||cruiser.state==='dead'||cruiser.state==='boom'||cruiser.state==='dying'||cruiser.hp<=0)||G.phase==='done'||G.phase==='pass'||G.won)return false;const soon=G.phase==='travel'&&G.len>0&&G.prog<1&&(1-G.prog)*G.len<3.2;const ban=banner&&banner.boss&&banner.t<(banner.dur||3)+1;if(soon||ban)return false}}catch(e){}return _o.apply(this,a)}}
+/* ===== v13.39 出发准备：增益在上 / 可视化编队（拖拽或点两下交换）===== */
+function prepSlots(P){const rows=['ark','pax'].concat(P.order),n=rows.length,sp=Math.min(80,Math.floor(380/Math.max(1,n-1))),y0=300;return rows.map((k,i)=>({k,i,x:96,y:y0+i*sp,lock:i<2}))}
+function prepSwap(P,a,b){const o=P.order;const ia=a-2,ib=b-2;if(ia<0||ib<0||ia===ib)return;const S=prepSlots(P);P.off=P.off||{};P.off[ia]=S[a].y-S[b].y;P.off[ib]=S[b].y-S[a].y;[o[ia],o[ib]]=[o[ib],o[ia]];const t=P.off[ia];P.off[ia]=P.off[ib];P.off[ib]=t;try{SFX2.uiClick()}catch(e){}ev('prepSwap',{a:ia,b:ib})}
+drawPrep=function(){const P=PREP;if(!P){state='map';return}P.t+=1/60;drawBG(1/60);ctx.fillStyle='rgba(6,10,30,.55)';ctx.fillRect(-40,0,W+80,H);const d=LVL.get(P.id),sv=LVS;
+ ctx.fillStyle='rgba(10,14,44,.92)';ctx.fillRect(-40,-60,W+80,128);ctx.fillStyle=CO;ctx.fillRect(-40,66,W+80,3);
+ lbWhite(10,14,74,40,'‹ 星图',()=>{PREP=null;openMap(P.id)},'‹ 星图');lbFit(()=>{txt('出发准备',CX-4,28,19,'#fff',2.6,'center',900);txt(`${d.id} ${d.name}`,CX-4,52,13,'#9fd8ff',0,'center',800)},170);lbPill(282,16,100,'coin',sv.coins||0);
+ // 本关增益
+ txt('本关增益（仅本关）',16,88,14,'#8fb8d8',0,'left',800);
+ PREPBUY.forEach((b,i)=>{const BW=88,BH=124,x=11+i*93,y=100,on=!!P.buy[b.id];ctx.save();rr(x+2,y+4,BW,BH,14);ctx.fillStyle=CO;ctx.fill();rr(x,y,BW,BH,14);ctx.fillStyle=on?'#2a3a9a':'#1d2463';ctx.fill();ctx.lineWidth=on?4:2.5;ctx.strokeStyle=on?b.col:CO;ctx.stroke();ctx.restore();
+  const ik={wl:'i_rate',sh:'i_shield',pl:'i_pulse',hp:'i_repair'}[b.id],cx2=x+BW/2;if(!(hasA(ik)&&aspr(ik,cx2,y+34,.4)))txt(b.ic,cx2,y+34,28,b.col,0,'center',900);
+  lbFit(()=>{txt(b.n,cx2,y+70,14,'#fff',2,'center',900);txt(b.d,cx2,y+89,12,'#cfe6ff',0,'center',700)},BW-8);txt(on?'✓ 已选':`${b.c} 金币`,cx2,y+110,14,on?'#9df27a':'#ffd23a',2,'center',900);
+  BTN.push({x,y,w:BW,h:BH,label:'buy:'+b.id,fn:()=>{P.buy[b.id]=!P.buy[b.id];SFX2.uiClick()}})});
+ // 本关编队
+ txt('本关编队',16,252,14,'#8fb8d8',0,'left',800);txt(P.order.length>1?'拖动或依次点两艘交换位置 · 上=前':'上=前（船队纵队）',374,252,12,'#9fd8ff',0,'right',700);
+ ctx.save();rr(10,266,370,430,18);ctx.fillStyle='rgba(16,20,64,.85)';ctx.fill();ctx.lineWidth=2.5;ctx.strokeStyle=CO;ctx.stroke();ctx.restore();
+ const S=prepSlots(P);P.off=P.off||{};ctx.save();ctx.strokeStyle='rgba(143,233,255,.35)';ctx.lineWidth=3;ctx.setLineDash([6,6]);ctx.beginPath();ctx.moveTo(96,S[0].y);ctx.lineTo(96,S[S.length-1].y);ctx.stroke();ctx.restore();
+ txt('▲ 前',96,284,12,'#8fe9ff',0,'center',800);
+ const ns=P.order.length;S.forEach(s=>{let y=s.y;if(!s.lock){const j=s.i-2;if(P.off[j]){P.off[j]*=.78;if(Math.abs(P.off[j])<.5)P.off[j]=0;y+=P.off[j]}if(P.drag&&P.drag.i===s.i&&P.drag.mv){y=P.drag.y}}
+  const sel=P.sel===s.i,R=s.lock?26:30;ctx.save();ctx.beginPath();ctx.arc(s.x,y,R,0,7);ctx.fillStyle=s.lock?'rgba(40,44,90,.9)':sel?'#ffc21a':'#2d4ab0';ctx.fill();ctx.lineWidth=3;ctx.strokeStyle=sel?'#fff':CO;ctx.stroke();ctx.restore();
+  ctx.save();if(s.lock)ctx.globalAlpha=.85;drawHull(s.k,s.x,y,s.k==='ark'?.3:.62);ctx.restore();if(s.lock)txt('🔒',s.x+R-4,y-R+6,13,'#fff',0,'center',400,'sans-serif');
+  const T0=STYPE[s.k],role=s.lock?(s.k==='ark'?'方舟 · 领航（固定）':'难民船 · 固定'):(ns===1?'护航位':(s.i===2?'前排 · 先接敌':s.i===S.length-1?'队尾 · 护尾':'中间'));
+  lbFit(()=>{txt(T0.n,140,y-14,18,T0.col,2.4,'left',900);txt(role,140,y+8,13,'#fff',0,'left',800);if(!s.lock&&T0.fm)txt(T0.fm,140,y+26,12,'#9fb8d8',0,'left',700)},230)});
+ // 出发
+ const c=prepCost(),ok=(sv.coins||0)>=c;txt(c?`合计 ${c} 金币`:'不买也可以直接出发',CX,716,14,ok?'#ffe46b':'#ff8a9a',2,'center',800);
+ button(40,734,310,70,'出发 ▶','y',prepGo,30);
+ if(tip){tip.t+=1/60;if(tip.t<tip.d){ctx.save();rr(70,670,250,30,12);ctx.fillStyle='rgba(10,14,44,.92)';ctx.fill();ctx.restore();txt(tip.text,CX,685,13,'#fff',0,'center',800)}}}
+{const hit=(P,x,y)=>prepSlots(P).find(s=>!s.lock&&Math.hypot(x-s.x,y-s.y)<40);
+ addEventListener('pointerdown',e=>{if(state!=='prep'||!PREP)return;const [x,y]=lp(e);const s=hit(PREP,x,y);if(s){PREP.drag={i:s.i,x0:x,y0:y,y,mv:false}}},true);
+ addEventListener('pointermove',e=>{const P=PREP;if(state!=='prep'||!P||!P.drag)return;const [x,y]=lp(e);P.drag.y=y;if(Math.abs(y-P.drag.y0)>8)P.drag.mv=true},true);
+ addEventListener('pointerup',e=>{const P=PREP;if(state!=='prep'||!P||!P.drag)return;const D=P.drag;P.drag=null;const [x,y]=lp(e);if(D.mv){const S=prepSlots(P).filter(s=>!s.lock);let best=null,bd=1e9;for(const s of S){const dd=Math.abs(s.y-y);if(dd<bd){bd=dd;best=s}}if(best&&best.i!==D.i)prepSwap(P,D.i,best.i);P.sel=null}else{if(P.sel!=null&&P.sel!==D.i){prepSwap(P,P.sel,D.i);P.sel=null}else{P.sel=P.sel===D.i?null:D.i;try{SFX2.uiClick()}catch(_){}}}},true)}
 
 // ===== v13.28 收尾 + 自查补丁（最后加载，只做覆盖/补充，不改数据结构）=====
 // 1) 「守护！」首次时刻：前 10–20 秒内第一次挡下射向船队的子弹 / 击落扑向船队的敌机 → 大字 + 慢动作 + 光环（每局一次）
