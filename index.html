@@ -9,7 +9,7 @@ body{display:block}canvas{display:block;touch-action:none;position:fixed;left:0;
 
 'use strict';
 // 《星港护航》MVP —— 纯 Canvas，单文件
-const VER='v13.32';const W=390,H=844,CX=195;
+const VER='v13.33';const W=390,H=844,CX=195;
 const OUT='#1d1747';
 const FONT='"PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Source Han Sans SC","Microsoft YaHei","WenQuanYi Micro Hei",sans-serif';
 const NUMF='"Arial Black","Helvetica Neue",Arial,'+FONT;
@@ -2161,10 +2161,10 @@ function sgTick(dt){const N=sgN();if(!N||!G.lvl)return;G.sgI=G.sgI||0;const s=G.
  if(!s||!s.on){const nb=(G.sgI+1)/N;if(G.sgI<N-1&&G.prog>=nb){G.prog=nb;G.sg={on:1,ph:'clear',t:0};ev('sgate',{i:G.sgI})}return}
  s.t+=dt;if(s.ph==='clear'){const left=enemies.some(e=>!e.dead&&e.k!=='crate'&&e.k!=='rock');if(!left||s.t>4){for(const e of enemies)if(!e.dead&&e.k!=='crate'){e.dead=true;boomFx(e.x,e.y,.5)}ebul.length=0;s.ph='warp';s.t=0;SFX2.warp()}}
  else if(s.ph==='warp'){if(s.t>=1.7){G.sgAnim={from:G.sgI,to:G.sgI+1,t:T};G.sgI++;s.on=0;G.lastE=G.time;sgCall(G.sgI);flash=.15}}}
-function drawSGate(){const s=G.sg;if(!s||!s.on||s.ph!=='warp')return;const f=s.t/1.7,y=-120+f*(H+260),R=150;ctx.save();
+function drawSGate(){const s=G.sg;if(!s||!s.on||s.ph!=='warp')return;const f=s.t/1.7,y=-120+f*(H-60),R=130;ctx.save();if(f>.8)ctx.globalAlpha=Math.max(0,(1-f)/.2);/* v13.33 星门圈不再扫过脉冲按钮 */
  ctx.globalAlpha=.25;ctx.fillStyle='#6fd8ff';for(let i=0;i<14;i++){const x=(i*53+T*40)%W;ctx.fillRect(x,0,2,H)}ctx.globalAlpha=1;
  ctx.translate(CX,y);ctx.scale(1,.32);ctx.lineWidth=16;ctx.strokeStyle='#14112e';ctx.beginPath();ctx.arc(0,0,R,0,7);ctx.stroke();ctx.lineWidth=9;ctx.strokeStyle='#5ff0ff';ctx.beginPath();ctx.arc(0,0,R,0,7);ctx.stroke();ctx.lineWidth=4;ctx.strokeStyle='#ffd23a';ctx.setLineDash([24,14]);ctx.lineDashOffset=-T*200;ctx.beginPath();ctx.arc(0,0,R-12,0,7);ctx.stroke();ctx.restore();
- txt('星门跃迁',CX,200,22,'#fff',4,'center',900)}
+ txt('星门跃迁',CX,200,22,'#fff',4,'center',900);txt('船队穿过星门 → 进入下一段航线',CX,226,12,'#cfe6ff',2,'center',800)}
 function drawStageBar(pv){if(!xpOn()||!sgN()){return drawStageBarOld(pv)}
  const NS=sgNodes(),ci=Math.min(sgCur(),NS.length-1);G.waveNM=[ci+1,NS.length];
  ctx.save();ctx.fillStyle='rgba(16,15,25,.82)';ctx.beginPath();ctx.moveTo(120,40);ctx.lineTo(250,40);ctx.lineTo(244,57);ctx.lineTo(114,57);ctx.closePath();ctx.fill();ctx.restore();
@@ -2226,10 +2226,10 @@ function makeEBS(){const K=3,S=26;const c=document.createElement('canvas');c.wid
  g.fillStyle='#ff3dbb';g.beginPath();g.arc(o,o,8.4,0,7);g.fill();
  g.fillStyle='#ffd6f2';g.beginPath();g.arc(o,o,4.8,0,7);g.fill();g.fillStyle='#fff';g.beginPath();g.arc(o-2.2,o-2.4,2,0,7);g.fill();EBS={c,S}}
 const CPB={'':['#2fd4ff','#ffffff'],hv:['#ffb21a','#fffbe0'],gs:['#ff7a2a','#fff0d8'],wing:['#59e0ff','#ffffff'],rf:['#2fd4ff','#ffffff']};
-function drawPBul(){if(!pbul.length)return;const al=clamp(1.15-pbul.length/220,.55,1),rl=up('rate');ctx.save();ctx.lineCap='round';
- for(const key in PBS){const S=PBS[key],C=CPB[key]||CPB[''];let any=false;ctx.beginPath();for(const b of pbul){if((b.st||'')!==key)continue;any=true;const sp=Math.hypot(b.vx,b.vy)||1,L=S.l*(b.pierce>0||(b.hit&&b.hit.length)?1.5:1);ctx.moveTo(b.x,b.y);ctx.lineTo(b.x-b.vx/sp*L,b.y-b.vy/sp*L)}
-  if(!any)continue;const wa=key===''?rl*.5:0,sm=key==='wing'?.75:1;ctx.globalAlpha=al;ctx.strokeStyle=CO;ctx.lineWidth=(S.w+wa+2.5)*sm;ctx.stroke();ctx.strokeStyle=C[0];ctx.lineWidth=(S.w+wa-.5)*sm;ctx.stroke();ctx.strokeStyle=C[1];ctx.lineWidth=(S.cw+wa*.5)*sm*.8;ctx.stroke();ctx.globalAlpha=1}
- if(up('pierce')){ctx.strokeStyle='rgba(63,224,255,.5)';for(const [o,a] of [[1,.5],[2,.3],[3,.15]]){ctx.globalAlpha=a*al;ctx.lineWidth=4;ctx.beginPath();for(const b of pbul){if(b.st||b.pierce<=0&&!(b.hit&&b.hit.length))continue;const sp=Math.hypot(b.vx,b.vy)||1,ux=b.vx/sp,uy=b.vy/sp,L=24;ctx.moveTo(b.x-ux*(L+o*10),b.y-uy*(L+o*10));ctx.lineTo(b.x-ux*(L+o*10+7),b.y-uy*(L+o*10+7))}ctx.stroke()}ctx.globalAlpha=1}
+function drawPBul(){if(!pbul.length)return;const al=clamp(.75-pbul.length/300,.42,.6),rl=up('rate');/* v13.33 弹壳式：己方子弹淡+细，敌弹保持亮 */ctx.save();ctx.lineCap='round';
+ for(const key in PBS){const S=PBS[key],C=CPB[key]||CPB[''];let any=false;ctx.beginPath();for(const b of pbul){if((b.st||'')!==key)continue;any=true;const sp=Math.hypot(b.vx,b.vy)||1,L=S.l*.8*(b.pierce>0||(b.hit&&b.hit.length)?1.15:1);ctx.moveTo(b.x,b.y);ctx.lineTo(b.x-b.vx/sp*L,b.y-b.vy/sp*L)}
+  if(!any)continue;const wa=key===''?rl*.5:0,sm=key==='wing'?.75:1;ctx.globalAlpha=al;ctx.strokeStyle=C[0];ctx.lineWidth=(S.w+wa-.5)*sm*.7;ctx.stroke();ctx.strokeStyle=C[1];ctx.lineWidth=(S.cw+wa*.5)*sm*.6;ctx.stroke();ctx.globalAlpha=1}
+ if(up('pierce')){ctx.strokeStyle='rgba(63,224,255,.5)';for(const [o,a] of [[1,.3],[2,.12]]){ctx.globalAlpha=a*al;ctx.lineWidth=2.5;ctx.beginPath();for(const b of pbul){if(b.st||b.pierce<=0&&!(b.hit&&b.hit.length))continue;const sp=Math.hypot(b.vx,b.vy)||1,ux=b.vx/sp,uy=b.vy/sp,L=24;ctx.moveTo(b.x-ux*(L+o*10),b.y-uy*(L+o*10));ctx.lineTo(b.x-ux*(L+o*10+7),b.y-uy*(L+o*10+7))}ctx.stroke()}ctx.globalAlpha=1}
  ctx.restore()}
 // 主按钮黄色；切角面板全部改圆角
 CBC.g=['#fff07a','#ffc21a','#c47800'];CBC.y=['#ffc88a','#ff8a1a','#b04a00'];
@@ -2335,7 +2335,7 @@ drawChoice=function(){const k=Math.min(1,CH.t/.25);const locked=CH.t<(CH.lock||0
   if(nl===1){ctx.save();rr(x+w-48,y-8,52,22,11);ctx.fillStyle='#ff3b4f';ctx.fill();ctx.lineWidth=2.5;ctx.strokeStyle=CO;ctx.stroke();ctx.restore();txt('NEW',x+w-22,y+3,11,'#fff',2,'center',900)}
   if(locked){ctx.save();ctx.globalAlpha=.3;rr(x,y,w,h,16);ctx.fillStyle='#000';ctx.fill();ctx.restore()}
   BTN.push({x,y,w,h,label:i?'选火力':'选护航',fn:()=>takeChoice(i)})});
- if(G.lvl&&CH.n3){const fr=1+((PB.unl||[]).includes('reroll2')?1:0),free=(G.reroll||0)<fr,c=free?0:30+20*((G.reroll||0)-fr);lightBtn(100,654,190,52,free?'刷新 ⟳ 免费':`刷新 ⟳ ${c} 金币`,'on',()=>{if(locked)return;if(!free&&G.coins<c){setTip('金币不足',1.2);return}if(!free)G.coins-=c;G.reroll=(G.reroll||0)+1;openChoice3();if(CH)CH.t=Math.max(CH.t,.3);ev('reroll',{c})},16)}};
+ if(G.lvl&&CH.n3){const fr=1+((PB.unl||[]).includes('reroll2')?1:0),free=(G.reroll||0)<fr,c=free?0:30+20*((G.reroll||0)-fr);lightBtn(100,654,190,52,free?'刷新 ⟳ 免费':`刷新 ⟳ ${c} 金币`,(free||G.coins>=c)?'on':'',()=>{if(locked)return;if(!free&&G.coins<c){setTip('金币不足',1.2);return}if(!free)G.coins-=c;G.reroll=(G.reroll||0)+1;openChoice3();if(CH)CH.t=Math.max(CH.t,.3);ev('reroll',{c})},16)}};
 
 // ===== v13.24 漫画风教学卡 / 提示气泡 =====
 function cBubble(x,y,w,h,fill,tx,ty){ctx.save();ctx.lineJoin='round';
@@ -2418,7 +2418,7 @@ function juBurst(x,y,r,n,col){ctx.beginPath();for(let i=0;i<n*2;i++){const a=i/(
 function drawAimLabels(){if(!G||!G.lvl||state!=='play'||CH)return;const on=G.lvl.id==='1-7'||G.time<40&&(()=>{try{return !localStorage.getItem('hh_tip_laser')}catch(e){return false}})();if(!on)return;let n=0;for(const e of enemies){if(n>=2)break;if(e.dead||!e.tele||!e.tgt)continue;const s=e.tgt;const x=e.x+(s.x-e.x)*.35,y=e.y+(s.y-e.y)*.35;if(y<130||y>H-120)continue;if(n>=1)break;/* v13.30 最多 1 条 */if(G.lvl.id==='1-1'&&fleet.some(q=>q.state==='dis'))continue;/* 1-1 修船教学时不叠「锁定方舟」 */if(fleet.some(q=>q.state!=='lost'&&!q.passed&&Math.abs(q.x-x)<58&&Math.abs(q.y-y)<70))continue;{const AP=window._arkPill;if(AP&&T-AP.T<.2&&Math.abs(AP.x-x)<AP.w+40&&Math.abs(AP.y-y)<26)continue;if((window._labs||[]).some(q=>Math.abs(q.x-x)<q.w+36&&Math.abs(q.y-y)<26))continue}n++;ctx.save();rr(x-32,y-11,64,22,11);ctx.fillStyle='rgba(200,90,0,.92)';ctx.fill();ctx.lineWidth=2;ctx.strokeStyle='#1a1030';ctx.stroke();ctx.restore();txt(s.k==='ark'?'锁定方舟':'瞄准中',x,y+1,12,'#fff',2,'center',900)}}
 function juBanner(a,b,d,pri){JU.ban={a,b,t:T,d:d||2.4,pri}}
 {const _al=alertList;alertList=function(){const L=_al();if(JU.ban)L.push(['juban',JU.ban.pri||7.5]);return L}}
-function drawJuBan(){const B=JU.ban;if(!B)return;if(state==='play'&&topAlert()!=='juban'){B.t+=1/60;return}/* v13.28 红色大横幅也进单一警报槽：方舟警示卡/通知在场时排队，提示气泡等它播完，不叠 */const t=T-B.t;if(t>B.d){JU.ban=null;return}const k=t<.15?t/.15:1,al=t>B.d-.3?(B.d-t)/.3:1;ctx.save();ctx.globalAlpha=al;ctx.translate(CX,318);ctx.scale(1,k);rr(-170,-34,340,68,14);ctx.fillStyle='#c8102e';ctx.fill();ctx.lineWidth=4;ctx.strokeStyle='#1a1030';ctx.stroke();ctx.restore();ctx.save();ctx.globalAlpha=al;txt(B.a,CX,306,24,'#fff',4,'center',900);txt(B.b,CX,334,13,'#ffe46b',2,'center',800);ctx.restore()}
+function drawJuBan(){const B=JU.ban;if(!B)return;if(state==='play'&&topAlert()!=='juban'){B.t+=1/60;return}/* v13.28 红色大横幅也进单一警报槽：方舟警示卡/通知在场时排队，提示气泡等它播完，不叠 */const t=T-B.t;if(t>B.d){JU.ban=null;return}const k=t<.15?.6+.4*t/.15:1,al=t>B.d-.3?(B.d-t)/.3:1;ctx.save();ctx.globalAlpha=al;ctx.translate(CX,318);ctx.scale(1,k);rr(-170,-34,340,68,14);ctx.fillStyle='#c8102e';ctx.fill();ctx.lineWidth=4;ctx.strokeStyle='#1a1030';ctx.stroke();ctx.restore();ctx.save();ctx.globalAlpha=al;txt(B.a,CX,306,24,'#fff',4,'center',900);txt(B.b,CX,334,13,'#ffe46b',2,'center',800);ctx.restore()}
 function drawJuice(){try{drawAimLabels()}catch(e){}
  if(G&&G.sgAnim&&G.sgAnim.t!==JU.sgT){JU.sgT=G.sgAnim.t;if(T-G.sgAnim.t<.5)JU.warp={t:T}}
  for(const p of JU.pops){p.t+=1/60;const k=p.t<.12?p.t/.12*1.25:p.t<.22?1.25-(p.t-.12)/.1*.25:1;const a=p.t>.75?Math.max(0,1-(p.t-.75)/.25):1;ctx.save();ctx.globalAlpha=a;ctx.translate(p.x,p.y);ctx.rotate(p.r);ctx.scale(k,k);juBurst(0,0,60,10,p.col);txt(p.w,0,10,p.w.length>5?22:28,'#1a1030',0,'center',900);txt(p.w,0,8,p.w.length>5?22:28,'#fff',4,'center',900);ctx.restore()}
@@ -2478,6 +2478,16 @@ function cardReady(){if(!CH)return false;if(CH.t>=9||(typeof AUTOMODE!=='undefin
 function drawTopFX(){if(CH)return;try{drawEvo()}catch(e){}try{drawJuBan()}catch(e){}}/* v13.32 进化/横幅在所有世界特效与 HUD 之后绘制 *//* v13.31 横幅最后画：在脉冲环/HUD 之上 */
 
 try{document.addEventListener('visibilitychange',()=>{if(!document.hidden){try{LVS=LVL.load()}catch(e){}}})}catch(e){}/* v13.31 切回前台重读存档 */
+
+/* ===== v13.33 ===== */
+/* Boss 最终阶段/倒计时、阶段横幅最短时间内不开三选一 */
+{const _xt=xpTick;xpTick=function(){try{if(cruiser&&cruiser.parts&&cruiser.state&&cruiser.state!=='dead'&&cruiser.state!=='gone'&&(cruiser.state==='critical'||(G._bph||0)>=3))return;if(JU.ban&&/^BOSS/.test(JU.ban.a)&&T-JU.ban.t<2.4)return}catch(e){}return _xt.apply(this,arguments)}}
+/* 方舟人数胶囊：最后再画一次，永远在子弹之上 */
+function drawArkPillTop(){const P=window._arkPill,A=typeof ark==='function'&&ark();if(!P||!A||T-P.T>.2)return;const n=Math.round(A.paxNow||0),w=P.w*2-12;ctx.save();rr(P.x-w/2,P.y-12,w,24,12);ctx.fillStyle='rgba(18,16,52,.92)';ctx.fill();ctx.lineWidth=2;ctx.strokeStyle='#8fe9ff';ctx.stroke();ctx.restore();txt('👤 '+n,P.x,P.y+1,14,'#fff',0,'center',900,NUMF)}
+/* 会打中方舟的敌弹：红边预警 */
+function drawArkThreat(){const A=typeof ark==='function'&&ark();if(!A||!ebul.length)return;ctx.save();ctx.strokeStyle='rgba(255,40,60,.95)';ctx.lineWidth=2.5;ctx.beginPath();let n=0;for(const b of ebul){if(n>40)break;const sp=Math.hypot(b.vx||0,b.vy||0);if(!sp)continue;const dx=A.x-b.x,dy=A.y-b.y,t2=(dx*b.vx+dy*b.vy)/(sp*sp);if(t2<0||t2>2.2)continue;const px=b.x+b.vx*t2-A.x,py=b.y+b.vy*t2-A.y;if(Math.hypot(px,py)>(A.r||30)+8)continue;n++;ctx.moveTo(b.x+(b.r||6)+4,b.y);ctx.arc(b.x,b.y,(b.r||6)+4,0,7)}ctx.stroke();ctx.restore()}
+{const _de=drawEBul;drawEBul=function(){_de.apply(this,arguments);try{if(state==='play')drawArkThreat()}catch(e){}}}
+{const _tf=drawTopFX;drawTopFX=function(){if(state==='play')try{drawArkPillTop()}catch(e){}_tf()}}
 
 // ===== v13.28 收尾 + 自查补丁（最后加载，只做覆盖/补充，不改数据结构）=====
 // 1) 「守护！」首次时刻：前 10–20 秒内第一次挡下射向船队的子弹 / 击落扑向船队的敌机 → 大字 + 慢动作 + 光环（每局一次）
