@@ -5013,7 +5013,7 @@ const day1={
     this.need=150; this.startPax=0; this.saved=[]; this.misses=[];
     this.impactN=0; this.leakN=0; this.leakBy={}; this._slipN=0; this.dilemma=0; this.fork=null;
     this.holdNeed=4.2; this.leftRing=0; this.neverIn=0; this._allowEnd=0; this.crises=[];
-    this._goldBanked=0;
+    this._goldBanked=0; this._banked=0; this._winShake=0; this._holdSlow=0; this._holdReal=0;
     this._bonusN=0; this.bonusGot=0; this.bonusMiss=0; this.bonusPax=0;
     this.medic=0; this.medShield=0; this.medBlocked=0; this.medicPax=0; this._medAt=-9;
     this._pairPick=null; this.pairDoom=null;
@@ -5126,7 +5126,7 @@ const day1={
     if(mark===10){this.k10=this.playerKills|0; this.fx10=fx}
     else {this.k20=this.playerKills|0; this.fx20=fx}
   },
-  bee(n,kind){
+  bee(n,kind,spec){
     this.waves=this.waves||[];
     this.waves.push({t:+(((G&&G.time)||0).toFixed(2)), kind:kind||'row', n:n});
     const push=(o)=>{
@@ -5153,9 +5153,14 @@ const day1={
     let live=0; for(const e of enemies)if(e&&!e.dead&&e.v21bee)live++;
     if(live>70)return;
     n=Math.min(n,80-live); if(n<1)return;
+    const soft=!!(spec&&spec.soft);
     for(let i=0;i<n;i++){
       const u=n<=1?0.5:i/(n-1); let x,y,vx=0,vy=96,hp=1,r=9;
-      if(kind==='swarm'){
+      if(kind==='swarm'&&soft){
+        x=CX+((i%5)-2)*22;
+        y=-40-Math.floor(i/5)*26;
+        vy=62;
+      }else if(kind==='swarm'){
         x=CX+((i%3)-1)*8;
         y=-18-Math.floor(i/3)*16;
         vy=128;
@@ -5672,12 +5677,14 @@ const day1={
     this.breakFeel(e);
     this.mark('wreck_camp_cleared', {kind:id, pax_gained:got, reward, firepower_tier:this.tier||0, fly:'fighter'});
   },
+  feelDur:{freeze:380, hold:1100, win:520},
   breakFeel(e){
     const x=e&&e.x!=null?e.x:CX, y=e&&e.y!=null?e.y:240;
     if(!(typeof test!=='undefined'&&test.on)){
       const now=(typeof performance!=='undefined')?performance.now():0;
-      this._holdSlow=now+240;
-      this._holdReal=now+760;
+      const dur=this.feelDur||{freeze:380, hold:1100};
+      this._holdSlow=now+dur.freeze;
+      this._holdReal=now+dur.hold;
       try{hitStop(0.09)}catch(err){}
     }
     try{feel.fxBump('shake')}catch(err){}
@@ -5707,6 +5714,8 @@ const day1={
     if(!(typeof test!=='undefined'&&test.on)){
       try{hitStop(0.1)}catch(err){}
       try{vib([40,70,40,24])}catch(err){}
+      const dur=this.feelDur||{win:520};
+      this._winShake=((typeof performance!=='undefined')?performance.now():0)+(dur.win||520);
     }
     try{feel.withJuice(()=>{
       try{SFX2.boom()}catch(err){}
@@ -5826,6 +5835,11 @@ const day1={
     if(camp.v21bonus)return '火力快→多救人';
     return '停在圈里';
   },
+  openGuide(t, cleared){
+    if((t||0)<2.4)return '废舰从上面下来，飞进圈里';
+    if((t||0)<5&&!cleared)return '去圈里，停住救人';
+    return '';
+  },
   drawPaxBar(){
     if(!isV21||!G||state==='title')return;
     let now=0, den=300;
@@ -5929,7 +5943,7 @@ const day1={
     this._script={
       camps,
       bees:[
-        {t:0.5, n:18, kind:'swarm'},
+        {t:0.5, n:11, kind:'swarm', soft:1},
         {t:3.6, n:16, kind:'swarm'},
         {t:6.4, n:3, kind:'elite'},
         {t:9.2, n:1, kind:'mini'},
@@ -6083,7 +6097,7 @@ const day1={
       try{broadcast('打破废舰，救出移民','救回 0 / 需要 150','#b8ffe0')}catch(e){}
       try{nums.push({x:CX, y:280, v:-18, txt:'救回 0 / 需要 150', col:'#ffe46b', t:0, life:1.6, big:2})}catch(e){}
     });
-    plan.bees.forEach((w,i)=>{sched('bee'+i,w.t,()=>{this.bee(w.n,w.kind)})});
+    plan.bees.forEach((w,i)=>{sched('bee'+i,w.t,()=>{this.bee(w.n,w.kind,w)})});
     [12,24,38,52,66].forEach((at,i)=>{sched('slip'+i,at,()=>{this.slip(4)})});
     plan.camps.forEach((c)=>{sched('camp'+c.id,c.t,()=>{if(state!=='play')return; this.spawnPlan(c)})});
     plan.cards.forEach((c,i)=>{sched('card'+i,c.t,()=>{if(state!=='play')return false; const ids=(this._cardPlan&&this._cardPlan[i])||c.ids; return this.offer(ids,c.prefer,c.tags)})});
@@ -6225,11 +6239,12 @@ const day1={
         if(F){
           const dx=camp.x-F.x, dy=camp.y-F.y, L=Math.hypot(dx,dy)||1;
           const x1=camp.x-dx/L*46, y1=camp.y-dy/L*46;
-          ctx.strokeStyle='#ffe46b'; ctx.lineWidth=4;
+          const opening=(G.time||0)<5&&!this.sawTier;
+          ctx.strokeStyle='#ffe46b'; ctx.lineWidth=opening?8:4;
           ctx.beginPath(); ctx.moveTo(F.x, F.y-28); ctx.lineTo(x1, y1); ctx.stroke();
           ctx.fillStyle='#ffe46b';
           ctx.beginPath(); ctx.moveTo(x1, y1);
-          ctx.lineTo(x1-dy/L*8, y1+dx/L*8); ctx.lineTo(x1+dy/L*8, y1-dx/L*8); ctx.closePath(); ctx.fill();
+          ctx.lineTo(x1-dy/L*10, y1+dx/L*10); ctx.lineTo(x1+dy/L*10, y1-dx/L*10); ctx.closePath(); ctx.fill();
         }
         ctx.restore();
         const Hn=(typeof H==='number')?H:844;
@@ -6240,11 +6255,23 @@ const day1={
       }
       ctx.save();
       ctx.fillStyle='rgba(8,36,24,.94)';
-      ctx.fillRect(18, 128, (typeof W==='number'?W:390)-36, 40);
+      ctx.fillRect(18, 136, (typeof W==='number'?W:390)-36, 40);
       ctx.strokeStyle='#ffe46b'; ctx.lineWidth=2;
-      ctx.strokeRect(18, 128, (typeof W==='number'?W:390)-36, 40);
+      ctx.strokeRect(18, 136, (typeof W==='number'?W:390)-36, 40);
       ctx.restore();
-      txt(camps.length>=2?'只能顾一边':'去解救战俘营', CX, 148, 22, '#fff', 4, 'center', 900);
+      const lead=this.openGuide(G&&G.time, this.sawTier);
+      txt(camps.length>=2?'只能顾一边':(lead||'去解救战俘营'), CX, 156, lead?24:22, '#fff', 4, 'center', 900);
+    }else{
+      const lead=this.openGuide(G&&G.time, this.sawTier);
+      if(lead){
+        ctx.save();
+        ctx.fillStyle='rgba(8,36,24,.94)';
+        ctx.fillRect(18, 136, (typeof W==='number'?W:390)-36, 40);
+        ctx.strokeStyle='#ffe46b'; ctx.lineWidth=2;
+        ctx.strokeRect(18, 136, (typeof W==='number'?W:390)-36, 40);
+        ctx.restore();
+        txt(lead, CX, 156, 22, '#fff', 4, 'center', 900);
+      }
     }
     if(this.toast&&this.toast.t<this.toast.life&&F){
       const a=this.toast.t<0.12?this.toast.t/0.12:this.toast.t>this.toast.life-0.35?(this.toast.life-this.toast.t)/0.35:1;
@@ -6263,12 +6290,16 @@ const day1={
     if(this._goldBanked)return 0;
     this._goldBanked=1;
     const got=Math.max(0, Math.floor((G&&G.coins)||0));
+    this._banked=got;
     if(got){meta.gold=(meta.gold|0)+got; try{meta.save()}catch(e){}}
     return got;
   },
   review(){
     if(!(G&&G.v21day1)||!END)return;
-    try{this.bankGold()}catch(e){}
+    try{
+      const got=this.bankGold();
+      if(END.v21banked==null)END.v21banked=got;
+    }catch(e){}
     const brief=this.brief();
     END.rec=brief;
     END.v21brief=brief;
@@ -7166,8 +7197,23 @@ wrap('drawChoice',function(orig){
 });
 
 wrap('drawLvEnd',function(orig){
+  let shook=false;
+  try{
+    if(isV21&&day1._winShake&&!(typeof test!=='undefined'&&test.on)){
+      const now=(typeof performance!=='undefined')?performance.now():0;
+      const left=day1._winShake-now;
+      if(left>0){
+        const k=Math.min(1, left/200);
+        const mag=9*k;
+        ctx.save();
+        ctx.translate(Math.sin(now*0.048)*mag, Math.cos(now*0.037)*mag*0.65);
+        shook=true;
+      }else day1._winShake=0;
+    }
+  }catch(e){}
   orig.call(this);
   try{V21.drawEnd()}catch(e){}
+  if(shook)try{ctx.restore()}catch(e){}
 });
 
 function trialMark(y){
@@ -7363,7 +7409,9 @@ V21.drawEnd=function(){
       drawMetaPanel();
       return;
     }
+    const banked=END.v21banked!=null?END.v21banked:(day1._banked||0);
     button(24,748,342,80,'养成','y',function(){meta.open=1},28,'金币 '+(meta.gold|0)+' · 买完立刻能感到');
+    txt('本局金币 +'+banked+' 已入账', CX, 762, 14, '#fff', 3, 'center', 900);
     return;
   }
   if(!flags.populationLedgerEnabled)return;
