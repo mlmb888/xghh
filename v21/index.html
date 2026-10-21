@@ -2181,8 +2181,8 @@ function drawLvEnd(){const E=END,d=G.lvl,r=E.res||{};ctx.fillStyle='#0d0f2e';ctx
   {const nx=LVL.all().filter(q=>LVL.prevs(q.id).includes(d.id));if(!nx.length&&!chapterChestReady(LVL.load())&&E.win&&LVL.chapterDone(1,LVL.load())){glass(36,580,318,40,12,.6);txt('第 1 章完成 · 章节宝箱已领取 ✓',CX,601,14,'#9df27a',2.2,'center',900)}if(!nx.length&&chapterChestReady(LVL.load())){const p=.5+.5*Math.sin(T*5);ctx.save();ctx.shadowColor='#ffd23a';ctx.shadowBlur=8+10*p;glass(36,580,318,40,12,.85);ctx.restore();txt('🎁 第 1 章宝箱已解锁！点继续打开',CX,601,15,'#ffd23a',2.4,'center',900)}if(nx.length){glass(36,580,318,40,12,.6);const s=nx.length>1?`下一站二选一：${nx.map(q=>q.name).join(' / ')}`:`下一关 ${nx[0].id} ${nx[0].name}`+(/新敌人/.test(nx[0].intro||'')?' · '+nx[0].intro.replace(/^.*新敌人[：:]\s*/,'新敌：').split(' · ')[0]:nx[0].kind==='boss'||nx[0].kind==='mini'?' · BOSS':'');txt(s,CX,600,13,'#ffe14a',2,'center',900)}}
   {const cr=E.win&&!LVL.all().some(q=>LVL.prevs(q.id).includes(d.id))&&chapterChestReady(LVL.load());button(40,628,310,64,cr?'打开章节宝箱 ›':'继续 ›','y',()=>{openMap(d.id,{id:d.id,s:r.stars,first:!!r.first,coins:((r.reward&&r.reward.coins)||0)+(r.bank||0)});if(cr)try{openChapterChest()}catch(e){}},24)}
  }else{txt(`${END.why||'失败'}${END.src?' · '+END.src:''}`,CX,218,19,'#ffb3bc',3,'center',900);
-  {const pg=clamp(E.prog||0,0,1);bar(70,248,250,16,pg,'#fff07a','#ffb21a');txt(`航程 ${Math.round(pg*100)}%`,CX,282,17,'#ffe46b',2.4,'center',900)}/* v13.28 航程条：一眼看出差多少 */
-  {const tp=failTip(END);const v21tip=!!(G&&G.v21day1);glass(36,308,318,v21tip?112:150,16,.7);txt('💡 怎么避免',CX,334,16,'#9df27a',2.4,'center',900);ctx.font=`900 20px ${FONT}`;const f0=Math.max(14,Math.min(20,Math.floor(20*296/Math.max(1,ctx.measureText(tp[0]).width))));txt(tp[0],CX,374,f0,'#fff',3,'center',900);if(tp[1]){ctx.font=`800 14px ${FONT}`;const f1=Math.max(11,Math.min(14,Math.floor(14*296/Math.max(1,ctx.measureText(tp[1]).width))));txt(tp[1],CX,410,f1,'#cfe6ff',2,'center',800)}}
+  {const v21fail=!!(G&&G.v21day1);if(!v21fail){const pg=clamp(E.prog||0,0,1);bar(70,248,250,16,pg,'#fff07a','#ffb21a');txt(`航程 ${Math.round(pg*100)}%`,CX,282,17,'#ffe46b',2.4,'center',900)}}/* v13.28 航程条：v21 首日改看救出的人，不再画这条 */
+  {const tp=failTip(END);const v21tip=!!(G&&G.v21day1);glass(36,v21tip?232:308,318,v21tip?100:150,16,.7);txt('💡 怎么避免',CX,v21tip?254:334,16,'#9df27a',2.4,'center',900);ctx.font=`900 20px ${FONT}`;const f0=Math.max(14,Math.min(20,Math.floor(20*296/Math.max(1,ctx.measureText(tp[0]).width))));txt(tp[0],CX,v21tip?286:374,f0,'#fff',3,'center',900);if(tp[1]){ctx.font=`800 14px ${FONT}`;const f1=Math.max(11,Math.min(14,Math.floor(14*296/Math.max(1,ctx.measureText(tp[1]).width))));txt(tp[1],CX,v21tip?318:410,f1,'#cfe6ff',2,'center',800)}}
   if(END.rec&&!(G&&G.v21day1)){ctx.font=`800 14px ${FONT}`;const fr=Math.max(11,Math.min(14,Math.floor(14*316/Math.max(1,ctx.measureText(END.rec).width))));txt(END.rec,CX,482,fr,'#8fe9ff',2,'center',800)}if(r.bank&&!(G&&G.v21day1))txt(`按进度获得 +${Math.round(r.bank*clamp((t-.4)/.8,0,1))} 金币`,CX,516,16,'#ffd23a',2.4,'center',900);
   const v21try=!!(G&&G.v21day1);const yTry=v21try?536:630,yAd=v21try?624:552;if(E.canRevive)lightBtn(44,yAd,302,54,'📺 看广告复活','y',()=>{adMock.arm=1;adMock(lvRevive)},17);if(E.costPending)txt('离开本页将消耗 1 个能源核心',CX,v21try?600:618,11,'#ffb3bc',0,'center',800);if(t>.9)lightBtn(40,yTry,310,60,'再试一次','g',()=>startLevel(d.id),24);else{glass(40,yTry,310,60,12,.3);txt('再试一次',CX,yTry+30,20,'rgba(255,255,255,.35)',0,'center',900)}}
  if(E.win)lightBtn(130,702,130,36,'再玩一次 ↻','',()=>startLevel(d.id),13);else lightBtn(120,700,150,36,'返回星图','',()=>{lvApplyCost();openMap(d.id)},13);drawAdMock()}
@@ -3146,7 +3146,9 @@ const cards={
       if(o.u.arm)s+=3;
       if(up(o.u.id)>=1)s+=4;
       if(o.u.id==='spread'||o.u.id==='pierce'||o.u.id==='wing')s+=1;
+      if(typeof day1!=='undefined'&&day1.on&&o.u.id==='spread'&&up(o.u.id)<1)s+=6;
       if(o.synPreview&&o.synPreview.progress==='1/2'&&!o.synPreview.upgrade)s+=5;
+      if(typeof day1!=='undefined'&&day1.on&&o.synPreview&&o.synPreview.progress==='1/2'&&!o.synPreview.upgrade)s+=8;
       if(s>bs){bs=s;bi=i}
     });
     return bi;
@@ -4929,6 +4931,7 @@ const day1={
     const g0=(typeof window!=='undefined'&&window.__test&&window.__test.fxLog)||{};
     this.fxBase={flash:g0.flash||0, shake:g0.shake||0, boom:g0.boom||0, hitstop:g0.hitstop||0};
     this.lockId=null; this._script=null; this._podLabel='';
+    this._cardPlan=null; this._cardRng=null; this._offerAt=0; this.offerLog=[];
     if(!this.on)return;
     try{opener.on=false; opener.released=true; opener.phase='off'}catch(e){}
     try{raid.on=false}catch(e){}
@@ -5058,11 +5061,112 @@ const day1={
       push({x:clamp(x,14,W-14), y, vx, vy, hp, maxHp:hp, r});
     }
   },
-  offer(ids, prefer, tags){
-    if(this.popupBlock('card'))return false;
-    if(typeof CH!=='undefined'&&CH)return false;
+  /* 1-1 卡池。权重跟主考表走，没写进主考表的卡也有底权，这样攻击力会进池。 */
+  cardPool(){
+    const exam=(typeof RICH_EXAM!=='undefined'&&RICH_EXAM['1-1'])||{};
+    const base={spread:28, pierce:22, wing:14, side:10, rear:10, rate:12, attr_atk:16, amp_rate:16, attr_ap:12, amp_speed:8, camp_door_charge:14};
+    return Object.keys(base).map(id=>({id, w:base[id]+((exam[id]||0)*4)}));
+  },
+  synergyPairs(){
+    return [['pierce','spread'],['wing','rate'],['side','rear'],['attr_atk','amp_rate']];
+  },
+  cardRng(){
+    let seed=1;
+    const seeded=typeof test!=='undefined'&&test&&test.seed!=null&&String(test.seed)!=='';
+    if(seeded)seed=(+test.seed)>>>0||1;
+    else if(typeof test!=='undefined'&&test&&test.on)seed=1;
+    else seed=((Date.now()&0xfffffff)||1);
+    this.cardSeed=seed>>>0;
+    return mulberry32((seed*0x9E3779B1+0xA5)>>>0||1);
+  },
+  cardOpen(id){
+    const u=rich.resolve(id);
+    if(!u)return false;
+    if(typeof up==='function'&&up(u.id)>=(u.max||1))return false;
+    return true;
+  },
+  drawTrio(rng){
+    const pool=this.cardPool().filter(c=>this.cardOpen(c.id));
+    const ids=[];
+    const used={};
+    for(let n=0;n<3;n++){
+      const live=pool.filter(c=>!used[c.id]);
+      if(!live.length)break;
+      let sum=0;
+      for(const c of live)sum+=c.w;
+      let r=rng()*sum;
+      let pick=live[live.length-1];
+      for(const c of live){r-=c.w; if(r<=0){pick=c; break}}
+      used[pick.id]=1;
+      ids.push(pick.id);
+    }
+    return ids;
+  },
+  placeCard(arr, id){
+    if(!arr||!id||arr.indexOf(id)>=0)return;
+    arr[arr.length-1]=id;
+    const seen={};
+    for(let i=0;i<arr.length;i++){
+      if(!seen[arr[i]]){seen[arr[i]]=1; continue}
+      const sub=this.cardPool().map(c=>c.id).find(x=>arr.indexOf(x)<0);
+      if(sub){arr[i]=sub; seen[sub]=1}
+    }
+  },
+  canSynergy(offers){
+    const pairs=this.synergyPairs();
+    for(const pair of pairs){
+      for(let i=0;i<offers.length;i++){
+        for(let j=0;j<offers.length;j++){
+          if(i===j)continue;
+          if(offers[i].indexOf(pair[0])>=0&&offers[j].indexOf(pair[1])>=0)return pair.slice();
+        }
+      }
+    }
+    return null;
+  },
+  repairSynergy(plan, idx, rng){
+    if(this.canSynergy(plan))return;
+    const pairs=this.synergyPairs();
+    for(const pair of pairs){
+      for(let j=0;j<plan.length;j++){
+        if(j===idx||!plan[j])continue;
+        for(let k=0;k<2;k++){
+          const id=pair[k], other=pair[1-k];
+          if(plan[j].indexOf(id)<0)continue;
+          this.placeCard(plan[idx], other);
+          return;
+        }
+      }
+    }
+    const pair=pairs[Math.floor(rng()*pairs.length)%pairs.length];
+    this.placeCard(plan[idx], pair[1]);
+    const host=idx===0?(plan[1]||plan[2]):plan[0];
+    if(host)this.placeCard(host, pair[0]);
+  },
+  dealCards(){
+    const rng=this._cardRng||(this._cardRng=this.cardRng());
+    const offers=[];
+    for(let i=0;i<3;i++)offers.push(this.drawTrio(rng));
+    if(!this.canSynergy(offers)){
+      const pairs=this.synergyPairs();
+      const pair=pairs[Math.floor(rng()*pairs.length)%pairs.length];
+      this.placeCard(offers[0], pair[0]);
+      this.placeCard(offers[1], pair[1]);
+      if(!this.canSynergy(offers))this.placeCard(offers[2], pair[1]);
+    }
+    const row=offers[0];
+    if(row&&row.indexOf('spread')<0){
+      const pair=this.canSynergy(offers)||[];
+      let idx=row.findIndex(id=>pair.indexOf(id)<0);
+      if(idx<0)idx=row.length-1;
+      row[idx]='spread';
+    }
+    this._cardPlan=offers;
+    return offers;
+  },
+  buildOpts(ids, tags){
     const opts=[];
-    for(let i=0;i<ids.length;i++){
+    for(let i=0;i<(ids||[]).length;i++){
       const id=ids[i];
       const u=rich.resolve(id);
       if(!u||(typeof up==='function'&&up(u.id)>=(u.max||1)))continue;
@@ -5071,8 +5175,6 @@ const day1={
       const label=(tags&&tags[i])||'';
       opts.push({u, tag:label||track||face.tag, sub:label||(u.arm?'点一张，主炮马上变样':(u.v21line||face.sub)), col:label==='救人更快'?'#b8ffe0':(label==='火力更强'?'#ffe46b':(track==='破营'?'#b8ffe0':(track==='属性'?'#ffd23a':face.col))), ic:face.ic});
     }
-    if(opts.length<2)return;
-    const ix=Math.max(0,Math.min(prefer||0, opts.length-1));
     synergy.paint({opts});
     for(let i=0;i<opts.length;i++){
       const label=tags&&tags[i];
@@ -5082,7 +5184,42 @@ const day1={
       opts[i].sub=extra?(label+' · '+extra):label;
       opts[i].col=label==='救人更快'?'#b8ffe0':(label==='火力更强'?'#ffe46b':opts[i].col);
     }
-    CH={t:0, lock:0.2, opts, n3:1, ot:(typeof performance!=='undefined'?performance.now():0), v21prefer:ix, v21day1:1};
+    return opts;
+  },
+  rerollOffer(){
+    if(typeof CH==='undefined'||!CH||!CH.opts)return false;
+    const prev=CH.opts.map(o=>o.u&&o.u.id).filter(Boolean).slice().sort().join(',');
+    const rng=this._cardRng||(this._cardRng=this.cardRng());
+    const idx=this._offerAt||0;
+    let ids=null;
+    for(let k=0;k<8;k++){
+      const plan=(this._cardPlan||[]).map(row=>row.slice());
+      while(plan.length<3)plan.push(this.drawTrio(rng));
+      plan[idx]=this.drawTrio(rng);
+      if(!this.canSynergy(plan))this.repairSynergy(plan, idx, rng);
+      ids=plan[idx].slice();
+      this._cardPlan=plan;
+      if(ids.slice().sort().join(',')!==prev)break;
+    }
+    const opts=this.buildOpts(ids);
+    if(opts.length<2)return false;
+    CH.opts=opts;
+    CH.t=Math.max(CH.t||0, 0.3);
+    CH.v21prefer=null;
+    CH.v21day1=1;
+    return ids.slice().sort().join(',')!==prev;
+  },
+  offer(ids, prefer, tags){
+    if(this.popupBlock('card'))return false;
+    if(typeof CH!=='undefined'&&CH)return false;
+    const opts=this.buildOpts(ids, tags);
+    if(opts.length<2)return;
+    const pinned=prefer!=null;
+    const ix=pinned?Math.max(0, Math.min(prefer|0, opts.length-1)):0;
+    CH={t:0, lock:0.2, opts, n3:1, ot:(typeof performance!=='undefined'?performance.now():0), v21prefer:pinned?ix:null, v21day1:1};
+    this.offerLog=this.offerLog||[];
+    this.offerLog.push(opts.map(o=>o.u.id));
+    this._offerAt=this.offerLog.length-1;
     G.xpLv=(G.xpLv||0)+1; G.xp=0;
     const t=+(G.time||0).toFixed(2);
     if(this.firstOffer==null)this.firstOffer=t;
@@ -5207,6 +5344,48 @@ const day1={
     parts.push('被撞掉 '+Math.round(this.impactN||0)+' 移民');
     parts.push('漏过底线 '+Math.round(this.leakN||0)+' 移民');
     return parts.join(' · ');
+  },
+  leakLine(){
+    const by=this.leakBy||{};
+    const spec=[
+      ['bee','小怪',1],
+      ['slip','漏网',2],
+      ['heavy','重型',2],
+      ['slip_heavy','重甲',3],
+      ['elite','精英',2],
+      ['mini','小头目',2]
+    ];
+    const parts=[];
+    const seen={};
+    spec.forEach(function(s){
+      const n=by[s[0]]|0;
+      if(!n)return;
+      seen[s[0]]=1;
+      parts.push(s[1]+'×'+n+'（-'+s[2]+'）');
+    });
+    Object.keys(by).forEach(function(k){
+      if(seen[k]||!(by[k]>0))return;
+      parts.push(k+'×'+by[k]);
+    });
+    return parts.length?('漏怪 '+parts.join('、')):'漏怪 没有漏过底线';
+  },
+  routeLine(){
+    const left=this.medic?('左路维修 +'+Math.round(this.medicPax||0)+(this.medBlocked?(' · 医务挡住 '+Math.round(this.medBlocked)):'')):'左路医务 没有';
+    const bonus=(this.bonusGot||0)>0?('加时营 '+this.bonusGot+' 座 +'+Math.round(this.bonusPax||0)):'加时营 没有';
+    return [left, bonus];
+  },
+  settleRows(){
+    const rows=[];
+    const miss=this.misses||[];
+    if(!miss.length)rows.push('营都救下了');
+    else for(const m of miss)rows.push((m.name||m.id)+' -'+m.n);
+    rows.push(this.leakLine());
+    const route=this.routeLine();
+    rows.push(route[0]);
+    rows.push(route[1]);
+    rows.push('星级线 一星 150 · 二星 220 · 三星 260');
+    if((this.impactN||0)>0)rows.push('被撞掉 '+Math.round(this.impactN)+' 人');
+    return rows;
   },
   noteCrisis(type, outcome, extra){
     this.crises=this.crises||[];
@@ -5351,17 +5530,16 @@ const day1={
     }else if(reward==='power'){
       const prev=this.roman(this.tier||0);
       this.plainCleared=true;
-      this.tier=Math.min(3,(this.tier||0)+2);
+      this.tier=Math.min(3,(this.tier||0)+1);
       this.tierAt=+((G.time||0).toFixed(2));
-      if(F){F.v21tier=this.tier; F.wlv=Math.min(4,(F.wlv||1)+2)}
-      this.powerMul=(this.powerMul||1)*1.65;
+      if(F){F.v21tier=this.tier; F.wlv=Math.min(4,(F.wlv||1)+1)}
       this.holdNeed=2.5;
       this.sawTier=1;
       tierUp=true;
       label='火力 '+prev+'→'+this.roman(this.tier)+' · 后续破营 2.5 秒';
       this.say('后续破营只要 2.5 秒');
       try{SFX2.powerup()}catch(err){}
-      this.mark('firepower_tier_up', {firepower_tier:this.tier, kind:id, jump:2, hold:2.5});
+      this.mark('firepower_tier_up', {firepower_tier:this.tier, kind:id, jump:1, hold:2.5});
     }else if(reward==='bonus'){
       this.plainCleared=true;
       this.bonusGot=(this.bonusGot||0)+1;
@@ -5527,6 +5705,19 @@ const day1={
     ctx.restore();
     txt(label, px+pw/2, py+ph/2+1, size, urgent||closing?col:'#fff7d0', 4, 'center', 900);
   },
+  /* 局内人数条的过线、二星、三星。1-1 固定 150 / 220 / 260。 */
+  barMarks(){
+    if(this.on)return [this.need||150, 220, 260];
+    let den=300, line=0.5;
+    try{den=paxDenom()||300; line=(flags.passLine||0.5)}catch(e){}
+    return [Math.round(den*line)];
+  },
+  campCue(camp){
+    if(!camp)return '';
+    if(!camp.v21arrived)return '未就位';
+    if(camp.v21bonus)return '火力快→多救人';
+    return '停在圈里';
+  },
   drawPaxBar(){
     if(!isV21||!G||state==='title')return;
     let now=0, den=300;
@@ -5535,12 +5726,20 @@ const day1={
     const need=this.on?(this.need||150):Math.round(den*(flags.passLine||0.5));
     const x=48, y=78, w=294, h=this.barKick>0.2?16:13;
     const f=Math.max(0, Math.min(1, den?shown/den:0));
-    const tick=den?need/den:0.5;
     const met=shown+0.5>=need;
     if(typeof bar==='function')bar(x, y, w, h, f, met?'#b8ffe0':'#9fd7ff', met?'#3dba6a':'#2f7de0');
+    const marks=this.barMarks().map((n,i)=>({n, col:this.on?(i===2?'#fff6d2':i===1?'#9fd8ff':'#ffe46b'):'#ffe46b'}));
     ctx.save();
-    ctx.fillStyle='#ffe46b';
-    ctx.fillRect(x+w*tick-1, y-4, 3, h+8);
+    ctx.textAlign='center';
+    ctx.textBaseline='bottom';
+    ctx.font='900 10px sans-serif';
+    for(const m of marks){
+      const u=den?Math.max(0, Math.min(1, m.n/den)):0.5;
+      const tx=x+w*u;
+      ctx.fillStyle=m.col;
+      ctx.fillRect(tx-1.5, y-5, 3, h+10);
+      ctx.fillText(String(m.n), tx, y-6);
+    }
     ctx.restore();
     txt('救回 '+Math.round(shown)+' / 需要 '+need, CX, y+h+16, 15, '#fff', 3, 'center', 900);
     const tier=(this.on?this.tier:(F&&F.v21tier))||0;
@@ -5632,11 +5831,7 @@ const day1={
         {t:46, n:18, kind:'v'},
         {t:59, n:16, kind:'row'}
       ],
-      cards:[
-        {t:3.3, ids:['spread','camp_door_charge','pierce'], prefer:0, tags:['火力更强','救人更快','火力更强']},
-        {t:21, ids:['pierce','side','wing'], prefer:0, tags:['火力更强','侧舷火力','僚机']},
-        {t:49, ids:['attr_ap','amp_rate','camp_door_charge'], prefer:0, tags:['破甲','救人更快','救人更快']}
-      ]
+      cards:(this._cardPlan||this.dealCards()).map((ids,i)=>({t:[3.3,21,49][i], ids:ids.slice()}))
     };
     return this._script;
   },
@@ -5782,7 +5977,7 @@ const day1={
     plan.bees.forEach((w,i)=>{sched('bee'+i,w.t,()=>{this.bee(w.n,w.kind)})});
     [12,24,38,52,66].forEach((at,i)=>{sched('slip'+i,at,()=>{this.slip(4)})});
     plan.camps.forEach((c)=>{sched('camp'+c.id,c.t,()=>{if(state!=='play')return; this.spawnPlan(c)})});
-    plan.cards.forEach((c,i)=>{sched('card'+i,c.t,()=>{if(state!=='play')return false; return this.offer(c.ids,c.prefer,c.tags)})});
+    plan.cards.forEach((c,i)=>{sched('card'+i,c.t,()=>{if(state!=='play')return false; const ids=(this._cardPlan&&this._cardPlan[i])||c.ids; return this.offer(ids,c.prefer,c.tags)})});
     const live=[];
     for(const e of enemies){
       if(!e||!e.v21camp||e.v21done)continue;
@@ -5907,14 +6102,16 @@ const day1={
     if(c){
       const R=this.campR();
       for(const camp of camps){
-        const near=this.inRing(camp);
-        const age=(G.time||0)-(camp.v21born||G.time||0);
         const metering=!!(camp.v21open&&camp.v21arrived);
         ctx.save();
-        if(!metering){
-          ctx.strokeStyle='#b8ffe0'; ctx.lineWidth=3; ctx.setLineDash([10,7]);
+        if(!camp.v21arrived){
+          ctx.strokeStyle='#9aa3b5'; ctx.lineWidth=2.5; ctx.setLineDash([4,8]);
           ctx.beginPath(); ctx.arc(camp.x, camp.y, R, 0, 7); ctx.stroke();
+          ctx.beginPath(); ctx.arc(camp.x, camp.y, R-16, 0, 7); ctx.stroke();
           ctx.setLineDash([]);
+        }else if(!metering){
+          ctx.strokeStyle='#d7ffe8'; ctx.lineWidth=3;
+          ctx.beginPath(); ctx.arc(camp.x, camp.y, R, 0, 7); ctx.stroke();
         }
         if(F){
           const dx=camp.x-F.x, dy=camp.y-F.y, L=Math.hypot(dx,dy)||1;
@@ -5929,8 +6126,8 @@ const day1={
         const Hn=(typeof H==='number')?H:844;
         const ly=Math.min(Hn-48, camp.y+this.campR()+20);
         txt(camp.v21bonus?'限时救援':'战俘营', camp.x, ly, camp.v21bonus?22:22, camp.v21bonus?'#ffe46b':'#f4fff8', 4, 'center', 900);
-        if(camp.v21bonus)txt('火力快→多救人', camp.x, Math.min(Hn-22, ly+28), 16, '#ffe46b', 3, 'center', 900);
-        else if(!near&&age>0.6)txt('停在圈内解救', camp.x, Math.min(Hn-22, ly+28), 16, '#f3fff8', 3, 'center', 900);
+        const cue=this.campCue(camp);
+        if(cue)txt(cue, camp.x, Math.min(Hn-22, ly+28), 16, camp.v21arrived?(camp.v21bonus?'#ffe46b':'#f3fff8'):'#d5dbe8', 3, 'center', 900);
       }
       ctx.save();
       ctx.fillStyle='rgba(8,36,24,.94)';
@@ -6612,6 +6809,11 @@ wrap('drawHUD',function(orig){
   orig.call(this);
   try{V21.draw()}catch(e){}
 });
+wrap('drawTopFX',function(orig){
+  const r=orig.call(this);
+  try{paintPaxTop()}catch(e){}
+  return r;
+});
 wrap('drawStageBar',function(orig,args){
   if(day1.on)return;
   return orig.apply(this,args);
@@ -6804,7 +7006,8 @@ function v21Cards(){
       if(!free&&G.coins<c){setTip('金币不足',1.2);return}
       if(!free)G.coins-=c;
       G.reroll=(G.reroll||0)+1;
-      openChoice3();
+      if(day1.on&&CH.v21day1)day1.rerollOffer();
+      else openChoice3();
       if(CH)CH.t=Math.max(CH.t,0.3);
       ev('reroll',{c});
     },16);
@@ -6830,11 +7033,18 @@ function trialMark(y){
     ctx.restore();
   }catch(e){}
 }
+function paintPaxTop(){
+  if(!isV21||!day1.on)return;
+  if(state!=='play'&&state!=='pause'&&state!=='dying')return;
+  const paint=function(){try{day1.drawPaxBar()}catch(e){}};
+  if(typeof hudShift==='function')hudShift(0, -(typeof TOPS==='number'?TOPS:0), paint);
+  else paint();
+}
 V21.draw=function(){
   if(!isV21||!G)return;
   try{day1.draw()}catch(e){}
   if((state==='play'||state==='pause')&&!day1.on)trialMark(78);
-  if(state!=='play')return;
+  if(state!=='play'){paintPaxTop();return}
   const c=crisis.current();
   if(c&&flags.escortThreatCuesEnabled){
     const y=118;
@@ -6892,27 +7102,27 @@ V21.draw=function(){
     txt(F.v21syn.name+' 成型',CX,F.y-76,15,'#fff',0,'center',900);
     ctx.restore();
   }
+  paintPaxTop();
 };
 V21.drawEnd=function(){
   if(!isV21||!END)return;
   if(G&&G.v21day1){
     const saved=END.win?(END.pax!=null?END.pax:(day1.result&&day1.result.pax)||0):((day1.result&&day1.result.pax)!=null?day1.result.pax:(END.lostPax||0));
     const need=day1.need||150;
-    const coins=Math.floor((G&&G.coins)||0);
-    const miss=day1.misses||[];
-    const missLine=miss.length?('漏了 '+miss.map(function(m){return (m.name||m.id)+' -'+m.n}).join('、')):'营都救下了';
-    const rows=[
-      missLine.length>28?(missLine.slice(0,27)+'…'):missLine,
-      '被撞掉 '+Math.round(day1.impactN||0)+' · 漏过底线 '+Math.round(day1.leakN||0),
-      '金币 '+coins+' · 金币用于局外升级'
-    ];
-    const y0=END.win?408:428;
-    const h=96;
+    const rows=day1.settleRows();
+    const win=!!END.win;
+    const y0=win?400:340;
+    const lh=win?16:13;
+    const h=34+rows.length*lh+10;
     ctx.save();
     ctx.fillStyle='rgba(6,10,28,.96)';
-    ctx.fillRect(16,y0,358,h);
+    ctx.fillRect(12,y0,366,h);
     txt('救回 '+Math.round(saved)+' / 需要 '+need+' · 火力 '+day1.roman(day1.tier||0),CX,y0+16,13,'#ffe46b',0,'center',900);
-    rows.forEach(function(ln,i){txt(ln,CX,y0+38+i*18,12,i===0?'#ffb4bc':(i===2?'#ffd23a':'#d5def2'),0,'center',800)});
+    rows.forEach(function(ln,i){
+      const yy=y0+34+i*lh;
+      const col=ln.indexOf('星级线')===0?'#9fd8ff':(ln.indexOf('左路')===0||ln.indexOf('加时营')===0?'#ffe46b':(ln.indexOf('漏怪')===0?'#d5def2':'#ffb4bc'));
+      txt(ln,CX,yy,12,col,0,'center',800);
+    });
     ctx.restore();
     return;
   }
