@@ -1,11 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#070914">
-<title>走廊试玩 v2 · 星港护航</title>
+<title>走廊试玩 v3 · 星港护航</title>
 <style>
   html,body{margin:0;padding:0;height:100%;background:#02030a;overflow:hidden;touch-action:none;
     -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;overscroll-behavior:none}
@@ -18,33 +17,36 @@
 <script>
 'use strict';
 /*
- * 星港护航 · 走廊试玩 v2（隔离原型）
+ * 星港护航 · 走廊试玩 v3（隔离原型）
  * 不参与 build/build.py，不替换线上根目录 index.html。
- * 镜头锁在方舟上：方舟固定在画面中下方，走廊向下滚。
- * 战机只在这一屏里飞，靠走位拦住冲向方舟的攻击。
+ * 镜头锁在方舟上：方舟固定在画面中下方，星域向下滚。
+ * 开阔星域，战机只在这一屏里飞。护航＝飞到受威胁的一侧开火。
+ * 硬撞和用身体挡弹会掉战机的血，普通敌人撞不死。
  * 胜：方舟抵达检查点。负：方舟被毁。一局约 76 秒。
- * 调试：?dbg=1&bot=1&t=4&go=1&seed=7
+ * 调试：?dbg=1&bot=1&t=8&go=1&seed=7  撞击对照：bot=ram
  */
 const Q=new URLSearchParams(location.search);
 const DBG=Q.get('dbg')==='1';
 if(DBG&&Q.get('seed')){let _s=(+Q.get('seed')||1)>>>0;Math.random=()=>{_s=_s+0x6D2B79F5|0;let t=Math.imul(_s^_s>>>15,1|_s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
-const BOT=DBG&&Q.get('bot')==='1';
+const BOT_MODE=DBG?(Q.get('bot')||''):'';
+const BOT=BOT_MODE==='1'||BOT_MODE==='shoot'||BOT_MODE==='ram';
+const BOT_RAM=BOT_MODE==='ram';
 const TIMESCALE=DBG?Math.min(8,Math.max(1,+(Q.get('t')||1)||1)):1;
 const FONT='"WenQuanYi Micro Hei","Droid Sans Fallback","PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Microsoft YaHei",sans-serif';
 const OUT='#1d1747';
 
 const LW=390;
-const HW=168;
 const ARK_SPEED=86;
 const GOAL=ARK_SPEED*76;
 const PLAYER_SPEED=470;
 const ARK_MAX=240;
-const MAX_E=20;
+const FIGHTER_MAX=100;
+const MAX_E=16;
 const ARK_K=0.68;
-const RANGE=112;
-const WING_RANGE=84;
-const BODY=17;
-const LANE=136;
+const RANGE=206;
+const WING_RANGE=148;
+const BODY=16;
+const LANE=176;
 const LEAK={left:'左侧漏了',right:'右侧漏了',front:'前方漏了',back:'后方漏了'};
 
 const cv=document.getElementById('c');
@@ -59,15 +61,25 @@ let draggedOnce=false;
 let fireCd=0,floatT=0,blipT=0;
 const cam={x:0,y:0};
 const ark={x:0,y:0,hp:ARK_MAX,hit:0,cab:[0,0,0],leak:null};
-const player={ox:0,oy:110,x:0,y:0,aim:Math.PI/2,bank:0,flash:0};
+const player={ox:0,oy:110,x:0,y:0,aim:Math.PI/2,bank:0,flash:0,hp:FIGHTER_MAX,ifr:0,hitstun:0,stun:0,blockT:0};
 let wings=[];
 const enemies=[],pbullets=[],ebullets=[],parts=[],nums=[],warns=[];
-const stats={flank:0,fan:0,brute:0,kills:0,blocks:0,rams:0,leaks:0};
+const stats={flank:0,fan:0,brute:0,kills:0,blocks:0,rams:0,leaks:0,stuns:0,hull:0};
 const sp={flank:0.35,fan:4.6,brute:16,side:-1};
 const held=Object.create(null);
 let drag=null,uiDown=null,pauseBtns=null,tgt=null;
 const stars=[];
-for(let i=0;i<90;i++)stars.push({sx:Math.random()*420-15,sy:Math.random()*900,z:0.25+Math.random()*0.75,r:0.5+Math.random()*1.5});
+for(let i=0;i<140;i++)stars.push({sx:Math.random()*460-30,sy:Math.random()*980,z:0.2+Math.random()*0.8,r:0.4+Math.random()*1.6});
+function h32(i){let t=Math.imul(i^0x9e3779b9,0x85ebca6b);t=Math.imul(t^t>>>13,0xc2b2ae35);return ((t^t>>>16)>>>0)/4294967296}
+const rocks=[];
+for(let i=0;i<42;i++){
+  const side=i%2?1:-1, h=h32(i+3), h2=h32(i+81);
+  rocks.push({x:side*(188+h*26), y:120+Math.floor(i/2)*300+h2*70, r:7+h2*7, rot:h*6.28, n:5+(i%3), cover:0});
+}
+for(let i=0;i<11;i++){
+  const side=i%2?1:-1, h=h32(i+210);
+  rocks.push({x:side*(72+h*34), y:320+i*580, r:15+h*11, rot:h*6.28, n:6, cover:1});
+}
 let actx=null,audioOk=false;
 
 const clamp=(v,a,b)=>v<a?a:v>b?b:v;
@@ -141,7 +153,7 @@ function w2s(x,y){return [(x-cam.x)+LW/2,(cam.y-y)+FOCUS]}
 function s2w(sx,sy){return [sx-LW/2+cam.x, cam.y-(sy-FOCUS)]}
 function lockCam(){cam.x=ark.x; cam.y=ark.y}
 function offBounds(pad){
-  const top=safe.top+102, bot=LH-safe.bot-30, left=22+pad, right=LW-22-pad;
+  const top=safe.top+118, bot=LH-safe.bot-22, left=8+pad, right=LW-8-pad;
   return {
     minX:left-LW/2+12, maxX:right-LW/2-12,
     minY:FOCUS-bot+12, maxY:FOCUS-top-12
@@ -203,11 +215,12 @@ function resetRun(){
   clock=0; shake=0; saidGate=false; fireCd=0; floatT=0;
   endTitle=''; endSub=''; draggedOnce=false; tgt=null;
   ark.x=0; ark.y=0; ark.hp=ARK_MAX; ark.hit=0; ark.cab=[0,0,0]; ark.leak=null;
-  player.ox=0; player.oy=108; player.aim=Math.PI/2; player.bank=0; player.flash=0;
-  wings=[{ox:-42,oy:-8,cd:0.05,aim:Math.PI/2,kind:'sand'},{ox:42,oy:-2,cd:0.12,aim:Math.PI/2,kind:'teal'}];
+  player.ox=0; player.oy=128; player.aim=Math.PI/2; player.bank=0; player.flash=0;
+  player.hp=FIGHTER_MAX; player.ifr=0; player.hitstun=0; player.stun=0; player.blockT=0;
+  wings=[{ox:-46,oy:-4,cd:0.08,aim:Math.PI/2,kind:'sand',guard:3,guardT:0},{ox:46,oy:2,cd:0.18,aim:Math.PI/2,kind:'teal',guard:3,guardT:0}];
   enemies.length=0; pbullets.length=0; ebullets.length=0; parts.length=0; nums.length=0; warns.length=0;
-  stats.flank=stats.fan=stats.brute=stats.kills=stats.blocks=stats.rams=stats.leaks=0;
-  sp.flank=0.2; sp.fan=2.4; sp.brute=13; sp.side=-1;
+  stats.flank=stats.fan=stats.brute=stats.kills=stats.blocks=stats.rams=stats.leaks=stats.stuns=stats.hull=0;
+  sp.flank=0.35; sp.fan=3.2; sp.brute=14; sp.side=-1;
   lockCam(); syncPlayer();
   tip.t=0;
 }
@@ -241,23 +254,40 @@ function hurtArk(n,src){
   try{if(navigator.vibrate)navigator.vibrate(16)}catch(e){}
   if(ark.hp>0&&ark.hp/ARK_MAX<0.34)toast('方舟危急',1.2);
 }
-function guard(x,y,ram){
-  if(ram)stats.rams++; else stats.blocks++;
-  burst(x,y,ram?'#ffe38a':'#c8ffb0',ram?10:8,ram?170:130);
-  floater(x,y-14,ram?'撞开':'拦住',ram?'#ffe9a0':'#d9ffc2');
-  blip(ram?190:860,0.04,0.032);
-  player.flash=0.12;
-  try{if(navigator.vibrate)navigator.vibrate(8)}catch(e){}
+function hurtFighter(n,x,y,label){
+  if(player.stun>0)return;
+  player.hp=Math.max(0,player.hp-n);
+  player.flash=0.2;
+  stats.hull+=n;
+  floater(x,y-16,label||('-'+n),'#ff8b9a',0.8,16,true);
+  blip(150,0.07,0.045);
+  try{if(navigator.vibrate)navigator.vibrate(12)}catch(e){}
+  if(player.hp<=0){
+    player.hp=36;
+    player.stun=2.05;
+    player.hitstun=2.05;
+    player.ifr=0.4;
+    stats.stuns++;
+    toast('战机重伤',1.3);
+    burst(player.x,player.y,'#ff8899',14,170);
+    player.ox*=0.35; player.oy=Math.min(player.oy,70);
+  }
+}
+function wingGuard(x,y){
+  stats.blocks++;
+  burst(x,y,'#b7ffe4',7,110);
+  floater(x,y-12,'护卫','#d8fff0');
+  blip(740,0.04,0.028);
 }
 
 function makeE(kind,x,y,ang,from,lane){
   const S={
-    mite:{hp:3,spd:108,turn:4.2,r:12,dmg:9},
-    diver:{hp:3,spd:156,turn:3.6,r:13,dmg:8,gun:1},
-    brute:{hp:16,spd:78,turn:1.8,r:20,dmg:18}
+    mite:{hp:8,spd:46,turn:2.3,r:12,dmg:10,ram:22},
+    diver:{hp:8,spd:50,turn:2.1,r:13,dmg:9,gun:1,ram:22},
+    brute:{hp:22,spd:30,turn:1.1,r:20,dmg:18,ram:34}
   }[kind];
-  return {kind,x,y,ang,from,lane:lane,hp:S.hp,max:S.hp,spd:S.spd,turn:S.turn,r:S.r,dmg:S.dmg,gun:S.gun||0,
-    shot:0.45+Math.random()*0.45,flash:0,ramT:0,cut:0,spent:0};
+  return {kind,x,y,ang,from,lane:lane,hp:S.hp,max:S.hp,spd:S.spd,turn:S.turn,r:S.r,dmg:S.dmg,ram:S.ram,gun:S.gun||0,
+    shot:0.7+Math.random()*0.5,flash:0,ramT:0,cut:0,spent:0};
 }
 function spawnFlank(w){
   stats.flank++;
@@ -265,9 +295,9 @@ function spawnFlank(w){
   const side=w.side;
   for(let i=0;i<w.n;i++){
     if(enemies.length>=MAX_E)return;
-    const y=ark.y+w.ahead+i*34+rand(-4,8);
-    const x=side*(HW-12-(i%2)*10);
-    const e=makeE(w.brute?'brute':'mite',x,y,side>0?Math.PI:0,'flank',side*(LANE-(i%2)*18));
+    const y=ark.y+w.ahead+i*46+rand(-6,10);
+    const x=side*(LW/2+36+(i%2)*16);
+    const e=makeE(w.brute?'brute':'mite',x,y,-Math.PI/2,'flank',side*(LANE-(i%2)*14));
     enemies.push(e);
   }
 }
@@ -278,37 +308,37 @@ function spawnFan(){
   for(let i=0;i<n;i++){
     if(enemies.length>=MAX_E)return;
     const u=n===1?0.5:i/(n-1);
-    const x=(-1+2*u)*(late?70:108);
-    const y=ark.y+Math.min(FOCUS-36,300)+Math.abs(u-0.5)*48;
-    const kind=i===1||i===n-1?'diver':'mite';
-    enemies.push(makeE(kind,x,y,-Math.PI/2,'fan',x));
+    const x=(-1+2*u)*(late?80:130);
+    const y=ark.y+Math.min(FOCUS-28,460)+Math.abs(u-0.5)*36;
+    const kind=(i===1)?'diver':'mite';
+    enemies.push(makeE(kind,x,y,-Math.PI/2,'fan',x*0.35));
   }
 }
 function updateSpawns(dt){
-  const ph=clock<10?0:clock<30?1:clock<58?2:3;
+  const ph=clock<12?0:clock<32?1:clock<58?2:3;
   const prog=ark.y/GOAL, late=prog>0.9;
-  const breathe=late?1.35:1;
+  const breathe=late?1.28:1;
   sp.flank-=dt;
   if(sp.flank<=0){
     const n=late?3:[3,4,4,3][ph];
-    warns.push({kind:'flank',t:0.78,side:sp.side,n,ahead:168+rand(0,36),brute:0});
-    const offP=[0.2,0.42,0.5,0.28][ph];
+    warns.push({kind:'flank',t:1.05,side:sp.side,n,ahead:340+rand(0,40),brute:0});
+    const offP=[0.22,0.4,0.48,0.26][ph];
     if(!late&&Math.random()<offP){
-      warns.push({kind:'flank',t:0.46,side:-sp.side,n:ph>=2?2:1,ahead:196,brute:0});
+      warns.push({kind:'flank',t:0.72,side:-sp.side,n:ph>=2?2:1,ahead:390,brute:0});
     }
     sp.side*=-1;
-    sp.flank=[1.85,1.5,1.35,1.7][ph]*breathe;
+    sp.flank=[2.15,1.75,1.55,1.9][ph]*breathe;
   }
   sp.fan-=dt;
   if(sp.fan<=0){
-    warns.push({kind:'fan',t:0.64,n:late?3:4});
-    sp.fan=[8.2,6.8,6.0,7.4][ph]*breathe;
+    warns.push({kind:'fan',t:0.95,n:late?3:4});
+    sp.fan=[8.4,7.2,6.4,7.6][ph]*breathe;
   }
   sp.brute-=dt;
-  if(sp.brute<=0&&clock>12&&!late){
+  if(sp.brute<=0&&clock>14&&!late){
     const side=Math.random()<0.5?-1:1;
-    warns.push({kind:'flank',t:0.7,side,n:1,ahead:150,brute:1});
-    sp.brute=(ph>=2?13:16)*breathe;
+    warns.push({kind:'flank',t:1.1,side,n:1,ahead:360,brute:1});
+    sp.brute=(ph>=2?14:17)*breathe;
   }
   for(let i=warns.length-1;i>=0;i--){
     warns[i].t-=dt;
@@ -326,39 +356,48 @@ function seek(e,tx,ty,dt){
   e.y+=Math.sin(e.ang)*e.spd*dt;
 }
 function steerEnemy(e,dt){
-  let tx=ark.x, ty=ark.y+6, spd=e.spd;
+  let tx=ark.x, ty=ark.y+6;
   if(e.spent){
-    tx=e.x+Math.sign(e.lane||1)*24;
+    tx=e.x+Math.sign(e.lane||1)*20;
     ty=ark.y-640;
-    spd=Math.max(e.spd,240);
   }else if(e.from==='flank'&&!e.cut){
     tx=e.lane;
-    ty=ark.y+18;
-    if(e.y<ark.y+86)e.cut=1;
+    ty=ark.y+36;
+    if(e.y<ark.y+168)e.cut=1;
   }else if(e.from==='flank'){
-    tx=ark.x+Math.sign(e.lane||1)*18;
-    ty=ark.y+2;
-  }else{
-    tx=ark.x+clamp(e.lane*0.22,-34,34);
+    tx=ark.x+Math.sign(e.lane||1)*20;
     ty=ark.y+4;
+  }else{
+    tx=ark.x+clamp(e.lane,-48,48);
+    ty=ark.y+8;
   }
+  const dist=Math.hypot(e.x-ark.x,e.y-ark.y);
+  let mul=1;
+  if(!e.spent){
+    if(dist>300)mul=0.5;
+    else if(dist>170)mul=0.72;
+  }else mul=2.4;
   const keep=e.spd;
-  e.spd=spd;
+  e.spd=keep*mul;
   seek(e,tx,ty,dt);
   e.spd=keep;
+}
+function pushOut(x,y,r){
+  for(const rk of rocks){
+    if(Math.abs(rk.y-y)>rk.r+r+8)continue;
+    let dx=x-rk.x, dy=y-rk.y, d=Math.hypot(dx,dy), min=r+rk.r;
+    if(d<min){
+      if(d<0.01){dx=1;dy=0;d=1}
+      const p=min-d+0.5;
+      x+=dx/d*p; y+=dy/d*p;
+    }
+  }
+  return {x,y};
 }
 function arkTouch(e,pad){
   const dx=(e.x-ark.x)/(30+(pad||0));
   const dy=(e.y-ark.y)/(46+(pad||0));
   return dx*dx+dy*dy<1;
-}
-function bodyOn(x,y,r){
-  if(Math.hypot(player.x-x,player.y-y)<BODY+r)return 'player';
-  for(const w of wings){
-    const p=wingAt(w);
-    if(Math.hypot(p.x-x,p.y-y)<12+r)return 'wing';
-  }
-  return '';
 }
 function updateEnemies(dt){
   for(let i=enemies.length-1;i>=0;i--){
@@ -366,29 +405,42 @@ function updateEnemies(dt){
     steerEnemy(e,dt);
     e.flash=Math.max(0,e.flash-dt);
     e.ramT=Math.max(0,e.ramT-dt);
-    const who=e.spent?'':bodyOn(e.x,e.y,e.r);
-    if(who&&e.ramT<=0){
-      e.ramT=0.42;
-      e.hp-=who==='player'?5:3;
+    const bumped=pushOut(e.x,e.y,e.r);
+    e.x=bumped.x; e.y=bumped.y;
+    if(!e.spent){
+      for(const w of wings){
+        const p=wingAt(w);
+        let dx=e.x-p.x, dy=e.y-p.y, d=Math.hypot(dx,dy), min=12+e.r;
+        if(d<min&&d>0.01){e.x+=dx/d*(min-d); e.y+=dy/d*(min-d)}
+      }
+    }
+    const hitF=!e.spent&&player.stun<=0&&Math.hypot(player.x-e.x,player.y-e.y)<BODY+e.r;
+    if(hitF&&e.ramT<=0){
+      const dx=player.x-e.x, dy=player.y-e.y, L=Math.hypot(dx,dy)||1;
+      player.ox+=dx/L*92; player.oy+=dy/L*78;
+      e.x-=dx/L*12; e.y-=dy/L*8;
+      if(e.kind==='brute')e.hp=Math.max(1,e.hp-1);
       e.flash=0.08;
-      const dx=e.x-ark.x, dy=e.y-ark.y, L=Math.hypot(dx,dy)||1;
-      e.x+=dx/L*34; e.y+=dy/L*26;
-      e.ang=Math.atan2(dy,dx);
-      guard(e.x,e.y,true);
-      if(e.hp<=0){e.hp=0; stats.kills++; burst(e.x,e.y,'#ffd27a',8,150)}
-    }else if(!e.spent&&e.ramT<=0&&arkTouch(e,e.r*0.22)){
+      e.ramT=0.9;
+      player.hitstun=Math.max(player.hitstun,1.05);
+      player.ifr=Math.max(player.ifr,0.2);
+      stats.rams++;
+      burst(player.x,player.y,'#ffb0a0',8,140);
+      hurtFighter(e.ram,player.x,player.y,'-'+e.ram);
+      clampOff(); syncPlayer();
+    }else if(!e.spent&&e.ramT<=0&&arkTouch(e,e.r*0.2)){
       e.spent=1;
       hurtArk(e.dmg,e);
     }
-    if(!e.spent&&e.gun&&ebullets.length<12){
+    if(!e.spent&&e.gun&&ebullets.length<10){
       e.shot-=dt;
-      if(e.shot<=0&&e.y>ark.y+30&&e.y<ark.y+FOCUS-20){
-        e.shot=2.15;
+      if(e.shot<=0&&e.y>ark.y+40&&e.y<ark.y+FOCUS-30){
+        e.shot=2.6;
         let a=Math.atan2((ark.y+8)-e.y,ark.x-e.x);
-        a+=rand(-0.14,0.14);
+        a+=rand(-0.12,0.12);
         const down=-Math.PI/2;
-        a=down+clamp(angDelta(down,a),-0.9,0.9);
-        ebullets.push({x:e.x,y:e.y,px:e.x,py:e.y,vx:Math.cos(a)*150,vy:Math.sin(a)*150,life:2.6,r:5,dmg:9});
+        a=down+clamp(angDelta(down,a),-0.75,0.75);
+        ebullets.push({x:e.x,y:e.y,px:e.x,py:e.y,vx:Math.cos(a)*96,vy:Math.sin(a)*96,life:3.2,r:5,dmg:8});
       }
     }
     if(e.hp<=0||e.y<ark.y-(LH-FOCUS)-70||(e.spent&&e.y<ark.y-90)){
@@ -429,27 +481,46 @@ function pickThreat(x,y,range,avoid){
 function shoot(x,y,a,speed,life,wing){
   pbullets.push({x,y,px:x,py:y,vx:Math.cos(a)*speed,vy:Math.sin(a)*speed,life,r:wing?2.6:3.4,wing:!!wing,hits:0,ignore:null});
 }
+function hitRock(x0,y0,x1,y1){
+  for(const rk of rocks){
+    if(rk.y<y0-80&&rk.y<y1-80)continue;
+    if(rk.y>y0+80&&rk.y>y1+80)continue;
+    if(segHit(x0,y0,x1,y1,rk.x,rk.y,rk.r+2))return rk;
+  }
+  return null;
+}
 function updateCombat(dt){
   player.flash=Math.max(0,player.flash-dt);
+  player.ifr=Math.max(0,player.ifr-dt);
+  player.hitstun=Math.max(0,player.hitstun-dt);
+  player.stun=Math.max(0,player.stun-dt);
   tgt=pickThreat(player.x,player.y,RANGE,null);
   const face=tgt?Math.atan2(tgt.y-player.y,tgt.x-player.x):Math.PI/2;
   player.aim=damp(player.aim,face,14,dt);
   player.bank=damp(player.bank,clamp(-player.ox*0.004,-0.25,0.25),8,dt);
   fireCd-=dt;
-  if(tgt&&fireCd<=0){
-    fireCd=0.09;
+  let tooClose=false;
+  if(player.stun<=0){
+    for(const e of enemies){
+      if(!e.spent&&Math.hypot(e.x-player.x,e.y-player.y)<56){tooClose=true; break}
+    }
+  }
+  const canFire=player.stun<=0&&player.hitstun<=0&&!tooClose;
+  if(canFire&&tgt&&fireCd<=0){
+    fireCd=0.082;
     const a=Math.atan2(tgt.y-player.y,tgt.x-player.x);
-    shoot(player.x+Math.cos(a)*14,player.y+Math.sin(a)*14,a,820,0.145,false);
+    shoot(player.x+Math.cos(a)*14,player.y+Math.sin(a)*14,a,780,0.28,false);
     player.aim=a;
   }
   for(const w of wings){
+    if(w.guard<3){w.guardT+=dt; if(w.guardT>=8){w.guard++; w.guardT=0}}
     const p=wingAt(w);
     const wt=pickThreat(p.x,p.y,WING_RANGE,tgt);
     w.aim=wt?Math.atan2(wt.y-p.y,wt.x-p.x):player.aim;
     w.cd-=dt;
-    if(wt&&w.cd<=0){
-      w.cd=0.16;
-      shoot(p.x+Math.cos(w.aim)*10,p.y+Math.sin(w.aim)*10,w.aim,700,0.13,true);
+    if(wt&&w.cd<=0&&canFire){
+      w.cd=0.34;
+      shoot(p.x+Math.cos(w.aim)*10,p.y+Math.sin(w.aim)*10,w.aim,640,0.24,true);
     }
   }
   for(let i=pbullets.length-1;i>=0;i--){
@@ -465,13 +536,16 @@ function updateCombat(dt){
     }
     if(hitE){
       hitE.hp-=1; hitE.flash=0.06;
-      if(hitE.hp<=0){hitE.hp=0; stats.kills++; burst(hitE.x,hitE.y,'#ffd0ea',6,120)}
+      if(hitE.hp<=0){hitE.hp=0; stats.kills++; burst(hitE.x,hitE.y,'#ffd0ea',8,140)}
       b.hits++; b.ignore=hitE;
       const sp=Math.hypot(b.vx,b.vy)||1;
       b.x=hitE.x+b.vx/sp*(hitE.r+7);
       b.y=hitE.y+b.vy/sp*(hitE.r+7);
       b.px=b.x; b.py=b.y;
       if(b.hits>=(b.wing?1:2))b.life=0;
+    }else if(hitRock(b.px,b.py,b.x,b.y)){
+      burst(b.x,b.y,'#c5d0e4',4,80);
+      b.life=0;
     }
     if(b.life<=0)pbullets.splice(i,1);
   }
@@ -479,11 +553,16 @@ function updateCombat(dt){
     const b=ebullets[i];
     b.px=b.x; b.py=b.y; b.x+=b.vx*dt; b.y+=b.vy*dt; b.life-=dt;
     let dead=b.life<=0;
-    if(!dead&&segHit(b.px,b.py,b.x,b.y,player.x,player.y,BODY+b.r)){guard(player.x,player.y,false); dead=true}
+    if(!dead&&hitRock(b.px,b.py,b.x,b.y)){burst(b.x,b.y,'#ffd0dc',4,70); dead=true}
+    if(!dead&&player.stun<=0&&clock-player.blockT>0.05&&segHit(b.px,b.py,b.x,b.y,player.x,player.y,BODY+b.r)){
+      player.blockT=clock;
+      hurtFighter(6,player.x,player.y,'-6');
+      dead=true;
+    }
     if(!dead){
       for(const w of wings){
         const p=wingAt(w);
-        if(segHit(b.px,b.py,b.x,b.y,p.x,p.y,12+b.r)){guard(p.x,p.y,false); dead=true; break}
+        if(w.guard>0&&segHit(b.px,b.py,b.x,b.y,p.x,p.y,12+b.r)){w.guard--; wingGuard(p.x,p.y); dead=true; break}
       }
     }
     if(!dead&&arkTouch({x:b.x,y:b.y,r:0},8)){hurtArk(b.dmg,b); dead=true}
@@ -502,29 +581,50 @@ function keySteer(dt){
   player.oy+=y/L*PLAYER_SPEED*dt;
 }
 function botSteer(dt){
+  if(player.stun>0)return;
+  if(!BOT_RAM){
+    let nx=0,ny=0,danger=false;
+    for(const e of enemies){
+      if(e.spent)continue;
+      const dx=player.x-e.x, dy=player.y-e.y, d=Math.hypot(dx,dy);
+      if(d<118){danger=true; nx+=dx/(d||1); ny+=dy/(d||1)}
+    }
+    if(danger){
+      const L=Math.hypot(nx,ny)||1;
+      player.ox+=nx/L*PLAYER_SPEED*dt;
+      player.oy+=ny/L*PLAYER_SPEED*dt;
+      return;
+    }
+  }
   let best=null,bestS=1e9;
   const consider=(x,y,eta,bias)=>{
     const s=eta-bias;
     if(s<bestS){bestS=s; best={x,y}}
   };
   for(const e of enemies){
-    if(e.spent||e.y<ark.y-30)continue;
-    const d=Math.hypot(e.x-ark.x,e.y-(ark.y+12));
-    consider(e.x,Math.max(e.y,ark.y+40),d/Math.max(90,e.spd+36),e.kind==='brute'?0.28:0);
+    if(e.spent||e.y<ark.y-20)continue;
+    const d=Math.hypot(e.x-ark.x,e.y-(ark.y+16));
+    consider(e.x,e.y,d/Math.max(80,e.spd+70),e.kind==='brute'?0.45:0);
   }
   for(const w of warns){
-    if(w.kind==='fan')consider(0,ark.y+210,w.t+0.32,0.05);
-    else consider(w.side*(LANE-8),ark.y+150,w.t+0.36,(w.n||1)*0.06+(w.brute?0.25:0));
+    if(w.kind==='fan')consider(0,ark.y+Math.min(FOCUS-80,400),w.t+0.4,0.08);
+    else consider(w.side*(LANE-20),ark.y+220,w.t+0.45,(w.n||1)*0.08+(w.brute?0.35:0));
   }
-  let tx=0, ty=120;
+  let tx=0, ty=170;
   if(best){
-    const dx=best.x-ark.x, dy=best.y-ark.y, L=Math.hypot(dx,dy)||1;
-    const hold=clamp(L*0.78,52,160);
-    tx=clamp(dx/L*hold,-148,148);
-    ty=clamp(dy/L*hold,42,210);
+    if(BOT_RAM){
+      tx=best.x-ark.x; ty=best.y-ark.y;
+    }else{
+      const dx=best.x-ark.x, dy=best.y-(ark.y+30), L=Math.hypot(dx,dy)||1;
+      const along=clamp(L*0.42,80,190);
+      tx=dx/L*along - dy/L*78;
+      ty=dy/L*along + dx/L*78;
+    }
   }
+  tx=clamp(tx,-160,160);
+  ty=clamp(ty,48,Math.max(90,FOCUS-160));
   const ox=tx-player.ox, oy=ty-player.oy, L=Math.hypot(ox,oy)||1;
-  if(L>8){player.ox+=ox/L*PLAYER_SPEED*dt; player.oy+=oy/L*PLAYER_SPEED*dt}
+  if(L>6){player.ox+=ox/L*PLAYER_SPEED*dt; player.oy+=oy/L*PLAYER_SPEED*dt}
 }
 function step(dt){
   clock+=dt;
@@ -538,6 +638,9 @@ function step(dt){
   else if(!drag)keySteer(dt);
   clampOff();
   syncPlayer();
+  const pp=pushOut(player.x,player.y,BODY-2);
+  player.ox+=pp.x-player.x; player.oy+=pp.y-player.y;
+  clampOff(); syncPlayer();
   updateSpawns(dt);
   updateEnemies(dt);
   updateCombat(dt);
@@ -685,33 +788,44 @@ function drawWorldBackdrop(){
     ctx.fillRect(sx,sy,s.r,s.r);
   }
   ctx.globalAlpha=1;
-  const [xL]=w2s(-HW,0), [xR]=w2s(HW,0);
-  const floor=ctx.createLinearGradient(0,0,0,LH);
-  floor.addColorStop(0,'#1a2450'); floor.addColorStop(1,'#10162e');
-  ctx.fillStyle=floor; ctx.fillRect(xL,0,xR-xL,LH);
-  ctx.save(); ctx.beginPath(); ctx.rect(xL,0,Math.max(0,xR-xL),LH); ctx.clip();
-  ctx.strokeStyle='rgba(140,170,255,.09)'; ctx.lineWidth=1;
-  const yBot=cam.y-(LH-FOCUS)-80, yTop=cam.y+FOCUS+80;
-  for(let y=Math.floor(yBot/52)*52;y<yTop;y+=52){
-    const [,sy]=w2s(0,y);
-    ctx.beginPath(); ctx.moveTo(xL,sy); ctx.lineTo(xR,sy); ctx.stroke();
+  const neb=ctx.createRadialGradient(LW*0.5,LH*0.42,40,LW*0.5,LH*0.4,LH*0.7);
+  neb.addColorStop(0,'rgba(46,62,120,.28)');
+  neb.addColorStop(1,'rgba(7,9,20,0)');
+  ctx.fillStyle=neb; ctx.fillRect(0,0,LW,LH);
+  for(const w of warns){
+    if(w.kind!=='flank')continue;
+    const hot=w.t<0.45;
+    const g=ctx.createLinearGradient(w.side<0?0:LW,0,w.side<0?86:LW-86,0);
+    g.addColorStop(0,hot?'rgba(255,60,80,.28)':'rgba(255,196,70,.16)');
+    g.addColorStop(1,'rgba(255,80,80,0)');
+    ctx.fillStyle=g; ctx.fillRect(w.side<0?0:LW-86,0,86,LH);
   }
-  for(const x of [-110,-55,0,55,110]){
-    const [sx]=w2s(x,0);
-    ctx.beginPath(); ctx.moveTo(sx,0); ctx.lineTo(sx,LH); ctx.stroke();
-  }
-  ctx.strokeStyle='rgba(190,220,255,.16)'; ctx.lineWidth=1.4;
-  for(let y=Math.floor(yBot/86)*86;y<yTop;y+=86){
-    const [sx,sy]=w2s(0,y);
-    ctx.beginPath(); ctx.moveTo(sx,sy-12); ctx.lineTo(sx-16,sy+8); ctx.moveTo(sx,sy-12); ctx.lineTo(sx+16,sy+8); ctx.stroke();
-  }
-  ctx.restore();
-  for(const side of [-1,1]){
-    const edge=side<0?xL:xR;
-    const flashing=warns.some(w=>w.kind==='flank'&&w.side===side&&!w.brute);
-    ctx.fillStyle=flashing?`rgba(255,70,90,${0.28+0.22*Math.sin(clock*14)})`:'#1b2a62';
-    ctx.fillRect(side<0?edge-22:edge,0,22,LH);
-    ctx.fillStyle='#8fe9ff'; ctx.fillRect(side<0?edge-3:edge,0,3,LH);
+  const vg=ctx.createLinearGradient(0,0,LW,0);
+  vg.addColorStop(0,'rgba(0,0,0,.28)');
+  vg.addColorStop(0.12,'rgba(0,0,0,0)');
+  vg.addColorStop(0.88,'rgba(0,0,0,0)');
+  vg.addColorStop(1,'rgba(0,0,0,.28)');
+  ctx.fillStyle=vg; ctx.fillRect(0,0,LW,LH);
+}
+function drawRocks(){
+  for(const rk of rocks){
+    const [sx,sy]=w2s(rk.x,rk.y);
+    if(sx<-50||sx>LW+50||sy<-50||sy>LH+50)continue;
+    ctx.save(); ctx.translate(sx,sy); ctx.rotate(rk.rot+cam.y*0.0004);
+    ctx.beginPath();
+    for(let i=0;i<rk.n;i++){
+      const a=i/rk.n*Math.PI*2;
+      const rad=rk.r*(0.75+0.28*Math.abs(Math.sin(a*2+rk.rot)));
+      const px=Math.cos(a)*rad, py=Math.sin(a)*rad*0.9;
+      if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.closePath();
+    ctx.fillStyle=rk.cover?'#6d7688':'#465066';
+    ctx.fill();
+    ctx.lineWidth=2; ctx.strokeStyle='#161b28'; ctx.stroke();
+    ctx.fillStyle='rgba(210,220,235,.35)';
+    ctx.fillRect(-rk.r*0.2,-rk.r*0.15,rk.r*0.28,2);
+    ctx.restore();
   }
 }
 function activeSides(){
@@ -726,7 +840,7 @@ function activeSides(){
   for(const e of enemies){
     const dx=e.x-ark.x, dy=e.y-ark.y, d=Math.hypot(dx,dy);
     const eta=d/Math.max(70,e.spd+ARK_SPEED*0.35);
-    if(d<42||eta>2.05)continue;
+    if(d<48||eta>3.1)continue;
     put(sideOf(dx,dy),eta);
   }
   return sides;
@@ -763,7 +877,7 @@ function drawThreats(){
 function drawGate(){
   const dist=GOAL-ark.y;
   const [sx,sy]=w2s(0,GOAL);
-  const [xL]=w2s(-HW,0), [xR]=w2s(HW,0);
+  const [xL]=w2s(-LW/2+18,0), [xR]=w2s(LW/2-18,0);
   if(sy>-40&&sy<LH+40){
     ctx.save(); ctx.translate(0,sy);
     ctx.fillStyle='rgba(130,230,255,.2)'; ctx.fillRect(xL,-8,xR-xL,16);
@@ -772,7 +886,7 @@ function drawGate(){
     ctx.restore();
     return;
   }
-  if(dist>0&&dist<1800)txt('▲  检查点  '+Math.max(1,Math.ceil(dist/ARK_SPEED))+'s',LW/2,safe.top+92,13,'#c9f6ff',3);
+  if(dist>0&&dist<1800)txt('▲  检查点  '+Math.max(1,Math.ceil(dist/ARK_SPEED))+'s',LW/2,safe.top+128,13,'#c9f6ff',3);
 }
 function drawConvoy(){
   for(const w of wings){
@@ -834,7 +948,7 @@ function drawHud(){
   const lo=ark.hp/ARK_MAX<=0.34;
   const y0=safe.top+12;
   txt('走廊试玩',16,y0+8,13,'#c9d7ff',2,'left',800);
-  txt('v2',78,y0+8,12,'#ffe27a',2,'left',800);
+  txt('v3',78,y0+8,12,'#ffe27a',2,'left',800);
   const L=layout();
   roundRect(L.pause.x,L.pause.y,L.pause.w,L.pause.h,10);
   ctx.fillStyle='rgba(12,16,40,.72)'; ctx.fill();
@@ -844,23 +958,29 @@ function drawHud(){
   txt('方舟',16,y0+34,14,'#fff',3,'left');
   bar(58,y0+26,200,14,f,lo?'#ffb0b8':'#d6ffb0',lo?'#ff2a40':'#2fc23a');
   txt(Math.ceil(ark.hp)+'',268,y0+33,13,'#fff',2,'left',800);
+  const fh=clamp(player.hp/FIGHTER_MAX,0,1);
+  const flo=player.hp/FIGHTER_MAX<=0.36||player.stun>0;
+  txt('战机',16,y0+54,12,flo?'#ffd0d6':'#d7f4ff',2,'left',800);
+  bar(58,y0+48,160,10,fh,flo?'#ffb0b8':'#bfefff',flo?'#ff4d6a':'#3aa0ff');
+  if(player.stun>0)txt('重伤',224,y0+53,12,'#ffb0bc',2,'left',800);
   const p=clamp(ark.y/GOAL,0,1);
-  txt('护住方舟到达前方',16,y0+56,13,'#d5ecff',2,'left',800);
-  txt(Math.round(p*100)+'%',LW-16,y0+56,14,'#fff',3,'right');
-  txt('护住 '+(stats.blocks+stats.rams),16,y0+76,12,'#d9ffc2',2,'left',700);
-  if(!draggedOnce&&!BOT&&clock<7){
-    txt('飞到亮起的一侧 · 身体拦住 · 舰队齐射',LW/2,LH-safe.bot-18,13,'#e7f2ff',3);
+  txt('护住方舟到达前方',16,y0+74,13,'#d5ecff',2,'left',800);
+  txt(Math.round(p*100)+'%',LW-16,y0+74,14,'#fff',3,'right');
+  txt('击落 '+stats.kills,16,y0+94,12,'#ffe7a8',2,'left',700);
+  if(!draggedOnce&&!BOT&&clock<8){
+    txt('飞到亮起的一侧开火 · 硬撞会受伤',LW/2,LH-safe.bot-16,13,'#e7f2ff',3);
   }
   if(tip.t>0){
     ctx.globalAlpha=clamp(tip.t,0,1);
-    txt(tip.txt,LW/2,y0+98,15,'#fff',3);
+    txt(tip.txt,LW/2,y0+116,15,'#fff',3);
     ctx.globalAlpha=1;
   }
   if(DBG)txt(Math.round(fps)+'  e'+enemies.length+'  '+clock.toFixed(0)+'s',10,LH-12,11,'#9ab',0,'left',700);
 }
 function drawPlayfield(){
   ctx.save(); ctx.translate(shakeX,shakeY);
-  drawWorldBackdrop();
+    drawWorldBackdrop();
+    drawRocks();
   if(state==='title'){
     const [ax,ay]=s2w(LW/2,FOCUS);
     blit('ark',ax,ay,0,1,false);
@@ -894,10 +1014,10 @@ function drawTitle(){
   roundRect(L.card.x,L.card.y,L.card.w,L.card.h,18);
   ctx.fillStyle='rgba(12,16,44,.9)'; ctx.fill();
   ctx.lineWidth=2.5; ctx.strokeStyle=OUT; ctx.stroke();
-  const lines=['方舟固定在画面下方','战机只在这一屏里飞','飞到亮起的一侧拦住','漏掉的才会打中方舟'];
+  const lines=['开阔星域，提前开火','飞到亮起的一侧射击','硬撞和挡弹都会掉血','漏掉的才会打中方舟'];
   lines.forEach((s,i)=>txt(s,LW/2,L.card.y+28+i*34,16,'#e7f1ff',3));
   txt('约 75 秒 · 方舟被毁则失败',LW/2,L.card.y+L.card.h-40,13,'#d5e4ff',2,'center',700);
-  txt('v2 · 独立试玩，不改主线',LW/2,L.card.y+L.card.h-18,12,'#9eb0d4',0,'center',700);
+  txt('v3 · 独立试玩，不改主线',LW/2,L.card.y+L.card.h-18,12,'#9eb0d4',0,'center',700);
   drawBtn(L.start);
 }
 function drawEnd(){
@@ -909,7 +1029,7 @@ function drawEnd(){
   ctx.lineWidth=3; ctx.strokeStyle=OUT; ctx.stroke();
   txt(endTitle,LW/2,top+46,28,'#fff',6);
   txt(endSub,LW/2,top+90,18,state==='win'?'#ffe27a':'#ffb0bc',4);
-  txt(state==='win'?('护住 '+(stats.blocks+stats.rams)+' 次'):'再护一次方舟',LW/2,top+122,14,'#d5ecff',2,'center',700);
+  txt(state==='win'?('击落 '+stats.kills+' · 护卫 '+stats.blocks):'再护一次方舟',LW/2,top+122,14,'#d5ecff',2,'center',700);
   drawBtn(L.retry);
   drawGhostBtn(L.back);
 }
@@ -1019,7 +1139,7 @@ window.__corridor={
       state,clock:+clock.toFixed(2),dpr:DPR,lh:LH,css:[CSS_W,CSS_H],
       position:getComputedStyle(cv).position,fixed,
       usedVisualViewport:!!window.visualViewport,
-      player:{x:+player.x.toFixed(1),y:+player.y.toFixed(1),ox:+player.ox.toFixed(1),oy:+player.oy.toFixed(1)},
+      player:{x:+player.x.toFixed(1),y:+player.y.toFixed(1),ox:+player.ox.toFixed(1),oy:+player.oy.toFixed(1),hp:+player.hp.toFixed(1),max:FIGHTER_MAX,stun:+player.stun.toFixed(2)},
       ark:{x:+ark.x.toFixed(1),y:+ark.y.toFixed(1),hp:+ark.hp.toFixed(1),max:ARK_MAX},
       cam:{x:+cam.x.toFixed(1),y:+cam.y.toFixed(1)},
       progress:+(ark.y/GOAL).toFixed(3),
@@ -1045,5 +1165,3 @@ requestAnimationFrame(loop);
 </script>
 </body>
 </html>
-
-
