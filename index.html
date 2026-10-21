@@ -12,7 +12,7 @@ const LOBBYBG={2:"data:image/webp;base64,UklGRpTRAQBXRUJQVlA4IIjRAQAQgwWdASrQAgA
 
 'use strict';
 // 《星港护航》MVP —— 纯 Canvas，单文件
-const VER='v13.41';const W=390,H=844,CX=195;
+const VER='v13.42';const W=390,H=844,CX=195;
 const OUT='#1d1747';
 const FONT='"PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Source Han Sans SC","Microsoft YaHei","WenQuanYi Micro Hei",sans-serif';
 const NUMF='"Arial Black","Helvetica Neue",Arial,'+FONT;
@@ -378,7 +378,7 @@ function makeBG(){BG=document.createElement('canvas');BG.width=W*2;BG.height=H*2
  const NK=.28;neb(340,90,200,100,'rgba(255,123,216,A)',.5*NK);neb(30,470,180,100,'rgba(63,224,255,A)',.4*NK);neb(360,700,180,100,'rgba(167,123,255,A)',.45*NK);/* 星云再淡 */
  for(let i=0;i<55;i++)STARS.push({x:Math.random()*W,y:Math.random()*H,r:pick([.5,.7,.9,1.1]),a:rnd(.18,.55),l:Math.random()<.12?2:1});}/* 星点减半、拖尾更少 */
 let bgDim=0,bgY=0,planetY=-200,planetK='planetO',planetX=320;
-let BGF=null;function drawBG(dt){bgY+=dt;const fight=state==='play'||state==='pause'||state==='dying';const bt=ARTON&&ARTI.bg;
+let BGF=null;function drawBG(dt){bgY+=dt;const fight=false;/* v13.42 模糊根因：v13.34 起战斗背景被压淡(38%)+55%暗色叠层，v13.38 又烘焙成 2x 缓存再放大 → 恢复 1095f2f 原图直绘 */const bt=ARTON&&ARTI.bg;
  if(bt&&!fight){const EW=W+2*OX+4,th=ART.meta.bg.h*EW/W,oy=(bgY*14)%th;for(let yy=oy-th;yy<H+OY;yy+=th)ctx.drawImage(bt,-OX-2,yy,EW,th)}
  else if(bt&&fight){const ew=W+2*OX+4,eh=H+2*OY+4,K=Math.min(2,DPR*SC);if(!BGF||BGF._k!==K||BGF._w!==ew||BGF._h!==eh){BGF=document.createElement('canvas');BGF.width=Math.ceil(ew*K);BGF.height=Math.ceil(eh*K);BGF._k=K;BGF._w=ew;BGF._h=eh;const g=BGF.getContext('2d');g.scale(K,K);g.translate(OX+2,OY+2);const th=ART.meta.bg.h*ew/W;g.fillStyle='#0b0d2a';g.fillRect(-OX-2,-OY-2,ew,eh);g.globalAlpha=.38;for(let yy=-th;yy<H+OY;yy+=th)g.drawImage(bt,-OX-2,yy,ew,th);g.globalAlpha=1;g.drawImage(BG,0,0,W,H);g.fillStyle='rgba(12,14,40,.55)';g.fillRect(-OX-2,-OY-2,ew,eh)}ctx.drawImage(BGF,-OX-2,-OY-2,ew,eh)}/* v13.38 战斗背景烘焙成一张缓存图：每帧 1 次 drawImage（原先 3~4 次全屏绘制） *//* v13.34 战斗：艺术卷轴压淡+暗色叠层，少花 */
  else ctx.drawImage(BG,0,0,W,H);
