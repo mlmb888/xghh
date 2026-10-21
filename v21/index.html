@@ -419,14 +419,14 @@ function makeBG(){BG=document.createElement('canvas');BG.width=W*3;BG.height=H*3
  const NK=.28;neb(340,90,200,100,'rgba(255,123,216,A)',.5*NK);neb(30,470,180,100,'rgba(63,224,255,A)',.4*NK);neb(360,700,180,100,'rgba(167,123,255,A)',.45*NK);/* 星云再淡 */
  for(let i=0;i<55;i++)STARS.push({x:Math.random()*W,y:Math.random()*H,r:pick([.5,.7,.9,1.1]),a:rnd(.18,.55),l:Math.random()<.12?2:1});}/* 星点减半、拖尾更少 */
 let bgDim=0,bgY=0,planetY=-200,planetK='planetO',planetX=320;
-let BGF=null;function drawBG(dt){bgY+=dt;const fight=false;/* v13.42 模糊根因：v13.34 起战斗背景被压淡(38%)+55%暗色叠层，v13.38 又烘焙成 2x 缓存再放大 → 恢复 1095f2f 原图直绘 */const bt=ARTON&&ARTI.bg;
+let BGF=null;function drawBG(dt){const v21calm=!!(window.V21&&V21.on&&(state==='play'||state==='pause'));bgY+=v21calm?dt*0.12:dt;const fight=false;/* v13.42 模糊根因：v13.34 起战斗背景被压淡(38%)+55%暗色叠层，v13.38 又烘焙成 2x 缓存再放大 → 恢复 1095f2f 原图直绘 */const bt=ARTON&&ARTI.bg;
  if(bt&&!fight){const EW=W+2*OX+4,th=ART.meta.bg.h*EW/W,oy=(bgY*14)%th;for(let yy=oy-th;yy<H+OY;yy+=th)ctx.drawImage(bt,-OX-2,yy,EW,th)}
  else if(bt&&fight){const ew=W+2*OX+4,eh=H+2*OY+4,K=Math.min(3,Math.round(DPR*SC*4)/4);if(!BGF||BGF._k!==K||BGF._w!==ew||BGF._h!==eh){BGF=document.createElement('canvas');BGF.width=Math.ceil(ew*K);BGF.height=Math.ceil(eh*K);BGF._k=K;BGF._w=ew;BGF._h=eh;const g=BGF.getContext('2d');g.scale(K,K);g.translate(OX+2,OY+2);const th=ART.meta.bg.h*ew/W;g.fillStyle='#0b0d2a';g.fillRect(-OX-2,-OY-2,ew,eh);g.globalAlpha=.38;for(let yy=-th;yy<H+OY;yy+=th)g.drawImage(bt,-OX-2,yy,ew,th);g.globalAlpha=1;g.drawImage(BG,0,0,W,H);g.fillStyle='rgba(12,14,40,.55)';g.fillRect(-OX-2,-OY-2,ew,eh)}ctx.drawImage(BGF,-OX-2,-OY-2,ew,eh)}/* v13.38 战斗背景烘焙成一张缓存图：每帧 1 次 drawImage（原先 3~4 次全屏绘制） *//* v13.34 战斗：艺术卷轴压淡+暗色叠层，少花 */
  else ctx.drawImage(BG,0,0,W,H);
- if(!bt&&!fight){planetY+=dt*9;if(planetY>H+150){planetY=-180;planetK=planetK==='planetO'?'planetT':'planetO';planetX=Math.random()<.5?rnd(20,80):rnd(310,370);}
+ if(!bt&&!fight&&!v21calm){planetY+=dt*9;if(planetY>H+150){planetY=-180;planetK=planetK==='planetO'?'planetT':'planetO';planetX=Math.random()<.5?rnd(20,80):rnd(310,370);}
  spr(planetK,planetX,planetY,planetK==='planetO'?.55:.6,0,.6);}
- ctx.fillStyle='#fff';for(const s of STARS){s.y+=dt*(s.l===2?(fight?22:42):(fight?10:18));if(s.y>H)s.y-=H;ctx.globalAlpha=s.a*(fight?.45:1);ctx.fillRect(s.x,s.y,s.r,s.r*(s.l===2?(fight?1.4:2.4):1));}ctx.globalAlpha=1;
- if(state==='play'&&dt>0){const tg=clamp((ebul.length-18)/30,0,1)*.18;bgDim+=(tg-bgDim)*Math.min(1,dt*4)}if(bgDim>.005){ctx.fillStyle=`rgba(0,0,0,${bgDim})`;ctx.fillRect(0,0,W,H)}
+ ctx.fillStyle='#fff';if(!v21calm)for(const s of STARS){s.y+=dt*(s.l===2?(fight?22:42):(fight?10:18));if(s.y>H)s.y-=H;ctx.globalAlpha=s.a*(fight?.45:1);ctx.fillRect(s.x,s.y,s.r,s.r*(s.l===2?(fight?1.4:2.4):1));}ctx.globalAlpha=1;
+ if(!v21calm&&state==='play'&&dt>0){const tg=clamp((ebul.length-18)/30,0,1)*.18;bgDim+=(tg-bgDim)*Math.min(1,dt*4)}if(!v21calm&&bgDim>.005){ctx.fillStyle=`rgba(0,0,0,${bgDim})`;ctx.fillRect(0,0,W,H)}
 }
 // ---------- 数据 ----------
 const UPS=[
@@ -1590,12 +1590,12 @@ function drawWorld(dt){drawBG(dt);drawHazFx();ctx.save();camApply();
  if(state==='play'&&(F.wlv||1)>=5&&!F.hangar){if(typeof comicBeam==='function')comicBeam()}
  if(state==='play'&&F.odT>0&&!F.hangar){ctx.save();ctx.globalCompositeOperation='lighter';ctx.strokeStyle=`rgba(255,200,90,${.5+.3*Math.sin(T*20)})`;ctx.lineWidth=3;ctx.beginPath();ctx.arc(F.x,F.y,34+6*Math.sin(T*12),0,7);ctx.stroke();ctx.restore()}
  if(false){ctx.save();ctx.globalCompositeOperation='lighter';const k=.6+.4*Math.sin(T*30);const g=ctx.createLinearGradient(F.x-26,0,F.x+26,0);g.addColorStop(0,'rgba(255,90,216,0)');g.addColorStop(.5,`rgba(255,160,240,${.35*k})`);g.addColorStop(1,'rgba(255,90,216,0)');ctx.fillStyle=g;ctx.fillRect(F.x-26,0,52,F.y-30);ctx.fillStyle=`rgba(255,255,255,${.5*k})`;ctx.fillRect(F.x-3,0,6,F.y-30);ctx.restore()}
- if(state==='play'||state==='pause'){if(F.sh>0){/* v13.50 护盾圈：缩小+平时淡，弧长=剩余护盾，挡弹时亮；首次标注一次 */const fr=clamp(F.sh/F.maxSh,0,1),bk=F.blockT>0;if(bk)afx('shieldB',F.x,F.y,.72,0,.85);ctx.save();ctx.globalAlpha=bk?.9:.22;ctx.strokeStyle='#8fe9ff';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(F.x,F.y,40,0,7);ctx.stroke();ctx.globalAlpha=bk?1:.6;ctx.lineWidth=bk?4:3;ctx.lineCap='round';ctx.beginPath();ctx.arc(F.x,F.y,40,-Math.PI/2,-Math.PI/2+Math.PI*2*fr);ctx.stroke();ctx.restore();if(state==='play'&&!AUTO){let sn=1;try{sn=localStorage.getItem('xghh_shTip')==='1'}catch(e){}if(!sn){G._shT=(G._shT||0)+1/60;if(G._shT>9){if(G._shT<13){const tx=clamp(F.x,95,295),ty=F.y-66;ctx.save();ctx.font='800 16px sans-serif';const tw=ctx.measureText('蓝圈＝战机护盾 · 帮你挡子弹').width+22;rr(tx-tw/2,ty-16,tw,32,12);ctx.fillStyle='rgba(10,14,44,.92)';ctx.fill();ctx.lineWidth=2;ctx.strokeStyle='#8fe9ff';ctx.stroke();ctx.restore();txt('蓝圈＝战机护盾 · 帮你挡子弹',tx,ty,16,'#fff',0,'center',800)}else{try{localStorage.setItem('xghh_shTip','1')}catch(e){}}}}}ctx.save();ctx.globalAlpha=(F.blockT>0?.8:.45)*(.4+.6*F.sh/F.maxSh);ctx.strokeStyle='#8fe9ff';ctx.fillStyle='rgba(143,233,255,.08)';ctx.lineWidth=F.blockT>0?3:1.5;ctx.beginPath();ctx.arc(F.x,F.y+4,30,0,7);ctx.fill();ctx.stroke();ctx.restore()}
+ if(state==='play'||state==='pause'){if(F.sh>0&&!(window.V21&&V21.on)){/* v13.50 护盾圈：缩小+平时淡，弧长=剩余护盾，挡弹时亮；首次标注一次 */const fr=clamp(F.sh/F.maxSh,0,1),bk=F.blockT>0;if(bk)afx('shieldB',F.x,F.y,.72,0,.85);ctx.save();ctx.globalAlpha=bk?.9:.22;ctx.strokeStyle='#8fe9ff';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(F.x,F.y,40,0,7);ctx.stroke();ctx.globalAlpha=bk?1:.6;ctx.lineWidth=bk?4:3;ctx.lineCap='round';ctx.beginPath();ctx.arc(F.x,F.y,40,-Math.PI/2,-Math.PI/2+Math.PI*2*fr);ctx.stroke();ctx.restore();if(state==='play'&&!AUTO){let sn=1;try{sn=localStorage.getItem('xghh_shTip')==='1'}catch(e){}if(!sn){G._shT=(G._shT||0)+1/60;if(G._shT>9){if(G._shT<13){const tx=clamp(F.x,95,295),ty=F.y-66;ctx.save();ctx.font='800 16px sans-serif';const tw=ctx.measureText('蓝圈＝战机护盾 · 帮你挡子弹').width+22;rr(tx-tw/2,ty-16,tw,32,12);ctx.fillStyle='rgba(10,14,44,.92)';ctx.fill();ctx.lineWidth=2;ctx.strokeStyle='#8fe9ff';ctx.stroke();ctx.restore();txt('蓝圈＝战机护盾 · 帮你挡子弹',tx,ty,16,'#fff',0,'center',800)}else{try{localStorage.setItem('xghh_shTip','1')}catch(e){}}}}}ctx.save();ctx.globalAlpha=(F.blockT>0?.8:.45)*(.4+.6*F.sh/F.maxSh);ctx.strokeStyle='#8fe9ff';ctx.fillStyle='rgba(143,233,255,.08)';ctx.lineWidth=F.blockT>0?3:1.5;ctx.beginPath();ctx.arc(F.x,F.y+4,30,0,7);ctx.fill();ctx.stroke();ctx.restore()}
   if(!(window.V21&&V21.hidePulse&&V21.hidePulse())){F.pulseCd=Math.min(F.pulseCd,pulseCdMax());const f=clamp(1-F.pulseCd/pulseCdMax(),0,1),ready=F.pulseCd<=0;ctx.save();ctx.lineCap='round';ctx.strokeStyle='rgba(29,23,71,.5)';ctx.lineWidth=4;ctx.beginPath();ctx.arc(F.x,F.y+4,38,0,7);ctx.stroke();
    ctx.strokeStyle=ready?'#ff9ad0':'rgba(255,154,208,.75)';ctx.lineWidth=ready?4+Math.sin(T*10)*1.5:3;ctx.beginPath();ctx.arc(F.x,F.y+4,38,-Math.PI/2,-Math.PI/2+Math.PI*2*f);ctx.stroke();ctx.restore();
    if(ready&&!AUTOPULSE)txt('就绪',F.x+44,F.y+4,10,'#ff9ad0',2.4,'left',900)}
   if(state==='play'&&nearRescue()){ctx.save();ctx.strokeStyle='#7dff8a';ctx.globalAlpha=.55+.25*Math.sin(T*8);ctx.lineWidth=3;ctx.beginPath();ctx.arc(F.x,F.y+4,46,0,7);ctx.stroke();ctx.restore();txt('救援护盾',F.x,F.y+62,10,'#7dff8a',2.2,'center',900)}
-  if(F.y<300){ctx.save();ctx.globalCompositeOperation='lighter';spr('glowY',F.x,F.y,.9,0,.5);ctx.restore()}
+  if(F.y<300&&!(window.V21&&V21.on)){ctx.save();ctx.globalCompositeOperation='lighter';spr('glowY',F.x,F.y,.9,0,.5);ctx.restore()}
   if(F.hangar){ctx.save();ctx.globalAlpha=.25+.1*Math.sin(T*6);spr('fighter',F.x,F.y,.28,0,.5);ctx.restore();txt('返航中',F.x,F.y+28,11,'#ffd23a',2,'center',800)}else spr('fighter',F.x,F.y+(F.rec||0),.34,0,F.inv>0&&Math.floor(T/.08)%2?.3:1);if(!F.hangar&&F.hp/F.maxHp<.3){const k=.5+.5*Math.sin(T*9);ctx.save();ctx.globalAlpha=.35+.4*k;ctx.strokeStyle='#ff3b4f';ctx.lineWidth=3;ctx.beginPath();ctx.arc(F.x,F.y,30+4*k,0,7);ctx.stroke();ctx.restore();txt('战机危险 · 先拉开',clamp(F.x,70,320),F.y-50,11,'#ff8a9a',2,'center',900)}drawEscort();if(F.hurtT>0){F.hurtT-=1/60;ctx.save();ctx.globalAlpha=Math.min(.6,F.hurtT*2.2);ctx.fillStyle='#ff3b4f';ctx.beginPath();ctx.arc(F.x,F.y,32,0,7);ctx.fill();ctx.restore()}ctx.fillStyle=OUT;ctx.beginPath();ctx.arc(F.x,F.y+(F.rec||0),3.2,0,7);ctx.fill();ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(F.x,F.y+(F.rec||0),2,0,7);ctx.fill();
   if(F.muz>0){const r=F.odT>0?9:6+up('rate')*2/3;comicMuzzle(F.x,F.y-30,r,F.odT>0?'#ffb21a':'#2fd4ff')}if(F.odT>0){ctx.save();ctx.globalCompositeOperation='lighter';spr('glowY',F.x,F.y-30,.6,0,.6+.3*Math.sin(T*20));ctx.restore()}
   if(G.combo>=2){const c=G.combo,cp=(G.comboPop||0)>0?1+G.comboPop/.15*.55:1;G.comboPop=(G.comboPop||0)-1/60;ctx.save();ctx.translate(clamp(F.x,110,250),F.y-62);ctx.scale(cp,cp);txt(`护航连击 ×${c}`,0,0,12,c<5?'#fff':c<10?'#ffe46b':c<15?'#ffab1f':'#ff7ad0',3,'center',900);ctx.restore()}}
@@ -2172,7 +2172,7 @@ function drawChapterChest(sv){const rdy=chapterChestReady(sv),cc=MAP.cc;if(!rdy&
 function drawLvEnd(){const E=END,d=G.lvl,r=E.res||{};ctx.fillStyle='#0d0f2e';ctx.fillRect(0,0,W,H);drawBG(0);ctx.fillStyle='rgba(6,10,30,.72)';ctx.fillRect(0,0,W,H);
  const t=T-(E.showT||T);ctx.save();rr(20,102,354,672,22);ctx.fillStyle=CO;ctx.fill();rr(16,96,354,672,22);ctx.fillStyle='rgba(29,36,99,.96)';ctx.fill();ctx.lineWidth=4;ctx.strokeStyle=CO;ctx.stroke();ctx.restore();/* v13.36 大厅风结算面板 */
  txt(`${d.id} ${d.name}`,CX,118,15,'#9fd8ff',0,'center',800);{const rc=E.win?['#ffcf4a','#b56a00']:['#ff6b7a','#7a1020'];ctx.save();ctx.fillStyle=rc[1];ctx.beginPath();ctx.moveTo(30,146);ctx.lineTo(60,146);ctx.lineTo(60,186);ctx.lineTo(30,186);ctx.lineTo(42,166);ctx.closePath();ctx.moveTo(360,146);ctx.lineTo(330,146);ctx.lineTo(330,186);ctx.lineTo(360,186);ctx.lineTo(348,166);ctx.closePath();ctx.fill();ctx.lineWidth=3.5;ctx.strokeStyle='#120c24';ctx.stroke();ctx.fillStyle=rc[0];ctx.fillRect(52,138,286,46);ctx.fillStyle='rgba(255,255,255,.35)';ctx.fillRect(52,138,286,12);ctx.strokeRect(52,138,286,46);ctx.restore();txt(E.win?'关卡完成！':'护航失败',CX,162,28,'#fff',4,'center',900)}
- if(E.win){for(let i=0;i<3;i++){const k=clamp((t-.3-i*.35)/.25,0,1),on=i<r.stars;const sc=on?(k<1?1.6-.6*k:1):1;ctx.save();ctx.translate(CX+(i-1)*84,262-(i===1?16:0));ctx.scale(sc,sc);comicStar(0,0,i===1?40:33,on&&k>0?'#ffd21a':'#3a3f6e');ctx.restore();if(on&&k>0&&k<.2&&!E['sfx'+i]){E['sfx'+i]=1;SFX2.chime(i)}}
+ if(E.win){const v21now=!!(G&&G.v21day1);if(v21now){const n=Math.round(E.pax||0);const earned=n>=210?3:n>=170?2:1;if((r.stars|0)<earned)r.stars=earned}for(let i=0;i<3;i++){const k=v21now?1:clamp((t-.3-i*.35)/.25,0,1),on=i<r.stars;const sc=on?(k<1?1.6-.6*k:1):1;ctx.save();ctx.translate(CX+(i-1)*84,262-(i===1?16:0));ctx.scale(sc,sc);comicStar(0,0,i===1?40:33,on&&(v21now||k>0)?'#ffd21a':'#3a3f6e');ctx.restore();if(on&&(v21now||(k>0&&k<.2))&&!E['sfx'+i]){E['sfx'+i]=1;SFX2.chime(i)}}
   txt(`${E.pax}/${E.den}`,CX,350,54,E.pct>=.9?'#9df27a':E.pct>=.7?'#ffe46b':'#ffb3bc',6,'center',900,NUMF);txt('移民平安抵达',CX,392,15,'#cfe6ff',2.4,'center',800);if(G&&(G.graze||0)>0)txt(`擦弹 ${G.graze} 次 · 脉冲充能 +${(G.graze*(up('graze')?.7:.35)).toFixed(1)}s`,CX,414,12,'#9fd8ff',0,'center',800);
   const rw=(r.first&&r.reward)||{};const gold=(rw.coins||0)+Math.round((r.bank||0)*clamp((t-1.2)/.9,0,1));
   const items=[{k:'coin',v:`+${gold}`,l:r.first?'金币':'重复通关奖励'}];if(rw.ship)items.push({k:'ship',s:rw.ship,v:'已解锁',l:STYPE[rw.ship].n});if(rw.chapter)items.push({k:'gate',v:'已点亮',l:'第 2 章星门'});
@@ -3371,6 +3371,44 @@ const feel={
       this.burst(e.x,e.y);
     }
   },
+  withJuice(fn){
+    const rnd=Math.random;
+    let s=0.17;
+    Math.random=function(){s=(s*1.7+0.13)%1;return s<0?s+1:s};
+    try{fn()}finally{Math.random=rnd}
+  },
+  hitSpark(e){
+    if(!e)return;
+    const x=e.x, y=e.y;
+    this.withJuice(()=>{
+      try{P({k:'flashc',x,y,t:0,life:.05,R:16})}catch(err){}
+      try{burst(x,y,6,'#fff4c4',220,.22,2.6)}catch(err){}
+      try{burst(x,y,4,'#ff7a22',140,.26,2.2)}catch(err){}
+    });
+    e.flash=Math.max(e.flash||0, 0.16);
+  },
+  killBoom(e){
+    if(!e)return;
+    const x=e.x, y=e.y;
+    const hp=e.maxHp||0;
+    const heavy=e.k==='heavy'||e.k==='kami'||e.k==='tug'||e.k==='gt';
+    const big=hp>=18||heavy;
+    const mid=!big&&hp>=8;
+    const flashR=big?62:mid?48:34;
+    const shockR=big?78:mid?60:46;
+    const ringR=big?44:mid?34:26;
+    const nLit=big?14:mid?11:8;
+    const nHot=big?8:mid?6:4;
+    this.withJuice(()=>{
+      try{P({k:'flashc',x,y,t:0,life:big?.08:mid?.07:.05,R:flashR})}catch(err){}
+      try{P({k:'shock',x,y,t:0,life:.34,R:shockR})}catch(err){}
+      try{P({k:'ring',x,y,t:0,life:.3,R:ringR,col:'#ffe7a0'})}catch(err){}
+      try{burst(x,y,nLit,'#fff6d2',260,.38,3.2)}catch(err){}
+      try{burst(x,y,nHot,'#ff4a16',180,.44,3.4)}catch(err){}
+      if(big){try{SFX2.boom()}catch(err){}}
+      else if(mid){try{SFX2.kill()}catch(err){}}
+    });
+  },
   burst(x,y){
     try{P({k:'ring',x,y,t:0,life:.32,R:86,col:'#ffe46b'})}catch(err){}
     try{burst(x,y,14,'#ffd23a',240,.45,3)}catch(err){}
@@ -4045,7 +4083,7 @@ function mulberry32(seed){
     return ((t^t>>>14)>>>0)/4294967296;
   };
 }
-const BOT_ALIAS={still:'still','不动':'still',idle:'still',none:'none','无操作':'none',wander:'wander','乱飞':'wander',sweep:'sweep','乱扫':'sweep','左右扫':'sweep',ram:'ram','只撞':'ram',ark:'ark','贴方舟':'ark',careful:'careful','认真':'careful','认真走位':'careful',good:'careful',left:'left','先左':'left',right:'right','先右':'right'};
+const BOT_ALIAS={off:'off','关闭':'off','不接管':'off',still:'still','不动':'still',idle:'still',none:'none','无操作':'none',wander:'wander','乱飞':'wander',sweep:'sweep','乱扫':'sweep','左右扫':'sweep',ram:'ram','只撞':'ram',ark:'ark','贴方舟':'ark',careful:'careful','认真':'careful','认真走位':'careful',good:'careful',left:'left','先左':'left',right:'right','先右':'right'};
 const test={
   on:Q.get('test')==='1',
   /* test=1 时 &fast=1 把局内时间加快，75 秒墙钟内能打完。不改变平时的 fast 进度开关。 */
@@ -4054,7 +4092,8 @@ const test={
   fail:Q.get('test')==='1'&&Q.get('fail')==='1',
   /* 只在 test=1 时生效。与结算积压卡开关共用 ?autopick=，但这里管的是对局里弹出的三选一。 */
   autopick:Q.get('autopick')==='1',
-  bot:'careful',
+  /* 默认不接管。只有 ?bot=careful 这类显式名字才每帧改战机目标。 */
+  bot:'off',
   seed:null,
   done:false,
   arkFirst:null,
@@ -4144,7 +4183,7 @@ const test={
     return {open:options.length>0,options,pending};
   },
   pickCard(i){
-    if(!this.on)return false;
+    if(!this.on&&!isV21)return false;
     if(typeof CH==='undefined'||!CH||!CH.opts||!CH.opts[i])return false;
     CH.t=9;CH.lock=0;CH.v21force=1;CH.v21up=1;
     takeChoice(i);
@@ -4157,6 +4196,7 @@ const test={
   steer(dt){
     if(!this.on||typeof F==='undefined'||!F||F.hangar||state!=='play')return;
     const bot=this.bot;
+    if(!bot||bot==='off')return;
     if(bot==='careful'||bot==='left'||bot==='right'){
       const saved=Math.random;
       if(this.botRng)Math.random=this.botRng;
@@ -4223,7 +4263,7 @@ const test={
     const hull=A&&A.maxHp?+((A.hp||0)/A.maxHp).toFixed(3):0;
     const ms=(typeof performance!=='undefined')?performance.now()-this.t0:0;
     const row={
-      test:1,
+      test:this.on?1:0,
       profile,
       seed:this.seed,
       level:(G&&G.lvl&&G.lvl.id)||'',
@@ -4267,7 +4307,7 @@ const test={
   },
   /* 不等结算。test=1 一进来就有报告，局内大约每半秒刷新。dbg=0 只藏界面，不挡这些日志。 */
   live(){
-    if(!this.on||this.done)return window.__testReport||null;
+    if(!(this.on||isV21)||this.done)return window.__testReport||null;
     const t=(G&&G.time)||0;
     const sig=(raid.loss||0)+':'+(typeof curPax==='function'&&G?curPax():'');
     if(this._liveAt!=null&&this._liveSig===sig&&t>=this._liveAt&&t-this._liveAt<0.5&&window.__testReport&&window.__testReport.reason!=='boot')return window.__testReport;
@@ -4277,14 +4317,14 @@ const test={
     row.partial=true;
     row.settled=false;
     window.__testReport=row;
-    if(!this._liveLog||t-this._liveLog>=5){
+    if(this.on&&(!this._liveLog||t-this._liveLog>=5)){
       this._liveLog=t;
       console.log('test_live t='+(+t.toFixed(2))+' pax='+(row.pax&&row.pax.now)+' reason='+row.reason);
     }
     return row;
   },
   finish(reason){
-    if(!this.on||this.done)return window.__testReport||null;
+    if(!(this.on||isV21)||this.done)return window.__testReport||null;
     this.done=true;
     if(!this.arkFirst){
       this.arkFirst={t:null,source:'none'};
@@ -4317,7 +4357,7 @@ const test={
   }
 };
 if(test.on){
-  test.bot=test.norm(Q.get('bot')||'careful');
+  test.bot=test.norm(Q.get('bot')||'off');
   if(seedArg!=null&&seedArg!=='')test.seed=+seedArg;
 }
 
@@ -4589,26 +4629,115 @@ const meta={
 if(isV21)meta.load();
 function paintJet(x,y){
   const t=(typeof T==='number'?T:0);
-  const flick=0.72+0.28*Math.sin(t*26);
-  const len=12+7*flick;
+  const spd=F&&F.v21spd||0;
+  const shot=!!(F&&F.v21shot!=null&&t-F.v21shot<0.18);
+  const tier=(typeof day1!=='undefined'&&day1&&day1.on)?(day1.tier|0):((F&&F.v21tier)|0);
+  const thrust=Math.max(0.34, Math.min(1, spd/480))*0.5+(shot?0.66:0.28);
+  const lean=Math.max(-22, Math.min(22, (F&&F.v21lean)||0));
+  const flick=0.8+0.2*Math.sin(t*46+(shot?1.4:0));
+  const tierLen=tier<=0?1:(tier===1?1.32:1.62);
+  const len=(22+44*thrust)*flick*tierLen;
   ctx.save();
+  ctx.translate(x, y+10);
+  ctx.rotate(-lean*0.006);
   ctx.globalCompositeOperation='lighter';
-  ctx.globalAlpha=0.8;
-  ctx.fillStyle='#ff8a2a';
+  const tongues=tier<=0
+    ?[[-9,0.78,'#c42818'],[0,1,'#ff7a18'],[9,0.78,'#c42818']]
+    :(tier===1
+      ?[[-13,0.9,'#e24a10'],[0,1.12,'#ff9a28'],[13,0.9,'#e24a10']]
+      :[[-18,0.7,'#ff4a12'],[-9,0.92,'#ffb21a'],[0,1.16,'#ffe14a'],[9,0.92,'#ffb21a'],[18,0.7,'#ff4a12']]);
+  const wide=tier<=0?6:(tier===1?8:9);
+  for(let i=0;i<tongues.length;i++){
+    const ox=tongues[i][0], sc=tongues[i][1], col=tongues[i][2];
+    ctx.globalAlpha=tier>=2?0.96:0.9;
+    ctx.fillStyle=col;
+    ctx.beginPath();
+    ctx.moveTo(ox-wide*sc, 2);
+    ctx.quadraticCurveTo(ox-2.2*sc, len*sc*0.55, ox, len*sc);
+    ctx.quadraticCurveTo(ox+2.2*sc, len*sc*0.55, ox+wide*sc, 2);
+    ctx.closePath();
+    ctx.fill();
+  }
+  ctx.globalAlpha=1;
+  ctx.fillStyle=tier>=2?(shot?'#fffef2':'#ffe9a0'):(shot?'#fff8dc':'#ffe09a');
+  const core=tier>=2?0.78:(tier===1?0.7:0.62);
+  const coreW=tier>=2?4.4:(tier===1?3.8:3.2);
   ctx.beginPath();
-  ctx.moveTo(x-4.5,y+11);
-  ctx.lineTo(x+4.5,y+11);
-  ctx.lineTo(x,y+11+len);
+  ctx.moveTo(-coreW, 4);
+  ctx.quadraticCurveTo(-1, len*0.42, 0, len*core);
+  ctx.quadraticCurveTo(1, len*0.42, coreW, 4);
   ctx.closePath();
   ctx.fill();
-  ctx.globalAlpha=0.9;
-  ctx.fillStyle='#fff4cf';
-  ctx.beginPath();
-  ctx.moveTo(x-2,y+11);
-  ctx.lineTo(x+2,y+11);
-  ctx.lineTo(x,y+11+len*0.5);
-  ctx.closePath();
-  ctx.fill();
+  ctx.restore();
+}
+function paintTierShot(b){
+  const tier=b.v21tier|0;
+  if(!b||tier<1)return;
+  if(b.lance||b.net||b.storm)return;
+  if(b.st==='wing'||b.st==='side'||b.st==='rear'||b.st==='turret')return;
+  const sp=Math.hypot(b.vx,b.vy)||1;
+  const ux=b.vx/sp, uy=b.vy/sp;
+  const px=-uy, py=ux;
+  ctx.save();
+  ctx.globalAlpha=1;
+  ctx.lineJoin='round';
+  ctx.lineCap='round';
+  if(tier===1){
+    const len=24;
+    ctx.strokeStyle='#6a2408';
+    ctx.lineWidth=11;
+    ctx.beginPath();
+    ctx.moveTo(b.x,b.y);
+    ctx.lineTo(b.x-ux*len,b.y-uy*len);
+    ctx.stroke();
+    ctx.strokeStyle='#ff5a12';
+    ctx.lineWidth=8.5;
+    ctx.stroke();
+    ctx.strokeStyle='#fff6dc';
+    ctx.lineWidth=3;
+    ctx.beginPath();
+    ctx.moveTo(b.x-ux*4,b.y-uy*4);
+    ctx.lineTo(b.x-ux*(len-5),b.y-uy*(len-5));
+    ctx.stroke();
+    ctx.fillStyle='#fff8e8';
+    ctx.beginPath();
+    ctx.arc(b.x,b.y,3.6,0,7);
+    ctx.fill();
+  }else{
+    const wide=tier>=3?16:12;
+    const len=tier>=3?20:16;
+    const noseX=b.x+ux*4, noseY=b.y+uy*4;
+    const lX=b.x-ux*len+px*wide, lY=b.y-uy*len+py*wide;
+    const rX=b.x-ux*len-px*wide, rY=b.y-uy*len-py*wide;
+    const nX=b.x-ux*len*0.42, nY=b.y-uy*len*0.42;
+    ctx.beginPath();
+    ctx.moveTo(noseX,noseY);
+    ctx.lineTo(lX,lY);
+    ctx.lineTo(nX,nY);
+    ctx.lineTo(rX,rY);
+    ctx.closePath();
+    ctx.fillStyle='#3a2404';
+    ctx.fill();
+    ctx.lineWidth=3.2;
+    ctx.strokeStyle='#3a2404';
+    ctx.stroke();
+    ctx.fillStyle=tier>=3?'#ffb21a':'#ffe14a';
+    ctx.fill();
+    ctx.lineWidth=1.3;
+    ctx.strokeStyle='#fff8dc';
+    ctx.stroke();
+    if(tier>=3){
+      const bx=b.x-ux*14, by=b.y-uy*14, s=0.7;
+      ctx.beginPath();
+      ctx.moveTo(bx+ux*3,by+uy*3);
+      ctx.lineTo(bx-ux*len*s+px*wide*s,by-uy*len*s+py*wide*s);
+      ctx.lineTo(bx-ux*len*0.42*s,by-uy*len*0.42*s);
+      ctx.lineTo(bx-ux*len*s-px*wide*s,by-uy*len*s-py*wide*s);
+      ctx.closePath();
+      ctx.fillStyle='#fff1a8';
+      ctx.fill();
+    }
+  }
   ctx.restore();
 }
 function drawMetaPanel(){
@@ -4665,7 +4794,7 @@ const day1={
     this.rescueTo=''; this._coinAt=-9; this._podWait=0;
     this.need=150; this.startPax=0; this.saved=[]; this.misses=[];
     this.impactN=0; this.leakN=0; this.dilemma=0; this.fork=null;
-    this.holdNeed=4.2; this.leftRing=0; this.crises=[];
+    this.holdNeed=4.2; this.leftRing=0; this.neverIn=0; this._allowEnd=0; this.crises=[];
     this.tierPopupAt=null; this.cardPopupAt=null; this.comboPopupAt=null;
     this.pendingRescue=null; this.staggerBad=0; this._pop=[];
     this.barShown=0; this.barKick=0; this.rescueMul=1; this.powerMul=1;
@@ -4716,6 +4845,38 @@ const day1={
   },
   campR(){return 86},
   inRing(e){return !!(e&&F&&dist(F.x,F.y,e.x,e.y)<this.campR())},
+  /* 和玩家拖拽同一套目标点：只算出该去哪，不改 F.tx。显式 bot 和真实输入都走这里。 */
+  playerAim(prefer){
+    if(!F||typeof enemies==='undefined')return null;
+    prefer=prefer==='right'?'right':'left';
+    const camps=enemies.filter(e=>e&&!e.dead&&!e.v21done&&e.v21camp);
+    if(camps.length>=2){
+      const ordered=camps.slice().sort((a,b)=>a.x-b.x);
+      const pick=prefer==='right'?ordered[ordered.length-1]:ordered[0];
+      const lockedAlive=this.lockId&&camps.some(c=>c.v21id===this.lockId);
+      if(!lockedAlive){
+        this.lockId=pick.v21id;
+        this.fork={t:G.time||0, id:pick.v21id, x:pick.v21homeX||pick.x, y:pick.v21holdY||pick.y};
+      }
+    }
+    const locked=this.lockId&&enemies.find(e=>e&&e.v21camp&&e.v21id===this.lockId);
+    const otherPair=enemies.some(e=>e&&e.v21camp&&e.v21pair&&!e.dead&&!e.v21done&&e.v21id!==this.lockId);
+    let camp=null;
+    if(locked&&!locked.dead&&!locked.v21done)camp=locked;
+    else if(otherPair&&this.fork)camp={x:this.fork.x, y:this.fork.y, v21homeX:this.fork.x, v21holdY:this.fork.y};
+    else{
+      if(locked&&(locked.dead||locked.v21done))this.lockId=null;
+      camp=camps[0]||null;
+    }
+    const boss=enemies.find(e=>e&&!e.dead&&e.v21boss);
+    if(camp){
+      const gx=camp.v21homeX!=null?camp.v21homeX:camp.x;
+      const hy=camp.v21holdY!=null?camp.v21holdY:camp.y;
+      return {x:gx, y:hy+58};
+    }
+    if(boss)return {x:boss.x, y:clamp(boss.y+150,220,680)};
+    return null;
+  },
   bee(n,kind){
     let live=0; for(const e of enemies)if(e&&!e.dead&&e.v21bee)live++;
     if(live>70)return;
@@ -4985,11 +5146,13 @@ const day1={
       this.tierAt=+((G.time||0).toFixed(2));
       if(F){F.v21tier=this.tier; F.wlv=Math.min(4,(F.wlv||1)+2)}
       this.powerMul=(this.powerMul||1)*1.65;
+      this.holdNeed=2.5;
       this.sawTier=1;
       tierUp=true;
-      label='火力 '+prev+'→'+this.roman(this.tier);
+      label='火力 '+prev+'→'+this.roman(this.tier)+' · 后续破营 2.5 秒';
+      this.say('后续破营只要 2.5 秒');
       try{SFX2.powerup()}catch(err){}
-      this.mark('firepower_tier_up', {firepower_tier:this.tier, kind:id, jump:2});
+      this.mark('firepower_tier_up', {firepower_tier:this.tier, kind:id, jump:2, hold:2.5});
     }else{
       this.plainCleared=true;
       label='人救出来了';
@@ -5002,7 +5165,25 @@ const day1={
     this.noteCrisis('camp', 'cleared', {id:id, n:got, reward:reward});
     this.solo();
     this.launchPods(e, got, tierUp);
+    this.breakFeel(e);
     this.mark('wreck_camp_cleared', {kind:id, pax_gained:got, reward, firepower_tier:this.tier||0, fly:'fighter'});
+  },
+  breakFeel(e){
+    const x=e&&e.x!=null?e.x:CX, y=e&&e.y!=null?e.y:240;
+    if(!(typeof test!=='undefined'&&test.on)){
+      const now=(typeof performance!=='undefined')?performance.now():0;
+      this._holdSlow=now+90;
+      this._holdReal=now+360;
+    }
+    try{addTrauma(0.4)}catch(err){}
+    try{kick(0,3)}catch(err){}
+    try{vib([20,40,20])}catch(err){}
+    try{feel.withJuice(()=>{
+      try{SFX2.boom()}catch(err){}
+      try{P({k:'flashc',x,y,t:0,life:.08,R:78})}catch(err){}
+      try{P({k:'shock',x,y,t:0,life:.4,R:120})}catch(err){}
+      try{P({k:'ring',x,y,t:0,life:.46,R:92,col:'#fff6d2'})}catch(err){}
+    })}catch(err){}
   },
   loseCamp(e, how){
     if(!e||e.v21done)return;
@@ -5012,6 +5193,7 @@ const day1={
     const name=e.v21name||id;
     this.misses=this.misses||[];
     this.misses.push({id, name, n, how:how||'drift'});
+    if(e.v21arrived&&!e.v21entered)this.neverIn=(this.neverIn||0)+1;
     if(id==='a'||e.v21kind==='flash')this.missAt=+(((G&&G.time)||0).toFixed(2));
     const Hn=(typeof H==='number')?H:844;
     try{nums.push({x:clamp(e.x,70,320), y:clamp(e.y,140,Hn-80), v:-16, txt:'战俘营失守 -'+n, col:'#ff4a5a', t:0, life:1.45, big:2})}catch(err){}
@@ -5032,24 +5214,48 @@ const day1={
   },
   paintCamp(e){
     if(!e||typeof ctx==='undefined')return;
-    const open=!!e.v21open;
-    const pulse=.55+.45*Math.sin((typeof T==='number'?T:0)*7);
     try{drawHull(e.v21kind==='flash'?'gun':'pax', e.x, e.y, 1.15, 0, true)}catch(err){}
+    if(!(e.v21open&&e.v21arrived))return;
+    const need=this.holdNeed||4.2;
+    const prog=Math.max(0, Math.min(need, e.v21prog||0));
+    const p=prog/need;
+    const left=Math.max(0, need-prog);
+    const inside=this.inRing(e);
+    const t=(typeof T==='number')?T:0;
+    const life=e.v21dieAt!=null&&G?((e.v21dieAt-(G.time||0))):99;
+    const closing=life<2.2;
+    const urgent=inside&&left<=1.6;
+    const wob=urgent?(0.5+0.5*Math.sin(t*16)):0;
+    const heat=inside?Math.max(0, Math.min(1, 1-left/need)):0;
+    const mix=(a,b,u)=>{
+      const pa=parseInt(a.slice(1),16), pb=parseInt(b.slice(1),16);
+      const r=Math.round(((pa>>16)&255)*(1-u)+((pb>>16)&255)*u);
+      const g=Math.round(((pa>>8)&255)*(1-u)+((pb>>8)&255)*u);
+      const bl=Math.round((pa&255)*(1-u)+(pb&255)*u);
+      return '#'+[r,g,bl].map(v=>v.toString(16).padStart(2,'0')).join('');
+    };
+    const col=closing?'#ff4a3a':mix('#fff7d0','#ff4a3a',heat);
+    const R=79, lw=14+wob*7;
     ctx.save();
-    ctx.strokeStyle='#7dffe0';
-    ctx.globalAlpha=.42+.28*pulse;
-    ctx.lineWidth=16;
-    ctx.beginPath(); ctx.arc(e.x, e.y, 58, 0, 7); ctx.stroke();
-    ctx.globalAlpha=.95;
-    ctx.lineWidth=open?7:6;
-    ctx.beginPath(); ctx.arc(e.x, e.y, 46+4*pulse, 0, 7); ctx.stroke();
-    ctx.restore();
-    if(open&&e.v21arrived&&typeof bar==='function'){
-      const need=this.holdNeed||4.2;
-      const p=Math.max(0, Math.min(1, (e.v21prog||0)/need));
-      bar(e.x-40, e.y+42, 80, 8, p, '#b8ffe0', '#1c6b45');
-      txt(p>0.02?'解救 '+Math.ceil((1-p)*need)+' 秒':'停在圈里 '+need+' 秒', e.x, e.y+62, 14, '#fff7d0', 3, 'center', 900);
+    ctx.lineCap='round';
+    ctx.strokeStyle=closing&&Math.sin(t*14)>0?'#ffd0c8':'rgba(255,247,208,.28)';
+    ctx.lineWidth=lw;
+    ctx.beginPath(); ctx.arc(e.x, e.y, R, 0, Math.PI*2); ctx.stroke();
+    if(p>0.004){
+      ctx.strokeStyle=col;
+      ctx.globalAlpha=0.98;
+      ctx.beginPath();
+      ctx.arc(e.x, e.y, R, -Math.PI/2, -Math.PI/2+Math.PI*2*p);
+      ctx.stroke();
     }
+    ctx.restore();
+    const label=left.toFixed(1);
+    const size=urgent?40:30;
+    ctx.save();
+    ctx.fillStyle='rgba(8,10,18,.82)';
+    ctx.beginPath(); ctx.arc(e.x, e.y, urgent?26:22, 0, 7); ctx.fill();
+    ctx.restore();
+    txt(label, e.x, e.y+1, size, urgent||closing?col:'#fff7d0', 4, 'center', 900);
   },
   drawPaxBar(){
     if(!isV21||!G||state==='title')return;
@@ -5066,7 +5272,6 @@ const day1={
     ctx.fillStyle='#ffe46b';
     ctx.fillRect(x+w*tick-1, y-4, 3, h+8);
     ctx.restore();
-    txt('需要 '+need, x+w*tick, y-8, 10, '#ffe46b', 0, 'center', 900);
     txt('救回 '+Math.round(shown)+' / 需要 '+need, CX, y+h+16, 15, '#fff', 3, 'center', 900);
     const tier=(this.on?this.tier:(F&&F.v21tier))||0;
     txt('火力 '+this.roman(tier), CX, y+h+34, 12, tier?'#ffe46b':'#d5def2', 0, 'center', 900);
@@ -5080,7 +5285,7 @@ const day1={
     }
   },
   checkLine(){
-    if(!isV21||state!=='play'||!G||(G.time||0)<5)return;
+    if(!isV21||state!=='play'||!G||(G.time||0)<30)return;
     if(this.on)return;
     let den=300, now=0;
     try{den=paxDenom()||300; now=curPax()}catch(e){}
@@ -5100,23 +5305,55 @@ const day1={
     if(e.v21bee||e.v21boss||e.v21right||e.v21gun||e.k==='tug')this.playerKills++;
     if(e.v21bee||e.v21boss)this.coin(e.x, e.y, 1);
   },
+  /* 同一对左右营共用一个时间抖动，顺序和最短间隔保留。不碰 Math.random，避免带种子的回放整表漂移。 */
+  jitterCamps(camps){
+    let seed=1;
+    const seeded=typeof test!=='undefined'&&test&&test.seed!=null&&String(test.seed)!=='';
+    if(seeded)seed=(+test.seed)>>>0||1;
+    else if(typeof test!=='undefined'&&test&&test.on)seed=1;
+    else{
+      let s=(Date.now()&0xfffffff)||1;
+      try{s=(s^((Math.random()*0x7fffffff)|0))>>>0}catch(e){}
+      seed=s||1;
+    }
+    this.jitterSeed=seed;
+    const rnd=mulberry32((seed*0x85EBCA6B+13)>>>0||1);
+    const W0=(typeof W==='number')?W:390;
+    let pairDt=null;
+    for(const c of camps){
+      c.x=Math.max(54, Math.min(W0-54, Math.round((c.x||0)+(rnd()*28-14))));
+      let dt;
+      if(c.pair){
+        if(pairDt==null)pairDt=+((rnd()*0.9-0.45).toFixed(2));
+        dt=pairDt;
+      }else dt=+((rnd()*0.9-0.45).toFixed(2));
+      c.t=Math.max(1.2, +((c.t||0)+dt).toFixed(2));
+    }
+    for(let i=1;i<camps.length;i++){
+      const a=camps[i-1], b=camps[i];
+      if(a.pair&&b.pair)continue;
+      if(b.t<a.t+0.2)b.t=+(a.t+0.2).toFixed(2);
+    }
+  },
   script(){
     if(this._script)return this._script;
     const W0=(typeof W==='number')?W:390;
+    const camps=[
+      {id:'a', t:2.4, x:CX, y:236, n:42, reward:'gun', name:'正前废舰·一', openIn:0.45, life:9, vy:74},
+      {id:'b', t:14, x:CX+34, y:248, n:42, reward:'rate', name:'正前废舰·二', openIn:0.4, life:9, vy:74},
+      {id:'c', t:27, x:70, y:286, n:56, reward:'crowd', name:'人多的废舰', openIn:0.3, life:8.2, vy:70, pair:1},
+      {id:'d', t:27.05, x:W0-70, y:286, n:48, reward:'power', name:'强火力废舰', openIn:0.3, life:8.2, vy:70, pair:1},
+      {id:'e', t:40, x:CX-26, y:228, n:42, reward:'rate', name:'正前废舰·三', openIn:0.4, life:9, vy:74},
+      {id:'f', t:54, x:CX+16, y:218, n:42, reward:'gun', name:'正前废舰·四', openIn:0.4, life:9, vy:74},
+      {id:'g', t:67.5, x:CX, y:206, n:42, reward:'gun', name:'封锁废舰', openIn:0.35, life:8.6, vy:82}
+    ];
+    this.jitterCamps(camps);
     this._script={
-      camps:[
-        {id:'a', t:2.4, x:CX, y:236, n:42, reward:'gun', name:'正前废舰·一', openIn:0.45, life:9, vy:74},
-        {id:'b', t:14, x:CX+34, y:248, n:42, reward:'rate', name:'正前废舰·二', openIn:0.4, life:9, vy:74},
-        {id:'c', t:27, x:70, y:286, n:78, reward:'crowd', name:'人多的废舰', openIn:0.3, life:8.2, vy:70, pair:1},
-        {id:'d', t:27.05, x:W0-70, y:286, n:28, reward:'power', name:'强火力废舰', openIn:0.3, life:8.2, vy:70, pair:1},
-        {id:'e', t:40, x:CX-26, y:228, n:42, reward:'rate', name:'正前废舰·三', openIn:0.4, life:9, vy:74},
-        {id:'f', t:54, x:CX+16, y:218, n:42, reward:'gun', name:'正前废舰·四', openIn:0.4, life:9, vy:74},
-        {id:'g', t:70, x:CX, y:206, n:42, reward:'gun', name:'封锁废舰', openIn:0.35, life:8.6, vy:82}
-      ],
+      camps,
       bees:[
-        {t:1, n:16, kind:'row'},
-        {t:8, n:20, kind:'v'},
-        {t:18, n:18, kind:'row'},
+        {t:1, n:12, kind:'row'},
+        {t:12, n:28, kind:'v'},
+        {t:18, n:14, kind:'row'},
         {t:32, n:42, kind:'row'},
         {t:46, n:18, kind:'v'},
         {t:59, n:16, kind:'row'}
@@ -5251,16 +5488,16 @@ const day1={
       live.push(e);
       if(!e.v21open&&t>=(e.v21openAt||0)&&e.y>24)e.v21open=1;
       const inside=!!(e.v21open&&e.v21arrived&&this.inRing(e));
+      if(e.v21arrived&&inside)e.v21entered=1;
       if(inside){
-        e.v21seen=1;
         e.v21prog=(e.v21prog||0)+(dt||0);
         if(e.v21prog>=need){this.breach(e); continue}
-      }else if((e.v21prog||0)>0){
-        if(e.v21seen&&!e.v21exited){
+      }else if(e.v21entered){
+        if(!e.v21exited){
           e.v21exited=1;
           this.leftRing=(this.leftRing||0)+1;
         }
-        e.v21prog=Math.max(0,(e.v21prog||0)-(dt||0)*0.55);
+        if((e.v21prog||0)>0)e.v21prog=Math.max(0,(e.v21prog||0)-(dt||0)*0.55);
       }
       if(e.v21arrived&&(t>=(e.v21dieAt||1e9)||e.x<-24||e.x>W0+24))this.loseCamp(e,'drift');
     }
@@ -5288,6 +5525,7 @@ const day1={
       const brief=this.brief();
       const pass=now+0.01>=(this.need||150);
       this.result={win:pass, pax:now, den, t:+t.toFixed(2), why:pass?'win':'below_half', brief};
+      this._allowEnd=1;
       if(!pass){try{lose('移民损失过半')}catch(e){}}
       else{try{lvWin()}catch(e){}}
     });
@@ -5335,10 +5573,13 @@ const day1={
       for(const camp of camps){
         const near=this.inRing(camp);
         const age=(G.time||0)-(camp.v21born||G.time||0);
+        const metering=!!(camp.v21open&&camp.v21arrived);
         ctx.save();
-        ctx.strokeStyle='#b8ffe0'; ctx.lineWidth=3; ctx.setLineDash([10,7]);
-        ctx.beginPath(); ctx.arc(camp.x, camp.y, R, 0, 7); ctx.stroke();
-        ctx.setLineDash([]);
+        if(!metering){
+          ctx.strokeStyle='#b8ffe0'; ctx.lineWidth=3; ctx.setLineDash([10,7]);
+          ctx.beginPath(); ctx.arc(camp.x, camp.y, R, 0, 7); ctx.stroke();
+          ctx.setLineDash([]);
+        }
         if(F){
           const dx=camp.x-F.x, dy=camp.y-F.y, L=Math.hypot(dx,dy)||1;
           const x1=camp.x-dx/L*46, y1=camp.y-dy/L*46;
@@ -5362,9 +5603,6 @@ const day1={
       ctx.strokeRect(18, 128, (typeof W==='number'?W:390)-36, 40);
       ctx.restore();
       txt(camps.length>=2?'只能顾一边':'去解救战俘营', CX, 148, 22, '#fff', 4, 'center', 900);
-    }else if(state==='play'||state==='pause'){
-      const shown=Math.round(this.barShown!=null?this.barShown:0);
-      txt('救回 '+shown+' / 需要 '+(this.need||150), CX, 148, 16, '#d8ffe8', 0, 'center', 900);
     }
     if(this.toast&&this.toast.t<this.toast.life&&F){
       const a=this.toast.t<0.12?this.toast.t/0.12:this.toast.t>this.toast.life-0.35?(this.toast.life-this.toast.t)/0.35:1;
@@ -5431,6 +5669,7 @@ wrap('disable',function(orig,args){
 wrap('lose',function(orig,args){
   if(!isV21)return orig.apply(this,args);
   let why=args[0];
+  if(day1.on&&!day1._allowEnd&&(why==='方舟被击毁'||why==='移民损失过半'))return;
   if(why==='方舟被击毁'){
     why='移民损失过半';
     args=['移民损失过半'];
@@ -5453,11 +5692,19 @@ wrap('newRun',function(orig,args){
   return r;
 });
 wrap('drawBG',function(orig,args){
+  const play=isV21&&(state==='play'||state==='pause');
+  const prev=bgDim;
+  if(play)bgDim=0;
   const r=orig.apply(this,args);
-  if(!(isV21&&(state==='play'||state==='pause')))return r;
+  if(play)bgDim=prev;
+  if(!play)return r;
+  const pad=(typeof OX==='number')?OX+12:48;
   ctx.save();
-  ctx.fillStyle='rgba(6,8,22,.46)';
-  ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='rgba(4,6,12,.82)';
+  ctx.fillRect(-pad,-pad,W+pad*2,H+pad*2);
+  ctx.fillStyle='rgba(52,54,62,.42)';
+  ctx.fillRect(-pad,-pad,W+pad*2,H+pad*2);
+  try{vignette('rgba(2,3,8,A)',0.64)}catch(e){}
   ctx.restore();
   return r;
 });
@@ -5503,10 +5750,10 @@ wrap('drawArkPillTop',function(orig){
 });
 wrap('spr',function(orig,args){
   const k=args[0], x=args[1], y=args[2], sc=args[3]==null?1:args[3];
-  if(isV21&&k==='fighter'&&sc>=0.3&&F&&!F.hangar&&(state==='play'||state==='pause')&&Math.abs(x-F.x)<1.5){
-    try{paintJet(x,y)}catch(e){}
-  }
-  return orig.apply(this,args);
+  const jet=isV21&&k==='fighter'&&sc>=0.3&&F&&!F.hangar&&(state==='play'||state==='pause')&&Math.abs(x-F.x)<1.5;
+  const r=orig.apply(this,args);
+  if(jet){try{paintJet(x,y)}catch(e){}}
+  return r;
 });
 wrap('drawArkWarn',function(orig){
   if(isV21)return;
@@ -5520,6 +5767,12 @@ wrap('drawEnemy',function(orig,args){
 
 wrap('update',function(orig,args){
   if(test.on&&test.hurry&&args[0])args[0]=args[0]*8;
+  if(day1.on&&!test.on&&day1._holdReal){
+    const now=(typeof performance!=='undefined')?performance.now():0;
+    if(now>=day1._holdReal)day1._holdReal=0;
+    else if(now<day1._holdSlow)args[0]=0;
+    else if(args[0])args[0]*=0.32;
+  }
   const dt=args[0]||0;
   try{
     if(opener.on)G._dv=99;
@@ -5529,7 +5782,7 @@ wrap('update',function(orig,args){
       const A=(typeof ark==='function')?ark():null;
       test._ark=A?{hp:A.hp,sh:A.shield||0}:null;
     }
-    if(test.on&&state==='play'){test.frames++;test.steer(dt);if(test.autopick)test.takeCard()}
+    if(test.on&&state==='play'){test.frames++;if(test.bot&&test.bot!=='off')test.steer(dt);if(test.autopick)test.takeCard()}
     else if(isV21&&typeof CH!=='undefined'&&CH&&CH.opts&&((typeof AUTO!=='undefined'&&AUTO)||V21._sim)){
       CH.t=9;CH.v21force=1;CH.lock=0;CH.v21up=1;
       takeChoice(cards.best(CH.opts));
@@ -5543,11 +5796,11 @@ wrap('update',function(orig,args){
       }
     }
   }catch(e){}
-  /* 1-1 选卡是 0.3 倍子弹时间，不是整局暂停。自动选卡已经在上面把卡点掉。 */
+  /* 1-1 选卡时世界停住，营倒计时不走。卡面自己的 CH.t 仍按这一帧原来的 dt 走。 */
   let cardHold=null;
   if(day1.on&&typeof CH!=='undefined'&&CH&&CH.opts){
     cardHold=CH; CH=null;
-    args[0]=(args[0]||0)*0.3;
+    args[0]=0;
   }
   let snap=null;
   try{
@@ -5562,6 +5815,12 @@ wrap('update',function(orig,args){
         try{xpAdd(step*1.15)}catch(e){}
       }
       feel.opening();
+      if(F&&state==='play'){
+        const px=F._jx==null?F.x:F._jx, py=F._jy==null?F.y:F._jy;
+        F.v21spd=Math.hypot(F.x-px,F.y-py)*60;
+        F.v21lean=(F.tx!=null?F.tx-F.x:0);
+        F._jx=F.x; F._jy=F.y;
+      }
       balanceBullets();
       if(!day1.on)opener.tick();
       if(!day1.on)horde.tick(step);
@@ -5589,8 +5848,8 @@ wrap('update',function(orig,args){
     if(test.on)test.watchArk();
     if(test.on&&!isV21)crisis.update();
     if(test.on&&test.fail&&G&&state==='play'&&G.time>=28&&!test._failed){test._failed=1;try{lose('方舟被击毁')}catch(e){}}
-    if(test.on)test.live();
-    if(test.on&&(state==='end'||state==='dying'))test.finish(state);
+    if(test.on||isV21)test.live();
+    if((test.on||isV21)&&(state==='end'||state==='dying'))test.finish(state);
   }catch(err){console.error('[v21]',err)}
   return r;
 });
@@ -5696,40 +5955,15 @@ wrap('xpTick',function(orig){
   return cards.tick();
 });
 wrap('autoPilot0',function(orig,args){
-  if(day1.on&&test.on&&(test.bot==='none'||test.bot==='still'||test.bot==='sweep'))return;
-  if(day1.on&&state==='play'&&F&&typeof enemies!=='undefined'){
-    const prefer=(test.on&&test.bot==='right')?'right':'left';
-    const camps=enemies.filter(e=>e&&!e.dead&&!e.v21done&&e.v21camp);
-    if(camps.length>=2){
-      const ordered=camps.slice().sort((a,b)=>a.x-b.x);
-      const pick=prefer==='right'?ordered[ordered.length-1]:ordered[0];
-      const lockedAlive=day1.lockId&&camps.some(c=>c.v21id===day1.lockId);
-      if(!lockedAlive){
-        day1.lockId=pick.v21id;
-        day1.fork={t:G.time||0, id:pick.v21id, x:pick.v21homeX||pick.x, y:pick.v21holdY||pick.y};
-      }
-    }
-    const locked=day1.lockId&&enemies.find(e=>e&&e.v21camp&&e.v21id===day1.lockId);
-    const otherPair=enemies.some(e=>e&&e.v21camp&&e.v21pair&&!e.dead&&!e.v21done&&e.v21id!==day1.lockId);
-    let camp=null;
-    if(locked&&!locked.dead&&!locked.v21done)camp=locked;
-    else if(otherPair&&day1.fork)camp={x:day1.fork.x, y:day1.fork.y, v21homeX:day1.fork.x, v21holdY:day1.fork.y};
-    else{
-      if(locked&&(locked.dead||locked.v21done))day1.lockId=null;
-      camp=camps[0]||null;
-    }
-    const boss=enemies.find(e=>e&&!e.dead&&e.v21boss);
-    let gx=null,gy=null;
-    if(camp){
-      gx=camp.v21homeX!=null?camp.v21homeX:camp.x;
-      const hy=camp.v21holdY!=null?camp.v21holdY:camp.y;
-      gy=hy+58;
-    }else if(boss){gx=boss.x; gy=clamp(boss.y+150,220,680)}
-    if(gx!=null){
+  const steerBot=test.on&&(test.bot==='careful'||test.bot==='left'||test.bot==='right');
+  if(day1.on&&test.on&&!steerBot)return;
+  if(steerBot&&day1.on&&state==='play'&&F){
+    const g=day1.playerAim(test.bot==='right'?'right':'left');
+    if(g){
       G.moved=true; G.lastMove=T;
       const k=Math.min(1,(args[0]||0)*4);
-      F.tx+=(clamp(gx,20,370)-F.tx)*k;
-      F.ty+=(clamp(gy,140,712)-F.ty)*k;
+      F.tx+=(clamp(g.x,20,370)-F.tx)*k;
+      F.ty+=(clamp(g.y,140,712)-F.ty)*k;
       return;
     }
   }
@@ -5821,6 +6055,10 @@ wrap('hurtEnemy',function(orig,args){
   let r;
   try{r=orig.apply(this,args)}finally{if(saved)Math.random=saved}
   try{
+    if(isV21&&e&&!was&&!e.v21camp){
+      if(e.dead)feel.killBoom(e);
+      else if((e.hp||0)>0)feel.hitSpark(e);
+    }
     if(isV21&&e&&!was&&e.dead){
       feel.noteKill(e);
       day1.noteKill(e);
@@ -5866,17 +6104,24 @@ wrap('failTip',function(orig,args){
   if(G&&G.v21day1){
     const sec=day1.holdNeed||4.2;
     const n=day1.leftRing||0;
-    return ['在圈内停 '+sec+' 秒才能破营','你有 '+n+' 座营离开过圈'];
+    const missed=day1.neverIn||0;
+    const line=n?('你有 '+n+' 座营进圈后又离开'):('有 '+missed+' 座营到了，你没飞进圈');
+    return ['在圈内停 '+sec+' 秒才能破营', line];
   }
   const t=orig.apply(this,args);
   if(isV21&&t&&/脉冲/.test((t[0]||'')+(t[1]||'')))return ['先拆开火的敌人','近防只清贴身的登舰艇，弹幕要躲开'];
-  if(t&&/护住方舟/.test((t[0]||'')+(t[1]||''))&&G&&G.v21day1)return ['在圈内停 '+(day1.holdNeed||4.2)+' 秒才能破营','你有 '+(day1.leftRing||0)+' 座营离开过圈'];
+  if(t&&/护住方舟/.test((t[0]||'')+(t[1]||''))&&G&&G.v21day1){
+    const n=day1.leftRing||0;
+    const line=n?('你有 '+n+' 座营进圈后又离开'):('有 '+(day1.neverIn||0)+' 座营到了，你没飞进圈');
+    return ['在圈内停 '+(day1.holdNeed||4.2)+' 秒才能破营', line];
+  }
   return t;
 });
 
 wrap('fire',function(orig,args){
   const n=pbul.length;
   const main0=!!args[3];
+  if(isV21&&main0&&F)F.v21shot=(typeof T==='number')?T:0;
   if(isV21&&main0&&args.length>2){
     let d=args[2]||14;
     d*=meta.dmgMul()*rich.atkFromTier();
@@ -5884,11 +6129,17 @@ wrap('fire',function(orig,args){
     args[2]=d;
   }
   const r=orig.apply(this,args);
-  const markHot=()=>{
-    if(!(day1.on&&day1.tier>=1))return;
-    for(let i=n;i<pbul.length;i++)if(pbul[i])pbul[i].v21hot=1;
+  const stampTier=()=>{
+    if(!isV21)return;
+    const tier=day1.on?(day1.tier||0):((F&&F.v21tier)||0);
+    for(let i=n;i<pbul.length;i++){
+      const b=pbul[i];
+      if(!b||b.v21tier!=null)continue;
+      if(b.st==='wing'||b.st==='side'||b.st==='rear'||b.st==='turret')continue;
+      b.v21tier=tier;
+    }
   };
-  markHot();
+  stampTier();
   if(!isV21||typeof up!=='function')return r;
   const main=!!args[3];
   const wingShot=args[4]==='wing';
@@ -5930,7 +6181,7 @@ wrap('fire',function(orig,args){
       for(let i=n;i<pbul.length;i++)if(pbul[i]&&!pbul[i].home){pbul[i].home=1;break}
     }
   }
-  markHot();
+  stampTier();
   return r;
 });
 wrap('spawnDrone',function(orig,args){
@@ -5944,15 +6195,18 @@ wrap('drawPBul',function(orig){
   if(!isV21)return;
   ctx.save();
   for(const b of pbul){
-    if(!b||!(b.fat||b.syn||b.evo||b.lance||b.v21hot))continue;
+    if(!b)continue;
+    const tier=b.v21tier|0;
+    const special=!!(b.lance||b.net||b.storm||b.st==='wing'||b.st==='side'||b.st==='rear'||b.st==='turret');
+    if(tier>=1&&!special){paintTierShot(b);continue}
+    if(!(b.fat||b.syn||b.evo||b.lance))continue;
     const sp=Math.hypot(b.vx,b.vy)||1;
     const ux=b.vx/sp, uy=b.vy/sp;
-    const hot=!!b.v21hot;
-    const len=hot?26:(b.net?30:(b.lance?24:(b.storm?18:14)));
-    const col=hot?'#ffe14a':(b.st==='rear'?'#ff9ad0':(b.st==='side'?'#7ee0ff':(b.st==='turret'?'#ffe14a':(b.net?'#ffe14a':(b.storm?'#bff6ff':(b.st==='hv'?'#9fd0ff':(b.st==='wing'?'#9dff8a':'#ffb15a')))))));
+    const len=b.net?30:(b.lance?24:(b.storm?18:14));
+    const col=b.st==='rear'?'#ff9ad0':(b.st==='side'?'#7ee0ff':(b.st==='turret'?'#ffe14a':(b.net?'#ffe14a':(b.storm?'#bff6ff':(b.st==='hv'?'#9fd0ff':(b.st==='wing'?'#9dff8a':'#ffb15a'))))));
     ctx.strokeStyle=col;
     ctx.globalAlpha=0.95;
-    ctx.lineWidth=hot?5.4:(b.net?5:(b.lance?3.6:2.8));
+    ctx.lineWidth=b.net?5:(b.lance?3.6:2.8);
     ctx.beginPath();
     ctx.moveTo(b.x,b.y);
     ctx.lineTo(b.x-ux*len,b.y-uy*len);
@@ -6021,6 +6275,100 @@ wrap('drawPause',function(orig){
   try{trialMark(78)}catch(e){}
   return r;
 });
+/* 两张和三张用同一张卡的宽、间距和字号。高光也贴这张卡，不再另算一套坐标。 */
+function v21Cards(){
+  if(typeof CH==='undefined'||!CH||!CH.opts)return;
+  const opts=CH.opts, n=opts.length;
+  const k=Math.min(1,(CH.t||0)/0.25);
+  const locked=(CH.t||0)<(CH.lock||0);
+  const w=118, gap=8, h=384;
+  const x0=CX-(n*w+(n-1)*gap)/2;
+  ctx.save();
+  ctx.fillStyle='rgba(10,8,40,'+(0.8*k)+')';
+  ctx.fillRect(0,0,W,H);
+  ctx.restore();
+  txt(n>=3?'选择强化':'选择方向', CX, 206, 34, 'gold', 6);
+  opts.forEach(function(o,i){
+    const x=x0+i*(w+gap);
+    const y=244+(1-k)*40;
+    const rar=o.u&&o.u.rar||0;
+    const rc=(typeof RAR!=='undefined'&&RAR[rar])?RAR[rar][1]:'#8fe9ff';
+    const fc=o.col||rc;
+    ctx.save();
+    rr(x+3,y+6,w,h,16); ctx.fillStyle=CO; ctx.fill();
+    rr(x,y,w,h,16); ctx.fillStyle=fc; ctx.fill();
+    rr(x+6,y+6,w-12,h-12,11); ctx.fillStyle='#1d2463'; ctx.fill();
+    ctx.save(); rr(x+6,y+6,w-12,h-12,11); ctx.clip();
+    ctx.fillStyle=rc; ctx.fillRect(x,y,w,50);
+    ctx.fillStyle='rgba(255,255,255,.25)'; ctx.fillRect(x,y,w,16);
+    ctx.restore();
+    rr(x,y,w,h,16); ctx.lineWidth=4; ctx.strokeStyle=CO; ctx.stroke();
+    ctx.restore();
+    const nl=(typeof up==='function'&&o.u)?up(o.u.id)+1:1;
+    txt(o.u?o.u.name:'', x+w/2, y+32, 18, '#fff', 3.5, 'center', 900);
+    ctx.save(); ctx.beginPath(); ctx.arc(x+w/2,y+132,48,0,7); ctx.fillStyle='rgba(255,255,255,.08)'; ctx.fill(); ctx.restore();
+    if(!(typeof upIcon==='function'&&o.u&&upIcon(o.u, x+w/2, y+132, 0.96)))txt(o.ic||'', x+w/2, y+134, 40, fc, 5);
+    const M=Math.min(3,(o.u&&o.u.max)||1);
+    for(let q=0;q<M;q++)comicStar(x+w/2+(q-(M-1)/2)*22, y+210, 9, q<nl?'#ffd21a':'#3a3f6e');
+    const l3=nl>=3&&o.u&&o.u.lv3;
+    let s='';
+    if(l3)s=(typeof LV3S!=='undefined'&&LV3S[o.u.id])||('质变·'+String(o.u.lv3).split('：')[0]);
+    else s=(typeof UPSHORT!=='undefined'&&o.u&&UPSHORT[o.u.id])||(o.u&&o.u.d&&o.u.d[0])||o.sub||'';
+    ctx.font='900 16px '+(typeof FONT!=='undefined'?FONT:'sans-serif');
+    const fs=Math.max(13, Math.min(17, Math.floor(16*(w-16)/Math.max(1, ctx.measureText(String(s)).width))));
+    if(l3)txt(s, x+w/2, y+268, fs, '#ffd23a', Math.max(2.2, fs*0.2), 'center', 900);
+    else if(typeof hiTxt==='function')hiTxt(s, x+w/2, y+268, fs);
+    if(o.tag)txt(String(o.tag), x+w/2, y+312, 13, fc, 0, 'center', 900);
+    if(nl===1){
+      ctx.save(); rr(x+w-46,y-8,42,22,11); ctx.fillStyle='#ff3b4f'; ctx.fill(); ctx.lineWidth=2.5; ctx.strokeStyle=CO; ctx.stroke(); ctx.restore();
+      txt('NEW', x+w-25, y+3, 12, '#fff', 2, 'center', 900);
+    }
+    if(nl>=2){
+      const p=1+0.06*Math.sin((typeof T==='number'?T:0)*6);
+      ctx.save(); ctx.translate(x+w/2, y-2); ctx.scale(p,p);
+      rr(-46,-14,92,26,13); ctx.fillStyle='#ffc21a'; ctx.fill(); ctx.lineWidth=3; ctx.strokeStyle='#1a1030'; ctx.stroke(); ctx.restore();
+      txt(nl>=3?'升级→Lv3!':'升级→Lv'+nl, x+w/2, y-1, 13, '#1a1030', 0, 'center', 900);
+    }
+    if(locked){ctx.save(); ctx.globalAlpha=0.3; rr(x,y,w,h,16); ctx.fillStyle='#000'; ctx.fill(); ctx.restore()}
+    const sweep=(CH.t||0)-0.2-i*0.12;
+    if(sweep>=0&&sweep<=0.6){
+      ctx.save();
+      if(typeof bev==='function'){bev(x+5,y+5,w-10,h-10,10); ctx.clip()}
+      const sx=x-60+sweep/0.6*(w+120);
+      const g=ctx.createLinearGradient(sx-70,y,sx+70,y+90);
+      g.addColorStop(0,'rgba(255,255,255,0)');
+      g.addColorStop(0.35,'rgba(255,230,140,.5)');
+      g.addColorStop(0.5,'rgba(255,255,255,.95)');
+      g.addColorStop(0.65,'rgba(255,230,140,.5)');
+      g.addColorStop(1,'rgba(255,255,255,0)');
+      ctx.fillStyle=g; ctx.fillRect(x,y,w,h); ctx.restore();
+    }
+    if(typeof BTN!=='undefined')BTN.push({x,y,w,h,label:i?'选火力':'选护航',fn:function(){takeChoice(i)}});
+  });
+  if(CH.q!=null){
+    const x=x0+CH.q*(w+gap);
+    ctx.save(); ctx.strokeStyle='#fff'; ctx.lineWidth=5; rr(x-3,241,w+6,h+6,18); ctx.stroke(); ctx.restore();
+  }
+  if(G&&G.lvl&&CH.n3){
+    const fr=1+(((typeof PB!=='undefined'&&PB.unl)||[]).indexOf('reroll2')>=0?1:0);
+    const free=(G.reroll||0)<fr;
+    const c=free?0:30+20*((G.reroll||0)-fr);
+    lightBtn(100,654,190,52, free?'刷新 ⟳ 免费':('刷新 ⟳ '+c+' 金币'), (free||G.coins>=c)?'on':'', function(){
+      if(locked)return;
+      if(!free&&G.coins<c){setTip('金币不足',1.2);return}
+      if(!free)G.coins-=c;
+      G.reroll=(G.reroll||0)+1;
+      openChoice3();
+      if(CH)CH.t=Math.max(CH.t,0.3);
+      ev('reroll',{c});
+    },16);
+  }
+}
+wrap('drawChoice',function(orig){
+  if(!isV21||typeof CH==='undefined'||!CH||!CH.opts)return orig.call(this);
+  try{v21Cards()}catch(e){return orig.call(this)}
+});
+
 wrap('drawLvEnd',function(orig){
   orig.call(this);
   try{V21.drawEnd()}catch(e){}
@@ -6154,6 +6502,7 @@ window.__test={
 };
 V21.rich=rich;
 V21.meta=meta;
+V21.day1=day1;
 if(window.__game){
   __game.v21=V21;
   __game.profile=profile;
@@ -6161,15 +6510,15 @@ if(window.__game){
   __game.v21.callInUpdate=function(fn){later.push({t:0,fn:fn})};
 }
 emit('boot',{profile,pulse:flags.autoPulseEnabled?1:0,l12:flags.level12CrisisEnabled?1:0,autopick:flags.autoPickPendingEnabled?1:0});
-if(test.on){
+if(test.on||isV21){
   window.__testReport={
-    test:1,profile,partial:true,settled:false,reason:'boot',
+    test:test.on?1:0,profile,partial:true,settled:false,reason:'boot',
     level:'',bot:test.bot,seed:test.seed,
     pax:{depart:0,delivered:0,lost:0,now:null,by_source:{}},
     first_ark_hit:{t:null,source:'none'},
     weapon_form_changed:[],synergy_previewed:[],synergy_activated:[]
   };
-  console.log('test_mode profile='+profile+' dbg_ui='+(typeof dbgOn==='function'&&dbgOn()?'1':'0'));
+  console.log((test.on?'test_mode':'report_ready')+' profile='+profile+' dbg_ui='+(typeof dbgOn==='function'&&dbgOn()?'1':'0'));
 }
 /* 无参数和 /v21/ 直接开 1-1。剧情点一下就跳过，实验档不等四段漫画。 */
 if(isV21){
