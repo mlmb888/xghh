@@ -12,7 +12,7 @@ const LOBBYBG={2:"data:image/webp;base64,UklGRpTRAQBXRUJQVlA4IIjRAQAQgwWdASrQAgA
 
 'use strict';
 // 《星港护航》MVP —— 纯 Canvas，单文件
-const VER='v13.39';const W=390,H=844,CX=195;
+const VER='v13.40';const W=390,H=844,CX=195;
 const OUT='#1d1747';
 const FONT='"PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Source Han Sans SC","Microsoft YaHei","WenQuanYi Micro Hei",sans-serif';
 const NUMF='"Arial Black","Helvetica Neue",Arial,'+FONT;
@@ -1882,7 +1882,7 @@ function drawDissolve(){const D=G&&G.dissolve;if(!D)return;D.t+=1/60;const a=1-D
 
 function frame(now){const raw=(now-last)/1000,dt=Math.min(.033,raw);last=now;{const P=window._perf||(window._perf={a:0,n:0,t:0,fps:0,ms:0});P.a+=raw;P.n++;P.t+=raw;if(P.t>=1){P.fps=Math.round(P.n/P.t);P.ms=+(P.t/P.n*1000).toFixed(1);if(state==='play'&&P.ms>20){P.bad=(P.bad||0)+1;if(P.bad>=2&&!window._dprCap&&(window.devicePixelRatio||1)>2){window._dprCap=2;resize();ev('dprDrop',{ms:P.ms})}}else P.bad=0;P.n=0;P.t=0}}/* v13.38 帧时统计；连续 2 秒 >20ms 自动降到 2x */if(state==='pause'&&drag)drag=null;/* v13.28 暂停/切后台后旧拖拽指针作废，避免恢复后第一下触摸被当成双指脉冲 */const udt=FREEZE?0:dt;if(state==='play'&&G&&!CH&&!BRF&&!FREEZE)G.wall=(G.wall||0)+Math.min(raw,.1)*(typeof SPEED!=='undefined'?SPEED:1);
  if(state==='play'&&!degraded&&SPEED===1&&!FREEZE){slowAcc=raw>.02?slowAcc+raw:Math.max(0,slowAcc-raw*.5);if(slowAcc>2){degraded=true;PCAP=140;ev('degrade')}}
- try{if(SPEED>1&&state==='play'&&!FREEZE&&raw<.028)for(let i=1;i<SPEED&&state==='play';i++){update(1/60);updCam(1/60)}update(udt);updCam(udt);ctx.setTransform(SC*DPR,0,0,SC*DPR,OX*SC*DPR,OY*SC*DPR);ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='low';ctx.clearRect(0,0,W,H);/* v13.35 美术图集改 3x，缩小采样用高质量平滑（最近邻在 2.3~3.5x 时边缘锯齿发毛）*/
+ try{if(SPEED>1&&state==='play'&&!FREEZE&&raw<.06)for(let i=1;i<SPEED&&state==='play';i++){update(1/60);updCam(1/60)}update(udt);updCam(udt);ctx.setTransform(SC*DPR,0,0,SC*DPR,OX*SC*DPR,OY*SC*DPR);ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='low';ctx.clearRect(0,0,W,H);/* v13.35 美术图集改 3x，缩小采样用高质量平滑（最近邻在 2.3~3.5x 时边缘锯齿发毛）*/
   if(state==='title')drawTitle();else if(state==='story')drawStory();else if(state==='pick')drawPick();else if(state==='station')drawStation();else if(state==='fork')drawFork();else if(state==='map'){drawMap();drawAdMock()}else if(state==='prep')drawPrep();
   else if(state!=='load'){drawWorld(state==='play'?udt:0);if(state==='play'||state==='pause')drawEBul();drawHUD();if(state==='play')drawDissolve();if(state==='pause')drawPause();if(state==='play'&&BRF)drawBrief();if(state==='play'&&CH)drawChoice();if(state==='dying')drawDying();if(state==='end'){updateFx(udt);drawEnd();}}if((state==='play'||state==='pause')&&typeof drawTopFX==='function')try{drawTopFX()}catch(e){}drawSoundHint();if(Q.get('dbg')&&window.__px){const p=__px;ctx.save();ctx.font='600 11px monospace';ctx.textAlign='left';ctx.textBaseline='top';const s=`${(window._perf||{}).fps||0}fps ${(window._perf||{}).ms||0}ms dpr=${p.dpr} css=${p.css} canvas=${p.canvas} k=${p.k} ${VER}`;const mw=ctx.measureText(s).width;ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(W-mw-8,60,mw+6,14);ctx.fillStyle='#7fff9a';ctx.fillText(s,W-mw-5,61);ctx.restore()}}
  catch(e){console.error(e);}
@@ -2210,10 +2210,10 @@ function txt(t,x,y,size,fill='#fff',sw,align='center',weight=900,font=FONT){size
 function button(x,y,w,h,label,col,fn,size=18,sub){const c=CBC[col]||CBC.y,r=Math.min(14,h*.42);
  ctx.save();rr(x,y+5,w,h,r);ctx.fillStyle=CO;ctx.fill();
  rr(x,y,w,h,r);ctx.fillStyle=c[1];ctx.fill();
- ctx.save();ctx.clip();ctx.fillStyle=c[2];ctx.fillRect(x,y+h*.72,w,h);rr(x+6,y+4,w-12,h*.22,r*.6);ctx.fillStyle=c[0];ctx.fill();ctx.fillStyle='rgba(255,255,255,.75)';rr(x+10,y+6,Math.min(18,w*.15),5,2.5);ctx.fill();ctx.restore();
+ ctx.save();ctx.clip();ctx.fillStyle=c[2];ctx.fillRect(x,y+h*.72,w,h);rr(x+6,y+4,w-12,h*.17,r*.5);ctx.fillStyle=c[0];ctx.fill();ctx.fillStyle='rgba(255,255,255,.75)';rr(x+10,y+6,Math.min(18,w*.15),5,2.5);ctx.fill();ctx.restore();
  rr(x,y,w,h,r);ctx.lineWidth=3.2;ctx.strokeStyle=CO;ctx.stroke();ctx.restore();
  const tc=col==='y'?'#fff':'#fff';
- if(sub){txt(label,x+w/2,y+h*.44,size,tc);txt(sub,x+w/2,y+h*.8,Math.max(14,size*.44),'#fff',2.5,'center',800)}else txt(label,x+w/2,y+h*.56,size,tc);/* v13.39 文字落在按钮主体，避开高光 */
+ if(sub){txt(label,x+w/2,y+h*.5,size,tc);txt(sub,x+w/2,y+h*.84,Math.max(14,size*.44),'#fff',2.5,'center',800)}else txt(label,x+w/2,y+h*.56,size,tc);/* v13.39 文字落在按钮主体，避开高光 */
  if(fn)BTN.push({x,y,w,h,fn,label:String(label)})}
 function panel(x,y,w,h,col='d',c=10,alpha=1){const cc=CBC[col]||CBC.d,r=Math.max(8,c+4);ctx.save();ctx.globalAlpha*=alpha;
  rr(x+3,y+4,w,h,r);ctx.fillStyle='rgba(18,12,36,.55)';ctx.fill();
@@ -2556,7 +2556,7 @@ drawTitle=function(){/* v13.36 弹壳战机式大厅：顶栏资源 / 侧边小�
   ctx.save();rr(44,642,200,7,3.5);ctx.fillStyle='#0d1238';ctx.fill();rr(44,642,200*Math.max(.04,done/Ls.length),10,5);ctx.fillStyle='#8cf56a';ctx.fill();ctx.restore();txt(`${done}/${Ls.length}`,252,646,12,'#fff',2,'left',900,NUMF);
   ctx.save();ctx.beginPath();ctx.arc(326,616,24,0,7);ctx.fillStyle='#3a1030';ctx.fill();ctx.lineWidth=3;ctx.strokeStyle='#ff3b4f';ctx.stroke();ctx.clip();if(hasA('cruiser'))aspr('cruiser',326,618,.26);ctx.restore();txt('BOSS',326,644,10,'#ff8a9a',2,'center',900)}
  // 出发（体力消耗）
- {const n=lbNext(),cost=n?LVL.costOf(n.id):0;const p=1+.025*Math.sin(T*4);ctx.save();ctx.translate(CX,700);ctx.scale(p,p);ctx.translate(-CX,-700);button(70,666,250,66,'出 发','y',()=>{if(n&&PB.runs&&typeof openPrep==='function'&&!Q.get('dbg'))openPrep(n.id);else openCampaign()},28,cost?`⚡ ${cost}`:'⚡ 免费');ctx.restore()}
+ {const n=lbNext(),cost=n?LVL.costOf(n.id):0;const p=1+.025*Math.sin(T*4);ctx.save();ctx.translate(CX,700);ctx.scale(p,p);ctx.translate(-CX,-700);button(70,662,250,74,'出 发','y',()=>{if(n&&PB.runs&&typeof openPrep==='function'&&!Q.get('dbg'))openPrep(n.id);else openCampaign()},28,cost?`⚡ ${cost}`:'⚡ 免费');ctx.restore()}
  // 底部 5 页签
  ctx.fillStyle='rgba(10,14,44,.95)';ctx.fillRect(-40,764,W+80,H);ctx.fillStyle=CO;ctx.fillRect(-40,762,W+80,3);
  const dock=()=>{if(PB.runs){PK={opts:['gun','shield','salvage','repair'],sel:[],need:1,t:0,dock:1};state='pick';ev('pick')}else tip={text:'通关一局后开放机库',t:0,d:2}};
@@ -2569,7 +2569,7 @@ drawTitle=function(){/* v13.36 弹壳战机式大厅：顶栏资源 / 侧边小�
 /* v13.35 Boss 入场前 3 秒、横幅后 1 秒内不弹选卡 */
 {const _o=openChoice3;openChoice3=function(...a){try{if(G&&state==='play'&&!AUTO){if(cruiser&&(cruiser.dead||cruiser.state==='dead'||cruiser.state==='boom'||cruiser.state==='dying'||cruiser.hp<=0)||G.phase==='done'||G.phase==='pass'||G.won)return false;const soon=G.phase==='travel'&&G.len>0&&G.prog<1&&(1-G.prog)*G.len<3.2;const ban=banner&&banner.boss&&banner.t<(banner.dur||3)+1;if(soon||ban)return false}}catch(e){}return _o.apply(this,a)}}
 /* ===== v13.39 出发准备：增益在上 / 可视化编队（拖拽或点两下交换）===== */
-function prepSlots(P){const rows=['ark','pax'].concat(P.order),n=rows.length,sp=Math.min(80,Math.floor(380/Math.max(1,n-1))),y0=300;return rows.map((k,i)=>({k,i,x:96,y:y0+i*sp,lock:i<2}))}
+function prepSlots(P){const rows=['ark','pax'].concat(P.order),n=rows.length,sp=Math.min(104,Math.floor(330/Math.max(1,n-1))),y0=320+Math.max(0,(330-sp*(n-1))/2);return rows.map((k,i)=>({k,i,x:96,y:y0+i*sp,lock:i<2}))}
 function prepSwap(P,a,b){const o=P.order;const ia=a-2,ib=b-2;if(ia<0||ib<0||ia===ib)return;const S=prepSlots(P);P.off=P.off||{};P.off[ia]=S[a].y-S[b].y;P.off[ib]=S[b].y-S[a].y;[o[ia],o[ib]]=[o[ib],o[ia]];const t=P.off[ia];P.off[ia]=P.off[ib];P.off[ib]=t;try{SFX2.uiClick()}catch(e){}ev('prepSwap',{a:ia,b:ib})}
 drawPrep=function(){const P=PREP;if(!P){state='map';return}P.t+=1/60;drawBG(1/60);ctx.fillStyle='rgba(6,10,30,.55)';ctx.fillRect(-40,0,W+80,H);const d=LVL.get(P.id),sv=LVS;
  ctx.fillStyle='rgba(10,14,44,.92)';ctx.fillRect(-40,-60,W+80,128);ctx.fillStyle=CO;ctx.fillRect(-40,66,W+80,3);
@@ -2582,14 +2582,14 @@ drawPrep=function(){const P=PREP;if(!P){state='map';return}P.t+=1/60;drawBG(1/60
   BTN.push({x,y,w:BW,h:BH,label:'buy:'+b.id,fn:()=>{P.buy[b.id]=!P.buy[b.id];SFX2.uiClick()}})});
  // 本关编队
  txt('本关编队',16,252,14,'#8fb8d8',0,'left',800);txt(P.order.length>1?'拖动或依次点两艘交换位置 · 上=前':'上=前（船队纵队）',374,252,12,'#9fd8ff',0,'right',700);
- ctx.save();rr(10,266,370,430,18);ctx.fillStyle='rgba(16,20,64,.85)';ctx.fill();ctx.lineWidth=2.5;ctx.strokeStyle=CO;ctx.stroke();ctx.restore();
+ ctx.save();rr(10,266,370,420,18);ctx.fillStyle='rgba(16,20,64,.85)';ctx.fill();ctx.lineWidth=2.5;ctx.strokeStyle=CO;ctx.stroke();ctx.restore();
  const S=prepSlots(P);P.off=P.off||{};ctx.save();ctx.strokeStyle='rgba(143,233,255,.35)';ctx.lineWidth=3;ctx.setLineDash([6,6]);ctx.beginPath();ctx.moveTo(96,S[0].y);ctx.lineTo(96,S[S.length-1].y);ctx.stroke();ctx.restore();
- txt('▲ 前',96,284,12,'#8fe9ff',0,'center',800);
+ txt('▲ 船队前方',30,286,12,'#8fe9ff',0,'left',800);
  const ns=P.order.length;S.forEach(s=>{let y=s.y;if(!s.lock){const j=s.i-2;if(P.off[j]){P.off[j]*=.78;if(Math.abs(P.off[j])<.5)P.off[j]=0;y+=P.off[j]}if(P.drag&&P.drag.i===s.i&&P.drag.mv){y=P.drag.y}}
-  const sel=P.sel===s.i,R=s.lock?26:30;ctx.save();ctx.beginPath();ctx.arc(s.x,y,R,0,7);ctx.fillStyle=s.lock?'rgba(40,44,90,.9)':sel?'#ffc21a':'#2d4ab0';ctx.fill();ctx.lineWidth=3;ctx.strokeStyle=sel?'#fff':CO;ctx.stroke();ctx.restore();
-  ctx.save();if(s.lock)ctx.globalAlpha=.85;drawHull(s.k,s.x,y,s.k==='ark'?.3:.62);ctx.restore();if(s.lock)txt('🔒',s.x+R-4,y-R+6,13,'#fff',0,'center',400,'sans-serif');
-  const T0=STYPE[s.k],role=s.lock?(s.k==='ark'?'方舟 · 领航（固定）':'难民船 · 固定'):(ns===1?'护航位':(s.i===2?'前排 · 先接敌':s.i===S.length-1?'队尾 · 护尾':'中间'));
-  lbFit(()=>{txt(T0.n,140,y-14,18,T0.col,2.4,'left',900);txt(role,140,y+8,13,'#fff',0,'left',800);if(!s.lock&&T0.fm)txt(T0.fm,140,y+26,12,'#9fb8d8',0,'left',700)},230)});
+  const sel=P.sel===s.i,R=s.lock?30:36;ctx.save();ctx.beginPath();ctx.arc(s.x,y,R,0,7);ctx.fillStyle=s.lock?'rgba(40,44,90,.9)':sel?'#ffc21a':'#2d4ab0';ctx.fill();ctx.lineWidth=3;ctx.strokeStyle=sel?'#fff':CO;ctx.stroke();ctx.restore();
+  ctx.save();if(s.lock)ctx.globalAlpha=.85;drawHull(s.k,s.x,y,s.k==='ark'?.36:.74);ctx.restore();if(s.lock)txt('🔒',s.x+R-4,y-R+6,13,'#fff',0,'center',400,'sans-serif');
+  const T0=STYPE[s.k],BEST={gun:'靠前',shield:'中间',salvage:'队尾',repair:'靠前'},DESC={gun:'先打来袭敌机',shield:'护住前后两艘',salvage:'接住掉落金币',repair:'给相邻船快修'};const pos=s.lock?'':(ns===1?'护航位':s.i===2?'靠前':s.i===S.length-1?'队尾':'中间'),best=BEST[s.k],okp=!s.lock&&(ns===1||best===pos||(best==='中间'&&ns>=1));
+  lbFit(()=>txt(T0.n,140,y-16,19,T0.col,2.4,'left',900),110);if(s.lock){txt(s.k==='ark'?'领航 · 护住它':'载有幸存者',140,y+10,13,'#cfe6ff',0,'left',800)}else{ctx.font=`900 19px ${FONT}`;const nw=Math.min(110,ctx.measureText(T0.n).width);ctx.save();rr(148+nw,y-29,58,26,13);ctx.fillStyle='#ffc21a';ctx.fill();ctx.lineWidth=2;ctx.strokeStyle=CO;ctx.stroke();ctx.restore();txt(pos,177+nw,y-16,13,'#1c2350',0,'center',900);lbFit(()=>txt((okp?'✓ '+(DESC[s.k]||''):'建议放'+best+'：'+(DESC[s.k]||'')),140,y+12,13,okp?'#9df27a':'#ffd23a',0,'left',800),232)}});
  // 出发
  const c=prepCost(),ok=(sv.coins||0)>=c;txt(c?`合计 ${c} 金币`:'不买也可以直接出发',CX,716,14,ok?'#ffe46b':'#ff8a9a',2,'center',800);
  button(40,734,310,70,'出发 ▶','y',prepGo,30);
