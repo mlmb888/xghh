@@ -3149,6 +3149,7 @@ const cards={
       if(typeof day1!=='undefined'&&day1.on&&o.u.id==='spread'&&up(o.u.id)<1)s+=6;
       if(o.synPreview&&o.synPreview.progress==='1/2'&&!o.synPreview.upgrade)s+=5;
       if(typeof day1!=='undefined'&&day1.on&&o.synPreview&&o.synPreview.progress==='1/2'&&!o.synPreview.upgrade)s+=8;
+      if(String(o.u.id).indexOf('morph_')===0)s-=1;
       if(s>bs){bs=s;bi=i}
     });
     return bi;
@@ -3379,6 +3380,33 @@ const feel={
     let s=0.17;
     Math.random=function(){s=(s*1.7+0.13)%1;return s<0?s+1:s};
     try{fn()}finally{Math.random=rnd}
+  },
+  /* 六张质变卡只往画面上加弹，不进伤害列表。没买到时一发都不加。 */
+  morphVolley(x,y){
+    if(!isV21||typeof up!=='function')return;
+    const a=-Math.PI/2;
+    const push=(ang,col,fill,v,fat,life)=>{
+      this.echoes.push({x, y, vx:Math.cos(ang)*(v||900), vy:Math.sin(ang)*(v||900), life:life||0.42, col, fill:fill||'#fff', fat:fat?1:0});
+    };
+    if(up('morph_fork')>=1){
+      push(a-0.62,'#3dff9a','#eafff4',980);
+      push(a+0.62,'#3dff9a','#eafff4',980);
+    }
+    if(up('morph_helix')>=1){
+      const spin=(typeof T==='number'?T:0)*9;
+      for(let i=0;i<3;i++)push(a+Math.sin(spin+i*2.1)*0.55,'#d7b0ff','#f6ecff',860+i*80,0,0.5);
+    }
+    if(up('morph_lance')>=1)push(a,'#9fd0ff','#f4fbff',1280,1,0.55);
+    if(up('morph_ring')>=1){
+      for(let i=0;i<8;i++)push(-Math.PI+i*Math.PI/4,'#ff9ad0','#fff0f8',640,0,0.36);
+    }
+    if(up('morph_rain')>=1){
+      for(let i=0;i<5;i++)push(a-0.22+0.11*i,'#8fe9ff','#f3fdff',760,0,0.4);
+    }
+    if(up('morph_crescent')>=1){
+      for(let i=0;i<5;i++)push(a-0.95+0.475*i,'#ffe14a','#fff6d2',900,0,0.4);
+    }
+    if(this.echoes.length>40)this.echoes.splice(0, this.echoes.length-40);
   },
   fxBump(kind){
     try{
@@ -3639,7 +3667,10 @@ const synergy={
     {id:'net', name:'贯穿弹网', a:'pierce', b:'spread', unlock:'解锁扇形贯穿弹幕', feel:'前方扇面穿透弹'},
     {id:'storm', name:'协同风暴', a:'wing', b:'rate', unlock:'解锁僚机短时齐射', feel:'主炮加速，僚机齐射'},
     {id:'omni', name:'全向火力', a:'side', b:'rear', unlock:'解锁移动时的侧后火网', feel:'走位时侧后补枪'},
-    {id:'overclock', name:'超载主炮', a:'attr_atk', b:'amp_rate', unlock:'攻击力和射速叠成粗弹', feel:'主炮变粗，射得更快'}
+    {id:'overclock', name:'超载主炮', a:'attr_atk', b:'amp_rate', unlock:'攻击力和射速叠成粗弹', feel:'主炮变粗，射得更快'},
+    {id:'fork', name:'叉旋', a:'morph_fork', b:'morph_helix', unlock:'解锁斜向螺旋', feel:'叉射拧成螺旋'},
+    {id:'lance', name:'矛环', a:'morph_lance', b:'morph_ring', unlock:'解锁长矛带环', feel:'长矛穿过一圈环弹'},
+    {id:'rain', name:'雨弧', a:'morph_rain', b:'morph_crescent', unlock:'解锁弧形弹雨', feel:'月弧里落下弹雨'}
   ],
   reset(){this.live={}; this.stormT=0; this._previewed={}},
   offersLeft(){
@@ -3742,12 +3773,14 @@ const synergy={
       P({k:'ring',x:F.x,y:F.y,t:0,life:.4,R:54,col:'#8fe9ff'});
       burst(F.x,F.y,16,'#ffd23a',220,.4,3);
     }catch(e){}
-    try{nums.push({x:clamp(F.x,80,310), y:F.y-84, v:-8, txt:r.name+' 成型', col:'#ffe46b', t:0, life:1.3, big:2})}catch(e){}
-    try{if(typeof day1!=='undefined'&&day1.on)day1.say(r.name+' 成型')}catch(e){}
+    const line='连携成立 · '+r.name;
+    this.lastLine=line;
+    try{nums.push({x:clamp(F.x,80,310), y:F.y-84, v:-8, txt:line, col:'#ffe46b', t:0, life:1.3, big:2})}catch(e){}
+    try{if(typeof day1!=='undefined'&&day1.on)day1.say(line)}catch(e){}
     try{feel.withJuice(()=>{synergy.demo(r)})}catch(e){}
     F.v21syn={id:r.id, name:r.name, t:T};
     if(!(typeof day1!=='undefined'&&day1.on)){
-      try{broadcast(r.name+' 成型', r.feel, 'gold')}catch(e){}
+      try{broadcast(line, r.feel, 'gold')}catch(e){}
     }
     emit('synergy_activated',{synergy_id:r.id, synergy_name:r.name, game_time_s:t});
     cards.noteForm(r.id, 'parts', r.name);
@@ -3769,6 +3802,16 @@ const synergy={
       for(const d of [-0.55,-0.22,0.22,0.55])push(a+d, '#bff6ff', '#fff', 1120);
     }else if(r.id==='omni'){
       for(const ang of [0, Math.PI, Math.PI/2, -Math.PI/2])push(ang, '#ff9ad0', '#fff', 860);
+    }else if(r.id==='fork'){
+      push(a-0.7, '#3dff9a', '#eafff4', 1000);
+      push(a+0.7, '#3dff9a', '#eafff4', 1000);
+      for(let i=0;i<4;i++)push(a-0.42+0.28*i, '#d7b0ff', '#f6ecff', 880);
+    }else if(r.id==='lance'){
+      push(a, '#9fd0ff', '#f4fbff', 1280);
+      for(let i=0;i<8;i++)push(i*Math.PI/4, '#ff9ad0', '#fff0f8', 620);
+    }else if(r.id==='rain'){
+      for(let i=0;i<5;i++)push(a-0.2+0.1*i, '#8fe9ff', '#f3fdff', 740);
+      for(let i=0;i<5;i++)push(a-1.05+0.52*i, '#ffe14a', '#fff6d2', 900);
     }else{
       for(const d of [-0.55,-0.28,0,0.28,0.55]){
         feel.echoes.push({x:x, y:y, vx:Math.cos(a+d)*1040, vy:Math.sin(a+d)*1040, life:0.46, col:'#ffd23a', fill:'#fff6d2', fat:1});
@@ -4503,8 +4546,8 @@ function guessHitSrc(s){
   }
   return '';
 }
-/* P0″：31 张卡和局外三条的数据。拼接时用 build/v21_pool.json 覆盖标记里的内容。 */
-const V21_POOL=/*V21_POOL_JSON*/{"cards":[{"id":"morph_spread","track":"形态","name":"散射","line":"前向扇形，清群","gate":"D1","ups":"spread","max":1},{"id":"morph_pierce","track":"形态","name":"穿透","line":"直线贯穿，打装甲和舱门","gate":"D1","ups":"pierce","max":1},{"id":"morph_broadside","track":"形态","name":"侧舷","line":"左右侧射，打侧翼","gate":"D1","ups":"side","max":1},{"id":"morph_tail","track":"形态","name":"尾炮","line":"后方补射","gate":"W1","ups":"rear","max":1},{"id":"morph_homing","track":"形态","name":"追踪","line":"轻度追踪，点名拖船","gate":"W1","ups":"","max":1},{"id":"morph_ricochet","track":"形态","name":"弹射","line":"命中后弹跳 1 次","gate":"W1","ups":"","max":1},{"id":"morph_beam","track":"形态","name":"光束","line":"短射线，单体更高","gate":"M1","ups":"","max":1},{"id":"morph_drone","track":"形态","name":"僚机","line":"跟射僚机，不是职能舰","gate":"W1","ups":"wing","max":1},{"id":"attr_ap","track":"属性","name":"穿甲","line":"对装甲和舱门伤害 ×1.5","gate":"D1","ups":"","max":1},{"id":"attr_atk","track":"属性","name":"攻击力","line":"主炮伤害 +18%","gate":"D1","ups":"","max":1},{"id":"attr_arc","track":"属性","name":"电弧","line":"击杀时跳到邻近 1 个敌人","gate":"W1","ups":"","max":1},{"id":"attr_cryo","track":"属性","name":"冷却","line":"命中减速","gate":"W1","ups":"","max":1},{"id":"attr_purge","track":"属性","name":"净化","line":"对登舰额外伤害","gate":"M1","ups":"","max":1},{"id":"amp_rate","track":"增幅","name":"射速强化","line":"射速 +12%，可叠 2 次","gate":"D1","ups":"","max":2},{"id":"amp_speed","track":"增幅","name":"弹速强化","line":"弹速 +15%","gate":"D1","ups":"","max":1},{"id":"amp_range","track":"增幅","name":"射程强化","line":"射程 +12%","gate":"W1","ups":"","max":1},{"id":"amp_magnet","track":"增幅","name":"吸取","line":"拾取范围变大","gate":"W1","ups":"magnet","max":1},{"id":"amp_hull","track":"增幅","name":"稳固编队","line":"被打时少掉约 15% 的人","gate":"W1","ups":"","max":1},{"id":"amp_repair","track":"增幅","name":"应急修理","line":"隔一段时间补一点人数缓冲","gate":"M1","ups":"","max":1},{"id":"ship_shield","track":"船","name":"收编·护盾舰","line":"本局护盾舰入列，不开火","gate":"D1","ups":"","max":1},{"id":"ship_gun","track":"船","name":"收编·炮舰","line":"本局炮舰入列，齐射按住","gate":"W1","ups":"","max":1},{"id":"ship_medic","track":"船","name":"收编·医护舰","line":"登舰时少掉人","gate":"W1","ups":"","max":1},{"id":"ship_repair","track":"船","name":"收编·维修舰","line":"瘫痪船更快回到队列","gate":"M1","ups":"","max":1},{"id":"ship_salvage","track":"船","name":"收编·回收舰","line":"掉落吸得更近","gate":"M1","ups":"","max":1},{"id":"ship_tow","track":"船","name":"收编·拖曳舰","line":"失位的船拉回队列","gate":"M1","ups":"","max":1},{"id":"ship_shield_plus","track":"船","name":"护盾协同","line":"已有护盾舰时穹顶更久","gate":"M1","ups":"","max":1},{"id":"ship_gun_plus","track":"船","name":"炮舰超载","line":"已有炮舰时齐射更快","gate":"M1","ups":"","max":1},{"id":"camp_flash_boost","track":"破营","name":"闪光余烬","line":"下一次破营人数 +20%","gate":"W1","ups":"","max":1},{"id":"camp_door_charge","track":"破营","name":"破门冲锋","line":"战俘营舱门伤害 +40%","gate":"D1","ups":"","max":1},{"id":"camp_escort_lane","track":"破营","name":"救援航道","line":"破营窗内少挨打","gate":"W1","ups":"","max":1},{"id":"camp_recruit_bias","track":"破营","name":"招降协议","line":"下一次三选一更偏向船卡","gate":"M1","ups":"","max":1}],"lines":[{"id":"gun","name":"主炮伤害","cap":5,"cost":30,"note":"主炮再重 8%"},{"id":"hold","name":"破营速度","cap":3,"cost":40,"note":"圈内少停 0.3 秒"},{"id":"start","name":"起始火力","cap":1,"cost":60,"note":"下局开局就是火力 II"}]}/*V21_POOL_JSON_END*/;
+/* P0″：卡池和局外三条的数据。拼接时用 build/v21_pool.json 覆盖标记里的内容。 */
+const V21_POOL=/*V21_POOL_JSON*/{"cards":[{"id":"morph_spread","track":"形态","name":"散射","line":"前向扇形，清群","gate":"D1","ups":"spread","max":1},{"id":"morph_pierce","track":"形态","name":"穿透","line":"直线贯穿，打装甲和舱门","gate":"D1","ups":"pierce","max":1},{"id":"morph_broadside","track":"形态","name":"侧舷","line":"左右侧射，打侧翼","gate":"D1","ups":"side","max":1},{"id":"morph_tail","track":"形态","name":"尾炮","line":"后方补射","gate":"W1","ups":"rear","max":1},{"id":"morph_homing","track":"形态","name":"追踪","line":"轻度追踪，点名拖船","gate":"W1","ups":"","max":1},{"id":"morph_ricochet","track":"形态","name":"弹射","line":"命中后弹跳 1 次","gate":"W1","ups":"","max":1},{"id":"morph_beam","track":"形态","name":"光束","line":"短射线，单体更高","gate":"M1","ups":"","max":1},{"id":"morph_drone","track":"形态","name":"僚机","line":"跟射僚机，不是职能舰","gate":"W1","ups":"wing","max":1},{"id":"morph_fork","track":"形态","name":"叉射","line":"左右两道斜弹，看得见分开","gate":"D1","ups":"","max":1},{"id":"morph_helix","track":"形态","name":"螺旋","line":"弹道拧着往前走","gate":"D1","ups":"","max":1},{"id":"morph_lance","track":"形态","name":"长矛","line":"正中一发又长又亮","gate":"D1","ups":"","max":1},{"id":"morph_ring","track":"形态","name":"环弹","line":"一圈同时飞出去","gate":"D1","ups":"","max":1},{"id":"morph_rain","track":"形态","name":"弹雨","line":"头顶落下一排细弹","gate":"D1","ups":"","max":1},{"id":"morph_crescent","track":"形态","name":"月弧","line":"前方一道弯弧","gate":"D1","ups":"","max":1},{"id":"attr_ap","track":"属性","name":"穿甲","line":"对装甲和舱门伤害 ×1.5","gate":"D1","ups":"","max":1},{"id":"attr_atk","track":"属性","name":"攻击力","line":"主炮伤害 +18%","gate":"D1","ups":"","max":1},{"id":"attr_arc","track":"属性","name":"电弧","line":"击杀时跳到邻近 1 个敌人","gate":"W1","ups":"","max":1},{"id":"attr_cryo","track":"属性","name":"冷却","line":"命中减速","gate":"W1","ups":"","max":1},{"id":"attr_purge","track":"属性","name":"净化","line":"对登舰额外伤害","gate":"M1","ups":"","max":1},{"id":"amp_rate","track":"增幅","name":"射速强化","line":"射速 +12%，可叠 2 次","gate":"D1","ups":"","max":2},{"id":"amp_speed","track":"增幅","name":"弹速强化","line":"弹速 +15%","gate":"D1","ups":"","max":1},{"id":"amp_range","track":"增幅","name":"射程强化","line":"射程 +12%","gate":"W1","ups":"","max":1},{"id":"amp_magnet","track":"增幅","name":"吸取","line":"拾取范围变大","gate":"W1","ups":"magnet","max":1},{"id":"amp_hull","track":"增幅","name":"稳固编队","line":"被打时少掉约 15% 的人","gate":"W1","ups":"","max":1},{"id":"amp_repair","track":"增幅","name":"应急修理","line":"隔一段时间补一点人数缓冲","gate":"M1","ups":"","max":1},{"id":"ship_shield","track":"船","name":"收编·护盾舰","line":"本局护盾舰入列，不开火","gate":"D1","ups":"","max":1},{"id":"ship_gun","track":"船","name":"收编·炮舰","line":"本局炮舰入列，齐射按住","gate":"W1","ups":"","max":1},{"id":"ship_medic","track":"船","name":"收编·医护舰","line":"登舰时少掉人","gate":"W1","ups":"","max":1},{"id":"ship_repair","track":"船","name":"收编·维修舰","line":"瘫痪船更快回到队列","gate":"M1","ups":"","max":1},{"id":"ship_salvage","track":"船","name":"收编·回收舰","line":"掉落吸得更近","gate":"M1","ups":"","max":1},{"id":"ship_tow","track":"船","name":"收编·拖曳舰","line":"失位的船拉回队列","gate":"M1","ups":"","max":1},{"id":"ship_shield_plus","track":"船","name":"护盾协同","line":"已有护盾舰时穹顶更久","gate":"M1","ups":"","max":1},{"id":"ship_gun_plus","track":"船","name":"炮舰超载","line":"已有炮舰时齐射更快","gate":"M1","ups":"","max":1},{"id":"camp_flash_boost","track":"破营","name":"闪光余烬","line":"下一次破营人数 +20%","gate":"W1","ups":"","max":1},{"id":"camp_door_charge","track":"破营","name":"破门冲锋","line":"战俘营舱门伤害 +40%","gate":"D1","ups":"","max":1},{"id":"camp_escort_lane","track":"破营","name":"救援航道","line":"破营窗内少挨打","gate":"W1","ups":"","max":1},{"id":"camp_recruit_bias","track":"破营","name":"招降协议","line":"下一次三选一更偏向船卡","gate":"M1","ups":"","max":1}],"lines":[{"id":"gun","name":"主炮伤害","cap":5,"cost":30,"note":"主炮再重 8%"},{"id":"hold","name":"破营速度","cap":3,"cost":40,"note":"圈内少停 0.3 秒"},{"id":"start","name":"起始火力","cap":1,"cost":60,"note":"下局开局就是火力 II"}]}/*V21_POOL_JSON_END*/;
 const RICH_ROWS=(V21_POOL.cards||[]).map(function(c){return [c.id,c.track,c.name,c.line,c.gate,c.ups||'',c.max||1]});
 const RICH_EXAM={
   '1-1':{spread:1.2,pierce:1.4,side:1.0,attr_ap:1.3,camp_door_charge:2,amp_rate:1.1,ship_shield:1.5},
@@ -4515,6 +4558,9 @@ const RICH_COMBOS=[
   {id:'combo_storm', name:'协同风暴', a:'wing', b:'rate', live:'storm', on:1},
   {id:'combo_omni', name:'全向火力', a:'side', b:'rear', live:'omni', on:1},
   {id:'combo_overclock', name:'超载主炮', a:'attr_atk', b:'amp_rate', live:'overclock', on:1},
+  {id:'combo_fork', name:'叉旋', a:'morph_fork', b:'morph_helix', live:'fork', on:1},
+  {id:'combo_lance', name:'矛环', a:'morph_lance', b:'morph_ring', live:'lance', on:1},
+  {id:'combo_rain', name:'雨弧', a:'morph_rain', b:'morph_crescent', live:'rain', on:1},
   {id:'combo_thunder', name:'雷暴链', a:'morph_ricochet', b:'attr_arc', on:0},
   {id:'combo_ice_line', name:'冰封线', a:'morph_beam', b:'attr_cryo', on:0},
   {id:'combo_hunt', name:'猎杀群', a:'morph_homing', b:'wing', on:0},
@@ -5093,6 +5139,12 @@ const day1={
       }
       return;
     }
+    if(kind==='press'){
+      push({v21elite:1, x:CX-78, y:-36, vx:0, vy:72, hp:22, maxHp:22, r:14});
+      push({v21elite:1, x:CX+78, y:-36, vx:0, vy:72, hp:22, maxHp:22, r:14});
+      try{this.say('精英压下来了')}catch(err){}
+      return;
+    }
     if(kind==='mini'){
       push({v21mini:1, x:CX, y:-58, vx:0, vy:48, hp:168, maxHp:168, r:18});
       return;
@@ -5115,7 +5167,7 @@ const day1={
   /* 1-1 卡池。权重跟主考表走，没写进主考表的卡也有底权，这样攻击力会进池。 */
   cardPool(){
     const exam=(typeof RICH_EXAM!=='undefined'&&RICH_EXAM['1-1'])||{};
-    const base={spread:28, pierce:22, wing:14, side:10, rear:10, rate:12, attr_atk:16, amp_rate:16, attr_ap:12, amp_speed:8, camp_door_charge:14};
+    const base={spread:28, pierce:22, wing:14, side:10, rear:10, rate:12, attr_atk:16, amp_rate:16, attr_ap:12, amp_speed:8, camp_door_charge:14, morph_fork:2, morph_helix:2, morph_lance:2, morph_ring:2, morph_rain:2, morph_crescent:2};
     return Object.keys(base).map(id=>({id, w:base[id]+((exam[id]||0)*4)}));
   },
   synergyPairs(){
@@ -5880,7 +5932,8 @@ const day1={
         {t:18, n:14, kind:'row'},
         {t:32, n:42, kind:'row'},
         {t:46, n:18, kind:'v'},
-        {t:59, n:16, kind:'row'}
+        {t:59, n:16, kind:'row'},
+        {t:63, n:2, kind:'press'}
       ],
       cards:(this._cardPlan||this.dealCards()).map((ids,i)=>({t:[3.3,21,49][i], ids:ids.slice()}))
     };
@@ -6106,7 +6159,7 @@ const day1={
     if(combo!==this._combo&&!(combo&&this.popupBlock('combo'))){
       this._combo=combo;
       if(combo){
-        try{banner={t:0, dur:1.2, title:'组合成型！', sub:synergy.live.net?'贯穿弹网':synergy.live.omni?'全向火力':'协同风暴', clear:true}}catch(e){}
+        try{banner={t:0, dur:1.2, title:'连携成立', sub:synergy.live.net?'贯穿弹网':synergy.live.omni?'全向火力':'协同风暴', clear:true}}catch(e){}
         this.comboAt=+t.toFixed(2);
         this.comboPopupAt=this.comboAt;
         this.notePopup('combo');
@@ -6820,6 +6873,7 @@ wrap('fire',function(orig,args){
       });
       if(feel.echoes.length>40)feel.echoes.splice(0, feel.echoes.length-40);
     }
+    try{feel.morphVolley(args[0], args[1])}catch(err){}
   }
   stampTier();
   return r;
@@ -7176,7 +7230,7 @@ V21.draw=function(){
   if(F&&F.v21syn&&T-F.v21syn.t<2.6){
     const a=1-Math.max(0,(T-F.v21syn.t-1.6));
     ctx.save();ctx.globalAlpha=Math.max(0,a);
-    txt(F.v21syn.name+' 成型',CX,F.y-76,15,'#fff',0,'center',900);
+    txt('连携成立 · '+F.v21syn.name,CX,F.y-76,15,'#fff',0,'center',900);
     ctx.restore();
   }
   paintTierHalo();
