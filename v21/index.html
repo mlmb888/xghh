@@ -4650,11 +4650,35 @@ const meta={
       try{setTip('金币不足',1.2)}catch(e){}
       return;
     }
+    const before=this.preview(line);
     this.gold=(this.gold|0)-cost;
     this[line]=(this[line]||0)+1;
+    this.flash={text:'已买 · '+before, line:line, at:Date.now()};
     this.save();
     emit('meta_upgrade',{line, level:this[line], bolt:this.bolt()});
     try{if(typeof SFX2!=='undefined')SFX2.uiClick()}catch(e){}
+  },
+  /* 买之前的对比句。等级先读当前值，所以飘字能留下刚跨过的那一档。 */
+  preview(id){
+    const lv=this[id]|0;
+    if(id==='hold'){
+      const sec=function(n){
+        const v=n<=0?4.2:Math.max(3.2, +(4.2-0.3*n).toFixed(2));
+        return v.toFixed(1);
+      };
+      if(lv>=3)return '破营 '+sec(lv)+'s';
+      return '破营 '+sec(lv)+'s→'+sec(lv+1)+'s';
+    }
+    if(id==='gun'){
+      const pct=function(n){return 100+n*8};
+      if(lv>=5)return '主炮 '+pct(lv)+'%';
+      return '主炮 '+pct(lv)+'%→'+pct(lv+1)+'%';
+    }
+    if(id==='start'){
+      if(lv>=1)return '开局 火力 II';
+      return '开局 火力 I→火力 II';
+    }
+    return '';
   },
   equip(id){
     const row=this.modules.find(m=>m.id===id&&m.on);
@@ -4872,7 +4896,15 @@ function drawMetaPanel(){
   ctx.fillStyle='rgba(6,8,20,.94)';
   ctx.fillRect(0,0,W,H);
   txt('局外养成',CX,64,24,'#ffe46b',0,'center',900);
-  txt('金币 '+meta.gold+' · 本局结束会存进来。旧的三条不花钱。',CX,90,12,'#d5def2',0,'center',800);
+  const flash=meta.flash;
+  const fresh=!!(flash&&flash.text&&(Date.now()-(flash.at||0)<1800));
+  if(fresh){
+    ctx.fillStyle='#ffb21a';
+    ctx.fillRect(18,74,354,32);
+    txt(flash.text,CX,90,15,'#1a1004',0,'center',900);
+  }else{
+    txt('金币 '+meta.gold+' · 本局结束会存进来。旧的三条不花钱。',CX,90,12,'#d5def2',0,'center',800);
+  }
   const rows=[['atk','火力',meta.atk,20,'单发伤害约 +'+(meta.atk*5)+'%'],['rate','射速',meta.rate,15,'射击间隔变短'],['cabin','舱容',meta.cabin,12,'载客上限 +'+(meta.cabin*12)]];
   rows.forEach((r,i)=>{
     const y=108+i*58;
@@ -4887,10 +4919,12 @@ function drawMetaPanel(){
     const y=292+i*58;
     const lv=meta[r.id]|0;
     const cost=r.cost|0;
-    ctx.fillStyle='rgba(48,32,12,.95)';
+    const hot=fresh&&flash.line===r.id;
+    ctx.fillStyle=hot?'rgba(120,72,12,.98)':'rgba(48,32,12,.95)';
     ctx.fillRect(24,y,342,52);
+    if(hot){ctx.strokeStyle='#ffe46b';ctx.lineWidth=2;ctx.strokeRect(24,y,342,52)}
     txt(r.name+'  Lv '+lv+' / '+r.cap,40,y+20,15,'#fff',0,'left',900);
-    txt(r.note+' · '+cost+' 金币',40,y+38,11,'#ffe9a8',0,'left',800);
+    txt((meta.preview(r.id)||r.note)+' · '+cost+' 金币',40,y+38,12,hot?'#fff6d0':'#ffe9a8',0,'left',800);
     button(286,y+8,68,34,lv>=r.cap?'满':'买','y',()=>meta.add(r.id),16);
   });
   txt('弹速子项 Lv '+meta.bolt()+'（跟着火力）',CX,478,13,'#9fd0ff',0,'center',800);
@@ -7173,7 +7207,7 @@ V21.drawEnd=function(){
       drawMetaPanel();
       return;
     }
-    button(70,748,250,44,'养成 · 金币 '+(meta.gold|0),'y',function(){meta.open=1},16);
+    button(24,748,342,80,'养成','y',function(){meta.open=1},28,'金币 '+(meta.gold|0)+' · 买完立刻能感到');
     return;
   }
   if(!flags.populationLedgerEnabled)return;
