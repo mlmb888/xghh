@@ -1,0 +1,596 @@
+{
+ "tex": {
+  "asphalt_a": {
+   "L": 125.5,
+   "S": 53.4,
+   "Lstd": 16.4
+  },
+  "asphalt_b": {
+   "L": 131.5,
+   "S": 49.9,
+   "Lstd": 18.4
+  },
+  "concrete_a": {
+   "L": 181.5,
+   "S": 40.0,
+   "Lstd": 17.3
+  },
+  "concrete_b": {
+   "L": 175.5,
+   "S": 31.8,
+   "Lstd": 16.0
+  },
+  "dirt_a": {
+   "L": 187.5,
+   "S": 97.3,
+   "Lstd": 10.5
+  },
+  "dirt_b": {
+   "L": 180.5,
+   "S": 105.9,
+   "Lstd": 11.0
+  }
+ },
+ "decals": [
+  {
+   "id": "crack_s_1",
+   "type": "crack_s",
+   "x": 92,
+   "y": 52,
+   "w": 43,
+   "h": 88,
+   "atlas": 1
+  },
+  {
+   "id": "crack_m_1",
+   "type": "crack_m",
+   "x": 289,
+   "y": 55,
+   "w": 103,
+   "h": 81,
+   "atlas": 1
+  },
+  {
+   "id": "weed_1",
+   "type": "weed",
+   "x": 521,
+   "y": 33,
+   "w": 92,
+   "h": 126,
+   "atlas": 1
+  },
+  {
+   "id": "gravel_1",
+   "type": "gravel",
+   "x": 722,
+   "y": 42,
+   "w": 144,
+   "h": 108,
+   "atlas": 1
+  },
+  {
+   "id": "manhole_1",
+   "type": "manhole",
+   "x": 963,
+   "y": 45,
+   "w": 117,
+   "h": 101,
+   "atlas": 1
+  },
+  {
+   "id": "oil_1",
+   "type": "oil",
+   "x": 1137,
+   "y": 8,
+   "w": 223,
+   "h": 176,
+   "atlas": 1,
+   "src": "r4_ai"
+  },
+  {
+   "id": "patch_1",
+   "type": "patch",
+   "x": 1414,
+   "y": 37,
+   "w": 122,
+   "h": 117,
+   "atlas": 1
+  },
+  {
+   "id": "chunks_1",
+   "type": "chunks",
+   "x": 1633,
+   "y": 34,
+   "w": 138,
+   "h": 124,
+   "atlas": 1
+  },
+  {
+   "id": "pothole_1",
+   "type": "pothole",
+   "x": 1818,
+   "y": 11,
+   "w": 223,
+   "h": 169,
+   "atlas": 1,
+   "src": "r4_ai"
+  },
+  {
+   "id": "zebra_wear_1",
+   "type": "zebra_wear",
+   "x": 40,
+   "y": 241,
+   "w": 146,
+   "h": 94,
+   "atlas": 1
+  },
+  {
+   "id": "leaves_1",
+   "type": "leaves",
+   "x": 270,
+   "y": 227,
+   "w": 140,
+   "h": 121,
+   "atlas": 1
+  },
+  {
+   "id": "oil_2",
+   "type": "oil",
+   "x": 456,
+   "y": 195,
+   "w": 222,
+   "h": 185,
+   "atlas": 1,
+   "src": "r4_ai"
+  },
+  {
+   "id": "crack_s_2",
+   "type": "crack_s",
+   "x": 771,
+   "y": 251,
+   "w": 47,
+   "h": 74,
+   "atlas": 1
+  },
+  {
+   "id": "crack_l_1",
+   "type": "crack_l",
+   "x": 961,
+   "y": 238,
+   "w": 121,
+   "h": 100,
+   "atlas": 1
+  },
+  {
+   "id": "weed_2",
+   "type": "weed",
+   "x": 1193,
+   "y": 223,
+   "w": 110,
+   "h": 129,
+   "atlas": 1
+  },
+  {
+   "id": "gravel_2",
+   "type": "gravel",
+   "x": 1402,
+   "y": 232,
+   "w": 147,
+   "h": 111,
+   "atlas": 1
+  },
+  {
+   "id": "manhole_2",
+   "type": "manhole",
+   "x": 1642,
+   "y": 235,
+   "w": 121,
+   "h": 106,
+   "atlas": 1
+  },
+  {
+   "id": "oil_3",
+   "type": "oil",
+   "x": 1818,
+   "y": 209,
+   "w": 223,
+   "h": 158,
+   "atlas": 1,
+   "src": "r4_ai"
+  },
+  {
+   "id": "patch_2",
+   "type": "patch",
+   "x": 54,
+   "y": 423,
+   "w": 119,
+   "h": 113,
+   "atlas": 1
+  },
+  {
+   "id": "chunks_2",
+   "type": "chunks",
+   "x": 272,
+   "y": 417,
+   "w": 136,
+   "h": 125,
+   "atlas": 1
+  },
+  {
+   "id": "pothole_mud_1",
+   "type": "pothole_mud",
+   "x": 461,
+   "y": 386,
+   "w": 213,
+   "h": 188,
+   "atlas": 1,
+   "src": "r4_ai"
+  },
+  {
+   "id": "zebra_wear_2",
+   "type": "zebra_wear",
+   "x": 714,
+   "y": 436,
+   "w": 160,
+   "h": 87,
+   "atlas": 1
+  },
+  {
+   "id": "leaves_2",
+   "type": "leaves",
+   "x": 954,
+   "y": 427,
+   "w": 135,
+   "h": 105,
+   "atlas": 1
+  },
+  {
+   "id": "oil_4",
+   "type": "oil",
+   "x": 1137,
+   "y": 408,
+   "w": 223,
+   "h": 143,
+   "atlas": 1,
+   "src": "r4_ai"
+  },
+  {
+   "id": "crack_xs_1",
+   "type": "crack_xs",
+   "x": 1468,
+   "y": 456,
+   "w": 14,
+   "h": 48,
+   "atlas": 1
+  },
+  {
+   "id": "crack_m_2",
+   "type": "crack_m",
+   "x": 1664,
+   "y": 407,
+   "w": 77,
+   "h": 145,
+   "atlas": 1
+  },
+  {
+   "id": "weed_3",
+   "type": "weed",
+   "x": 1865,
+   "y": 425,
+   "w": 128,
+   "h": 110,
+   "atlas": 1
+  },
+  {
+   "id": "gravel_3",
+   "type": "gravel",
+   "x": 36,
+   "y": 616,
+   "w": 154,
+   "h": 112,
+   "atlas": 1
+  },
+  {
+   "id": "manhole_3",
+   "type": "manhole",
+   "x": 280,
+   "y": 592,
+   "w": 120,
+   "h": 160,
+   "atlas": 1
+  },
+  {
+   "id": "oil_5",
+   "type": "oil",
+   "x": 456,
+   "y": 590,
+   "w": 223,
+   "h": 163,
+   "atlas": 1,
+   "src": "r4_ai"
+  },
+  {
+   "id": "patch_3",
+   "type": "patch",
+   "x": 733,
+   "y": 613,
+   "w": 123,
+   "h": 117,
+   "atlas": 1
+  },
+  {
+   "id": "chunks_3",
+   "type": "chunks",
+   "x": 939,
+   "y": 614,
+   "w": 164,
+   "h": 116,
+   "atlas": 1
+  },
+  {
+   "id": "pothole_2",
+   "type": "pothole",
+   "x": 1137,
+   "y": 591,
+   "w": 223,
+   "h": 161,
+   "atlas": 1,
+   "src": "r4_ai"
+  },
+  {
+   "id": "zebra_wear_3",
+   "type": "zebra_wear",
+   "x": 1400,
+   "y": 623,
+   "w": 150,
+   "h": 97,
+   "atlas": 1
+  },
+  {
+   "id": "leaves_3",
+   "type": "leaves",
+   "x": 1629,
+   "y": 612,
+   "w": 146,
+   "h": 120,
+   "atlas": 1
+  },
+  {
+   "id": "oil_6",
+   "type": "oil",
+   "x": 1818,
+   "y": 585,
+   "w": 223,
+   "h": 174,
+   "atlas": 1,
+   "src": "r4_ai"
+  },
+  {
+   "id": "big_weed_1",
+   "type": "big_weed",
+   "atlas": 2,
+   "x": 2,
+   "y": 38,
+   "w": 405,
+   "h": 371
+  },
+  {
+   "id": "big_leaves_1",
+   "type": "big_leaves",
+   "atlas": 2,
+   "x": 411,
+   "y": 40,
+   "w": 405,
+   "h": 367
+  },
+  {
+   "id": "rubble_1",
+   "type": "rubble",
+   "atlas": 2,
+   "x": 820,
+   "y": 56,
+   "w": 404,
+   "h": 336
+  },
+  {
+   "id": "pothole_water_1",
+   "type": "pothole_water",
+   "atlas": 2,
+   "x": 1229,
+   "y": 60,
+   "w": 405,
+   "h": 328
+  },
+  {
+   "id": "oil_gloss_1",
+   "type": "oil_gloss",
+   "atlas": 2,
+   "x": 1638,
+   "y": 66,
+   "w": 405,
+   "h": 316
+  },
+  {
+   "id": "flower_weed_1",
+   "type": "flower_weed",
+   "atlas": 2,
+   "x": 2,
+   "y": 496,
+   "w": 405,
+   "h": 351
+  },
+  {
+   "id": "broken_asphalt_1",
+   "type": "broken_asphalt",
+   "atlas": 2,
+   "x": 411,
+   "y": 488,
+   "w": 405,
+   "h": 367
+  },
+  {
+   "id": "pothole_water_2",
+   "type": "pothole_water",
+   "atlas": 2,
+   "x": 820,
+   "y": 500,
+   "w": 405,
+   "h": 343
+  },
+  {
+   "id": "litter_1",
+   "type": "litter",
+   "atlas": 2,
+   "x": 1229,
+   "y": 500,
+   "w": 405,
+   "h": 344
+  }
+ ],
+ "roof_props": [
+  {
+   "id": "ac_0",
+   "type": "ac",
+   "atlas": "roof",
+   "x": 2,
+   "y": 2,
+   "w": 123,
+   "h": 124
+  },
+  {
+   "id": "tank_1",
+   "type": "tank",
+   "atlas": "roof",
+   "x": 146,
+   "y": 2,
+   "w": 91,
+   "h": 124
+  },
+  {
+   "id": "vent_2",
+   "type": "vent",
+   "atlas": "roof",
+   "x": 269,
+   "y": 2,
+   "w": 102,
+   "h": 124
+  },
+  {
+   "id": "ac_3",
+   "type": "ac",
+   "atlas": "roof",
+   "x": 386,
+   "y": 5,
+   "w": 124,
+   "h": 118
+  },
+  {
+   "id": "rail_4",
+   "type": "rail",
+   "atlas": "roof",
+   "x": 519,
+   "y": 2,
+   "w": 114,
+   "h": 123
+  },
+  {
+   "id": "rail_5",
+   "type": "rail",
+   "atlas": "roof",
+   "x": 642,
+   "y": 4,
+   "w": 124,
+   "h": 120
+  },
+  {
+   "id": "vent_6",
+   "type": "vent",
+   "atlas": "roof",
+   "x": 781,
+   "y": 2,
+   "w": 102,
+   "h": 124
+  },
+  {
+   "id": "ac_7",
+   "type": "ac",
+   "atlas": "roof",
+   "x": 899,
+   "y": 2,
+   "w": 122,
+   "h": 124
+  },
+  {
+   "id": "tank_8",
+   "type": "tank",
+   "atlas": "roof",
+   "x": 21,
+   "y": 130,
+   "w": 85,
+   "h": 124
+  },
+  {
+   "id": "pipes_9",
+   "type": "pipes",
+   "atlas": "roof",
+   "x": 149,
+   "y": 130,
+   "w": 85,
+   "h": 124
+  },
+  {
+   "id": "hut_10",
+   "type": "hut",
+   "atlas": "roof",
+   "x": 273,
+   "y": 130,
+   "w": 93,
+   "h": 124
+  },
+  {
+   "id": "pipes_11",
+   "type": "pipes",
+   "atlas": "roof",
+   "x": 409,
+   "y": 130,
+   "w": 77,
+   "h": 124
+  },
+  {
+   "id": "ac_12",
+   "type": "ac",
+   "atlas": "roof",
+   "x": 514,
+   "y": 135,
+   "w": 124,
+   "h": 113
+  },
+  {
+   "id": "vent_13",
+   "type": "vent",
+   "atlas": "roof",
+   "x": 642,
+   "y": 133,
+   "w": 124,
+   "h": 117
+  },
+  {
+   "id": "dish_14",
+   "type": "dish",
+   "atlas": "roof",
+   "x": 782,
+   "y": 130,
+   "w": 99,
+   "h": 124
+  },
+  {
+   "id": "tank_15",
+   "type": "tank",
+   "atlas": "roof",
+   "x": 909,
+   "y": 130,
+   "w": 102,
+   "h": 123
+  }
+ ]
+}

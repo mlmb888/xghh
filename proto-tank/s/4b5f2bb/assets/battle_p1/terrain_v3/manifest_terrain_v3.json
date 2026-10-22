@@ -1,0 +1,408 @@
+{
+ "name": "terrain_v3 暖色破碎柏油路（原创 AI 底纹 + 贴花）",
+ "seed": 1101,
+ "seed_note": "所有贴花位置/类型/旋转/缩放/透明度 = md5(seed|layer|type|row|col|j) 的确定性函数；与区块加载顺序无关，同种子同图。换关卡只换 seed。",
+ "scale": {
+  "pt_per_m": 22.2,
+  "tile_pt": 40,
+  "camera_zoom": 1.7,
+  "export": "2.5x",
+  "runtime_px_per_tile": 170,
+  "tex_world_tiles": 6.02
+ },
+ "textures": {
+  "road": [
+   "tex/asphalt_a.webp",
+   "tex/asphalt_b.webp"
+  ],
+  "plaza": [
+   "tex/concrete_a.webp 1024²",
+   "tex/concrete_b.webp 768²"
+  ],
+  "ground": [
+   "tex/dirt_a.webp(无石子)",
+   "tex/dirt_b.webp 768²(石子已滤除)",
+   "+asphalt_b 碎块岛"
+  ],
+  "water/bridge": "见 structures",
+  "facade": [
+   "tex/facade.webp 512²",
+   "tex/facade_shop.webp 512×384"
+  ]
+ },
+ "blend_rules": "每种材质 2 变体按世界坐标低频噪声(周期≈5格)混合；每个变体再叠一层 1.31×/0.83× 缩放 + 90°/270° 旋转 + 错位采样(噪声周期≈3.3格) → 无可见周期。路面另有≈12% 水泥补丁区，废地上≈20% 柏油碎块岛。材质交界 0.35 格噪声扭曲 + 软边；路沿 0.2m 浅水泥。",
+ "decal_rules": {
+  "_atlas_to_runtime": 1.0,
+  "layers": {
+   "base": {
+    "road": {
+     "crack_s": 0.55,
+     "crack_m": 0.35,
+     "crack_l": 0.12,
+     "crack_xs": 0.4,
+     "patch": 0.12,
+     "oil": 0.09
+    },
+    "plaza": {
+     "crack_s": 0.4,
+     "crack_m": 0.2,
+     "crack_xs": 0.35,
+     "chunks": 0.08,
+     "oil": 0.04
+    },
+    "ground": {
+     "crack_m": 0.15,
+     "oil": 0.02,
+     "pothole_mud": 0.04
+    }
+   },
+   "mid": {
+    "road": {
+     "pothole": 0.06,
+     "manhole": 0.035,
+     "zebra_wear": 0.03,
+     "gravel": 0.12
+    },
+    "plaza": {
+     "gravel": 0.06,
+     "manhole": 0.03,
+     "pothole": 0.03
+    },
+    "ground": {
+     "gravel": 0.25,
+     "chunks": 0.08,
+     "pothole": 0.03
+    }
+   },
+   "focal": {
+    "road": {
+     "pothole_water": 0.122,
+     "oil_gloss": 0.105,
+     "broken_asphalt": 0.088,
+     "big_leaves": 0.033,
+     "litter": 0.045
+    },
+    "plaza": {
+     "big_weed": 0.105,
+     "flower_weed": 0.088,
+     "big_leaves": 0.057,
+     "litter": 0.057,
+     "broken_asphalt": 0.053
+    },
+    "ground": {
+     "big_weed": 0.245,
+     "flower_weed": 0.122,
+     "big_leaves": 0.068,
+     "rubble": 0.08,
+     "litter": 0.09,
+     "pothole_water": 0.035
+    }
+   },
+   "top": {
+    "road": {
+     "weed": 0.12,
+     "leaves": 0.1
+    },
+    "plaza": {
+     "weed": 0.22,
+     "leaves": 0.14
+    },
+    "ground": {
+     "weed": 0.75,
+     "leaves": 0.35
+    }
+   }
+  },
+  "type_rules": {
+   "crack_xs": {
+    "rot": "any",
+    "scale": [
+     0.45,
+     0.8
+    ],
+    "alpha": [
+     0.45,
+     0.7
+    ]
+   },
+   "crack_s": {
+    "rot": "any",
+    "scale": [
+     0.55,
+     0.95
+    ],
+    "alpha": [
+     0.45,
+     0.75
+    ]
+   },
+   "crack_m": {
+    "rot": "any",
+    "scale": [
+     0.7,
+     1.15
+    ],
+    "alpha": [
+     0.45,
+     0.75
+    ]
+   },
+   "crack_l": {
+    "rot": "any",
+    "scale": [
+     0.9,
+     1.4
+    ],
+    "alpha": [
+     0.45,
+     0.7
+    ]
+   },
+   "patch": {
+    "rot": "any",
+    "scale": [
+     0.6,
+     1.1
+    ],
+    "alpha": [
+     0.5,
+     0.75
+    ]
+   },
+   "oil": {
+    "rot": "any",
+    "scale": [
+     0.45,
+     0.8
+    ],
+    "alpha": [
+     0.6,
+     0.85
+    ]
+   },
+   "pothole": {
+    "rot": "any",
+    "scale": [
+     0.45,
+     0.75
+    ],
+    "alpha": [
+     0.75,
+     0.95
+    ]
+   },
+   "pothole_mud": {
+    "rot": "any",
+    "scale": [
+     0.45,
+     0.75
+    ],
+    "alpha": [
+     0.75,
+     0.95
+    ]
+   },
+   "manhole": {
+    "rot": "any",
+    "scale": [
+     0.42,
+     0.5
+    ],
+    "alpha": [
+     0.85,
+     0.95
+    ]
+   },
+   "zebra_wear": {
+    "rot": "axis",
+    "scale": [
+     0.8,
+     1.0
+    ],
+    "alpha": [
+     0.5,
+     0.75
+    ]
+   },
+   "gravel": {
+    "rot": "any",
+    "scale": [
+     0.3,
+     0.55
+    ],
+    "alpha": [
+     0.8,
+     1.0
+    ]
+   },
+   "chunks": {
+    "rot": "any",
+    "scale": [
+     0.3,
+     0.55
+    ],
+    "alpha": [
+     0.85,
+     1.0
+    ]
+   },
+   "weed": {
+    "rot": "any",
+    "scale": [
+     0.35,
+     0.6
+    ],
+    "alpha": [
+     0.85,
+     1.0
+    ]
+   },
+   "leaves": {
+    "rot": "any",
+    "scale": [
+     0.28,
+     0.45
+    ],
+    "alpha": [
+     0.7,
+     0.95
+    ]
+   },
+   "big_weed": {
+    "rot": "any",
+    "scale": [
+     0.35,
+     0.62
+    ],
+    "alpha": [
+     0.92,
+     1.0
+    ]
+   },
+   "flower_weed": {
+    "rot": "any",
+    "scale": [
+     0.35,
+     0.62
+    ],
+    "alpha": [
+     0.92,
+     1.0
+    ]
+   },
+   "big_leaves": {
+    "rot": "any",
+    "scale": [
+     0.35,
+     0.62
+    ],
+    "alpha": [
+     0.92,
+     1.0
+    ]
+   },
+   "rubble": {
+    "rot": "any",
+    "scale": [
+     0.35,
+     0.62
+    ],
+    "alpha": [
+     0.92,
+     1.0
+    ]
+   },
+   "litter": {
+    "rot": "any",
+    "scale": [
+     0.35,
+     0.62
+    ],
+    "alpha": [
+     0.92,
+     1.0
+    ]
+   },
+   "broken_asphalt": {
+    "rot": "any",
+    "scale": [
+     0.35,
+     0.62
+    ],
+    "alpha": [
+     0.92,
+     1.0
+    ]
+   },
+   "pothole_water": {
+    "rot": "any",
+    "scale": [
+     0.32,
+     0.5
+    ],
+    "alpha": [
+     0.95,
+     1.0
+    ]
+   },
+   "oil_gloss": {
+    "rot": "any",
+    "scale": [
+     0.35,
+     0.6
+    ],
+    "alpha": [
+     0.65,
+     0.85
+    ]
+   }
+  },
+  "density_unit": "每格(40pt)期望个数；小数部分按哈希概率取整；格内位置 = 哈希抖动(0..1)",
+  "draw_order": "base(裂缝/补丁/油渍) → mid(小坑/井盖/碎石) → focal(图集2 大号焦点贴花，带软接触阴影) → top(杂草/落叶)",
+  "cluster_rule": "每层一张 40×48 的种子随机场(σ=1.6格高斯平滑)，密度×(0.1+2.2·v^1.6)：贴花成团成片出现、留出干净区，避免均匀撒点",
+  "focal_min_dist_tiles": 6.0,
+  "focal_rule": "focal 层先按密度生成候选，再按全局哈希优先级做最小间距 6 格的泊松筛选（确定性）→ 每屏(9×16格)≈3-5 个焦点"
+ },
+ "pipeline": [
+  "ai_raw/*.jpg（AI 原创，battle_final 仅参考）",
+  "build_kit_v3.py → tex/*.webp + decals/decal_atlas_v3.webp + kit_build.json",
+  "compose_v3.py full|crop → preview/",
+  "preview_v3.py → horde 预览 + 对比图"
+ ],
+ "atlases": {
+  "1": "decals/decal_atlas_v3.webp 2048×768, 36 小贴花",
+  "2": "decals/decal_atlas_v3_big.webp 2048×896, 9 大号焦点贴花"
+ },
+ "render_settings": {
+  "mipmap": "关闭（正交固定镜头，1:1 采样；内存预算按无 mip 计算）",
+  "filter": "bilinear",
+  "wrap": "repeat"
+ },
+ "grade": "r4: 路面中性暖灰 L≈128-134 sat×0.22；泥土暖黄土 L≈181-188 sat×0.5 tint(1.08,1,.82)；路面暖光(1.03,1,.95)",
+ "road_light": "路面：低频暖光层(±5%)×暖色(1.07,1,0.90)；胎痕：每条 3 格路两车道各 2 道(偏移 .55/1.05/1.95/2.45 格，宽 .07 格)，噪声断续，压暗 16%",
+ "structures": {
+  "roof": "tex/roof.webp 512²",
+  "facade": "tex/facade.webp 512²(横向无缝，3层≈1.55格屏高)",
+  "water": "tex/water.webp 512²",
+  "bridge": "tex/bridge.webp 512²",
+  "note": "AI 原创；几何/光照沿用 v2 Blender id/light pass（52°，左上光）；屋檐描边 #10122A"
+ },
+ "roof_props_rule": {
+  "atlas": "decals/roof_props_atlas.webp 1024×256（16 件：空调外机/水箱/通风口/护栏/管道/楼梯间/天线锅）",
+  "per_tile2": 0.35,
+  "max_per_roof": 5,
+  "scale": [
+   0.55,
+   0.9
+  ],
+  "placement": "按建筑哈希，限屋顶内，左上光投影；檐口阴影=立面顶部0.25格渐变压暗45%"
+ },
+ "build_order": "run_all.sh：build_kit_v3.py → build_struct_v3.py → build_r4.py → build_r5.py → compose/preview/repetition（顺序不可换：kit 会把 concrete_b/dirt_b 写回 1024²，r4 会覆写图集1的油渍/坑洼格）",
+ "version": "v3.1",
+ "v3_1": {
+  "road": "柏油赭暖灰(tint 1.06,1,.89; sat .28-.30; L≈126-132，低于泥土 181-188)；路内 0.3 格指数压暗 20%；路沿按世界哈希+聚团噪声撒小草(≈9%为大草丛)；22% 裂缝中心长草",
+  "scatter": "裂缝(4 档合池 7 件)与碎石/碎块(6 件)：母点按密度生成，子点 1+Poisson(1.2)、σ=0.55 格高斯偏移可跨格，缩放×0.6–1.35、非等比 0.75–1.33、任意旋转、镜像 → 有效变体≫件数",
+  "facade": "3 变体：住宅/整面底商(facade_shop：无字，破损空白灯箱+杯/扳手/篮子轮廓)/住宅上层+底商带；×4 色调；按建筑世界坐标哈希选择",
+  "water": "两次采样(1.0×/1.4×+旋转)按噪声混合 + 东西向流向扭曲噪声 + 岸边 0.07 格泡沫(噪声断续)"
+ }
+}

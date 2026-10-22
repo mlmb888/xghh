@@ -1,0 +1,6058 @@
+{
+ "spec": {
+  "world_scale": "1m=22.2pt",
+  "export_scale": 2.5,
+  "projection": "orthographic 52° elevation",
+  "light": "upper-left warm sun (same as jeep_v2)",
+  "outline": "2px #10122A (elite 3px)",
+  "dirs": {
+   "down": "facing screen-bottom",
+   "up": "facing screen-top",
+   "side": "facing screen-right",
+   "sideL": "mirror of side (flipX at runtime, or use *_sideL_* files)"
+  },
+  "anchor_note": "anchor = ground point under feet in untrimmed frame px; atlas entries give trim offset (ox,oy) inside the untrimmed frame",
+  "shadow": "每型 44 张 shadow_{anim}_{dir}_{i}.png（含 sideL），亦可运行时用 side 镜像",
+  "lod": "walk (6f, near/elite) and walk_lite (3f = frames 0,2,4 of walk, same atlas, play at half fps) share one atlas",
+  "death": "5f, frames 3-4 fade alpha 0.8/0.5, hold last frame then remove",
+  "status": "v4 卡通精瘦重绘 (方案B：每(型号,动作,方向)一张6格AI原创绘制+按区域向walk_down_0颜色匹配)",
+  "source_model": "OpenGameArt \"Male City Zombie\" (CC0) 基础网格+Mixamo 走路/死亡动画；各型号骨骼体型+附加部件（肚子/兜帽/肋骨/驼峰骨刺利爪）；贴图为 battle_final/zombies_v3 裁出的衣服/皮肤贴片；AO 压暗+黄橄榄高光+斑驳后处理",
+  "camera_zoom": "针对1.7×镜头放大，输出@2.5×",
+  "size_note": "普通型可见高=v2×1.7；精英朝上走可见轮廓最大边=jeep_v5 0000向可见最大边(403px)×1.15",
+  "source": "原创AI绘制，battle_final仅风格参考；Blender 姿态引导",
+  "frames_note": "frames 表逐帧列出：atlas=所在图集键名，rect=[x,y,w,h]（图集内裁剪后矩形），trim_offset=[ox,oy]（裁剪矩形左上角在未裁剪帧内的位置），frame_px=未裁剪帧尺寸，anchor_px=未裁剪帧内锚点，anchor_in_rect=锚点相对裁剪矩形左上角。sideL 不进图集：用 side 同名帧 flipX，镜像后 anchor_x=frame_w-anchor_x；也提供 frames/*/…_sideL_*.png 文件"
+ },
+ "types": {
+  "walker": {
+   "name": "普通·瘦高型",
+   "class": "normal",
+   "atlas": [
+    "zombies_normal_atlas"
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "display_pt": [
+    163.2,
+    163.2
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "visible_height_pt": 74.4,
+   "visible_width_pt_front": 44.4,
+   "visible_length_pt_side": 66.0,
+   "model_height_m": 1.872,
+   "render_px_per_m": 100,
+   "anims": {
+    "walk": {
+     "frames": 6,
+     "fps": 10,
+     "loop": true
+    },
+    "walk_lite": {
+     "frames": [
+      0,
+      2,
+      4
+     ],
+     "fps": 5,
+     "loop": true
+    },
+    "death": {
+     "frames": 5,
+     "fps": 12,
+     "loop": false
+    }
+   },
+   "files": "frames/walker/{anim}_{dir}_{i}.png",
+   "shadow_files": "frames/walker/shadow_{anim}_{dir}_{i}.png"
+  },
+  "fatty": {
+   "name": "普通·胖型",
+   "class": "normal",
+   "atlas": [
+    "zombies_normal_atlas"
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "display_pt": [
+    163.2,
+    163.2
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "visible_height_pt": 81.2,
+   "visible_width_pt_front": 52.8,
+   "visible_length_pt_side": 66.0,
+   "model_height_m": 1.746,
+   "render_px_per_m": 100,
+   "anims": {
+    "walk": {
+     "frames": 6,
+     "fps": 10,
+     "loop": true
+    },
+    "walk_lite": {
+     "frames": [
+      0,
+      2,
+      4
+     ],
+     "fps": 5,
+     "loop": true
+    },
+    "death": {
+     "frames": 5,
+     "fps": 12,
+     "loop": false
+    }
+   },
+   "files": "frames/fatty/{anim}_{dir}_{i}.png",
+   "shadow_files": "frames/fatty/shadow_{anim}_{dir}_{i}.png"
+  },
+  "hoodie": {
+   "name": "普通·工服/连帽衫型",
+   "class": "normal",
+   "atlas": [
+    "zombies_normal_atlas"
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "display_pt": [
+    163.2,
+    163.2
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "visible_height_pt": 74.0,
+   "visible_width_pt_front": 41.6,
+   "visible_length_pt_side": 60.8,
+   "model_height_m": 1.8,
+   "render_px_per_m": 100,
+   "anims": {
+    "walk": {
+     "frames": 6,
+     "fps": 10,
+     "loop": true
+    },
+    "walk_lite": {
+     "frames": [
+      0,
+      2,
+      4
+     ],
+     "fps": 5,
+     "loop": true
+    },
+    "death": {
+     "frames": 5,
+     "fps": 12,
+     "loop": false
+    }
+   },
+   "files": "frames/hoodie/{anim}_{dir}_{i}.png",
+   "shadow_files": "frames/hoodie/shadow_{anim}_{dir}_{i}.png"
+  },
+  "brute": {
+   "name": "精英·巨尸",
+   "class": "elite",
+   "atlas": [
+    "zombies_elite_atlas_0",
+    "zombies_elite_atlas_1"
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "display_pt": [
+    285.6,
+    285.6
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "visible_height_pt": 147.6,
+   "visible_width_pt_front": 187.6,
+   "visible_length_pt_side": 140.0,
+   "model_height_m": 2.61,
+   "render_px_per_m": 162,
+   "anims": {
+    "walk": {
+     "frames": 6,
+     "fps": 10,
+     "loop": true
+    },
+    "walk_lite": {
+     "frames": [
+      0,
+      2,
+      4
+     ],
+     "fps": 5,
+     "loop": true
+    },
+    "death": {
+     "frames": 5,
+     "fps": 12,
+     "loop": false
+    }
+   },
+   "files": "frames/brute/{anim}_{dir}_{i}.png",
+   "shadow_files": "frames/brute/shadow_{anim}_{dir}_{i}.png"
+  }
+ },
+ "atlases": {
+  "zombies_normal_atlas": {
+   "png": "zombies_normal_atlas.png",
+   "webp": "zombies_normal_atlas.webp",
+   "size": [
+    2048,
+    2048
+   ],
+   "frames": {
+    "walker/death_down_0": {
+     "x": 0,
+     "y": 0,
+     "w": 137,
+     "h": 268,
+     "ox": 136,
+     "oy": 38
+    },
+    "walker/walk_up_3": {
+     "x": 139,
+     "y": 0,
+     "w": 136,
+     "h": 259,
+     "ox": 132,
+     "oy": 55
+    },
+    "walker/walk_up_1": {
+     "x": 277,
+     "y": 0,
+     "w": 140,
+     "h": 258,
+     "ox": 146,
+     "oy": 55
+    },
+    "walker/walk_up_4": {
+     "x": 419,
+     "y": 0,
+     "w": 140,
+     "h": 258,
+     "ox": 140,
+     "oy": 47
+    },
+    "walker/walk_up_5": {
+     "x": 561,
+     "y": 0,
+     "w": 137,
+     "h": 258,
+     "ox": 137,
+     "oy": 50
+    },
+    "walker/walk_up_2": {
+     "x": 700,
+     "y": 0,
+     "w": 138,
+     "h": 256,
+     "ox": 127,
+     "oy": 52
+    },
+    "fatty/walk_up_3": {
+     "x": 840,
+     "y": 0,
+     "w": 156,
+     "h": 255,
+     "ox": 123,
+     "oy": 14
+    },
+    "hoodie/death_down_0": {
+     "x": 998,
+     "y": 0,
+     "w": 147,
+     "h": 255,
+     "ox": 119,
+     "oy": 66
+    },
+    "fatty/walk_up_4": {
+     "x": 1147,
+     "y": 0,
+     "w": 157,
+     "h": 254,
+     "ox": 122,
+     "oy": 15
+    },
+    "fatty/death_down_0": {
+     "x": 1306,
+     "y": 0,
+     "w": 157,
+     "h": 252,
+     "ox": 127,
+     "oy": 39
+    },
+    "fatty/walk_side_5": {
+     "x": 1465,
+     "y": 0,
+     "w": 201,
+     "h": 251,
+     "ox": 137,
+     "oy": 55
+    },
+    "fatty/walk_up_1": {
+     "x": 1668,
+     "y": 0,
+     "w": 156,
+     "h": 251,
+     "ox": 123,
+     "oy": 16
+    },
+    "fatty/walk_up_2": {
+     "x": 1826,
+     "y": 0,
+     "w": 153,
+     "h": 251,
+     "ox": 128,
+     "oy": 15
+    },
+    "fatty/walk_up_5": {
+     "x": 0,
+     "y": 270,
+     "w": 151,
+     "h": 251,
+     "ox": 124,
+     "oy": 28
+    },
+    "fatty/walk_side_3": {
+     "x": 153,
+     "y": 270,
+     "w": 200,
+     "h": 249,
+     "ox": 138,
+     "oy": 68
+    },
+    "fatty/walk_side_4": {
+     "x": 355,
+     "y": 270,
+     "w": 207,
+     "h": 247,
+     "ox": 135,
+     "oy": 64
+    },
+    "fatty/walk_up_0": {
+     "x": 564,
+     "y": 270,
+     "w": 152,
+     "h": 247,
+     "ox": 121,
+     "oy": 19
+    },
+    "walker/death_up_0": {
+     "x": 718,
+     "y": 270,
+     "w": 126,
+     "h": 245,
+     "ox": 154,
+     "oy": 63
+    },
+    "fatty/walk_side_2": {
+     "x": 846,
+     "y": 270,
+     "w": 196,
+     "h": 244,
+     "ox": 146,
+     "oy": 65
+    },
+    "fatty/walk_side_1": {
+     "x": 1044,
+     "y": 270,
+     "w": 170,
+     "h": 242,
+     "ox": 161,
+     "oy": 55
+    },
+    "walker/walk_up_0": {
+     "x": 1216,
+     "y": 270,
+     "w": 137,
+     "h": 241,
+     "ox": 128,
+     "oy": 56
+    },
+    "fatty/walk_side_0": {
+     "x": 1355,
+     "y": 270,
+     "w": 159,
+     "h": 238,
+     "ox": 155,
+     "oy": 55
+    },
+    "walker/walk_side_3": {
+     "x": 1516,
+     "y": 270,
+     "w": 187,
+     "h": 236,
+     "ox": 134,
+     "oy": 83
+    },
+    "walker/walk_side_4": {
+     "x": 1705,
+     "y": 270,
+     "w": 187,
+     "h": 236,
+     "ox": 132,
+     "oy": 76
+    },
+    "fatty/death_side_0": {
+     "x": 1894,
+     "y": 270,
+     "w": 124,
+     "h": 236,
+     "ox": 145,
+     "oy": 65
+    },
+    "fatty/death_up_0": {
+     "x": 0,
+     "y": 523,
+     "w": 145,
+     "h": 236,
+     "ox": 135,
+     "oy": 49
+    },
+    "walker/death_side_0": {
+     "x": 147,
+     "y": 523,
+     "w": 108,
+     "h": 235,
+     "ox": 153,
+     "oy": 69
+    },
+    "walker/walk_side_1": {
+     "x": 257,
+     "y": 523,
+     "w": 170,
+     "h": 233,
+     "ox": 154,
+     "oy": 73
+    },
+    "hoodie/walk_up_4": {
+     "x": 429,
+     "y": 523,
+     "w": 120,
+     "h": 233,
+     "ox": 144,
+     "oy": 63
+    },
+    "walker/walk_side_2": {
+     "x": 551,
+     "y": 523,
+     "w": 180,
+     "h": 232,
+     "ox": 146,
+     "oy": 81
+    },
+    "walker/walk_side_5": {
+     "x": 733,
+     "y": 523,
+     "w": 187,
+     "h": 230,
+     "ox": 141,
+     "oy": 64
+    },
+    "hoodie/walk_up_3": {
+     "x": 922,
+     "y": 523,
+     "w": 120,
+     "h": 230,
+     "ox": 138,
+     "oy": 71
+    },
+    "hoodie/walk_up_5": {
+     "x": 1044,
+     "y": 523,
+     "w": 125,
+     "h": 230,
+     "ox": 137,
+     "oy": 65
+    },
+    "hoodie/walk_up_0": {
+     "x": 1171,
+     "y": 523,
+     "w": 115,
+     "h": 229,
+     "ox": 148,
+     "oy": 48
+    },
+    "hoodie/walk_up_1": {
+     "x": 1288,
+     "y": 523,
+     "w": 118,
+     "h": 229,
+     "ox": 146,
+     "oy": 63
+    },
+    "hoodie/death_up_0": {
+     "x": 1408,
+     "y": 523,
+     "w": 146,
+     "h": 228,
+     "ox": 131,
+     "oy": 66
+    },
+    "hoodie/walk_up_2": {
+     "x": 1556,
+     "y": 523,
+     "w": 121,
+     "h": 228,
+     "ox": 141,
+     "oy": 65
+    },
+    "walker/walk_side_0": {
+     "x": 1679,
+     "y": 523,
+     "w": 159,
+     "h": 227,
+     "ox": 154,
+     "oy": 72
+    },
+    "fatty/death_side_1": {
+     "x": 1840,
+     "y": 523,
+     "w": 161,
+     "h": 226,
+     "ox": 126,
+     "oy": 111
+    },
+    "fatty/death_down_2": {
+     "x": 0,
+     "y": 761,
+     "w": 204,
+     "h": 225,
+     "ox": 91,
+     "oy": 141
+    },
+    "hoodie/death_side_0": {
+     "x": 206,
+     "y": 761,
+     "w": 139,
+     "h": 219,
+     "ox": 154,
+     "oy": 81
+    },
+    "fatty/death_up_3": {
+     "x": 347,
+     "y": 761,
+     "w": 201,
+     "h": 217,
+     "ox": 93,
+     "oy": 111
+    },
+    "walker/death_up_3": {
+     "x": 550,
+     "y": 761,
+     "w": 157,
+     "h": 216,
+     "ox": 134,
+     "oy": 125
+    },
+    "hoodie/death_down_3": {
+     "x": 709,
+     "y": 761,
+     "w": 213,
+     "h": 215,
+     "ox": 90,
+     "oy": 161
+    },
+    "fatty/death_down_1": {
+     "x": 924,
+     "y": 761,
+     "w": 178,
+     "h": 214,
+     "ox": 107,
+     "oy": 109
+    },
+    "walker/death_down_2": {
+     "x": 1104,
+     "y": 761,
+     "w": 205,
+     "h": 212,
+     "ox": 96,
+     "oy": 152
+    },
+    "hoodie/death_down_2": {
+     "x": 1311,
+     "y": 761,
+     "w": 205,
+     "h": 212,
+     "ox": 102,
+     "oy": 155
+    },
+    "fatty/death_down_3": {
+     "x": 1518,
+     "y": 761,
+     "w": 207,
+     "h": 210,
+     "ox": 92,
+     "oy": 162
+    },
+    "hoodie/death_down_4": {
+     "x": 1727,
+     "y": 761,
+     "w": 217,
+     "h": 209,
+     "ox": 89,
+     "oy": 164
+    },
+    "hoodie/walk_side_4": {
+     "x": 0,
+     "y": 988,
+     "w": 196,
+     "h": 209,
+     "ox": 131,
+     "oy": 100
+    },
+    "walker/death_up_2": {
+     "x": 198,
+     "y": 988,
+     "w": 197,
+     "h": 208,
+     "ox": 114,
+     "oy": 141
+    },
+    "walker/walk_down_1": {
+     "x": 397,
+     "y": 988,
+     "w": 109,
+     "h": 208,
+     "ox": 150,
+     "oy": 95
+    },
+    "fatty/death_up_1": {
+     "x": 508,
+     "y": 988,
+     "w": 167,
+     "h": 208,
+     "ox": 122,
+     "oy": 103
+    },
+    "fatty/walk_down_0": {
+     "x": 677,
+     "y": 988,
+     "w": 138,
+     "h": 208,
+     "ox": 139,
+     "oy": 93
+    },
+    "hoodie/walk_side_3": {
+     "x": 817,
+     "y": 988,
+     "w": 192,
+     "h": 208,
+     "ox": 135,
+     "oy": 103
+    },
+    "walker/death_up_1": {
+     "x": 1011,
+     "y": 988,
+     "w": 176,
+     "h": 207,
+     "ox": 123,
+     "oy": 115
+    },
+    "fatty/death_down_4": {
+     "x": 1189,
+     "y": 988,
+     "w": 205,
+     "h": 207,
+     "ox": 92,
+     "oy": 163
+    },
+    "hoodie/walk_down_1": {
+     "x": 1396,
+     "y": 988,
+     "w": 118,
+     "h": 207,
+     "ox": 147,
+     "oy": 105
+    },
+    "fatty/walk_down_1": {
+     "x": 1516,
+     "y": 988,
+     "w": 140,
+     "h": 206,
+     "ox": 134,
+     "oy": 92
+    },
+    "fatty/death_up_2": {
+     "x": 1658,
+     "y": 988,
+     "w": 185,
+     "h": 203,
+     "ox": 105,
+     "oy": 116
+    },
+    "hoodie/death_up_3": {
+     "x": 1845,
+     "y": 988,
+     "w": 200,
+     "h": 203,
+     "ox": 105,
+     "oy": 135
+    },
+    "hoodie/death_up_2": {
+     "x": 0,
+     "y": 1199,
+     "w": 202,
+     "h": 202,
+     "ox": 104,
+     "oy": 130
+    },
+    "hoodie/walk_side_2": {
+     "x": 204,
+     "y": 1199,
+     "w": 185,
+     "h": 202,
+     "ox": 145,
+     "oy": 104
+    },
+    "walker/walk_down_3": {
+     "x": 391,
+     "y": 1199,
+     "w": 129,
+     "h": 200,
+     "ox": 140,
+     "oy": 128
+    },
+    "fatty/death_side_4": {
+     "x": 522,
+     "y": 1199,
+     "w": 225,
+     "h": 200,
+     "ox": 91,
+     "oy": 150
+    },
+    "hoodie/walk_side_5": {
+     "x": 749,
+     "y": 1199,
+     "w": 183,
+     "h": 200,
+     "ox": 137,
+     "oy": 94
+    },
+    "walker/death_down_3": {
+     "x": 934,
+     "y": 1199,
+     "w": 199,
+     "h": 199,
+     "ox": 86,
+     "oy": 167
+    },
+    "fatty/death_up_4": {
+     "x": 1135,
+     "y": 1199,
+     "w": 214,
+     "h": 199,
+     "ox": 87,
+     "oy": 137
+    },
+    "fatty/walk_down_2": {
+     "x": 1351,
+     "y": 1199,
+     "w": 137,
+     "h": 199,
+     "ox": 141,
+     "oy": 115
+    },
+    "hoodie/walk_side_1": {
+     "x": 1490,
+     "y": 1199,
+     "w": 157,
+     "h": 199,
+     "ox": 164,
+     "oy": 97
+    },
+    "walker/walk_down_2": {
+     "x": 1649,
+     "y": 1199,
+     "w": 113,
+     "h": 198,
+     "ox": 151,
+     "oy": 109
+    },
+    "walker/death_side_1": {
+     "x": 1764,
+     "y": 1199,
+     "w": 134,
+     "h": 197,
+     "ox": 131,
+     "oy": 113
+    },
+    "walker/walk_down_4": {
+     "x": 1900,
+     "y": 1199,
+     "w": 135,
+     "h": 197,
+     "ox": 132,
+     "oy": 110
+    },
+    "fatty/death_side_3": {
+     "x": 0,
+     "y": 1403,
+     "w": 224,
+     "h": 197,
+     "ox": 91,
+     "oy": 151
+    },
+    "walker/death_down_1": {
+     "x": 226,
+     "y": 1403,
+     "w": 172,
+     "h": 196,
+     "ox": 120,
+     "oy": 109
+    },
+    "fatty/walk_down_5": {
+     "x": 400,
+     "y": 1403,
+     "w": 139,
+     "h": 196,
+     "ox": 145,
+     "oy": 109
+    },
+    "walker/walk_down_5": {
+     "x": 541,
+     "y": 1403,
+     "w": 123,
+     "h": 193,
+     "ox": 148,
+     "oy": 113
+    },
+    "hoodie/death_side_1": {
+     "x": 666,
+     "y": 1403,
+     "w": 141,
+     "h": 193,
+     "ox": 134,
+     "oy": 124
+    },
+    "walker/walk_down_0": {
+     "x": 809,
+     "y": 1403,
+     "w": 116,
+     "h": 192,
+     "ox": 154,
+     "oy": 89
+    },
+    "hoodie/walk_side_0": {
+     "x": 927,
+     "y": 1403,
+     "w": 151,
+     "h": 192,
+     "ox": 167,
+     "oy": 97
+    },
+    "walker/death_down_4": {
+     "x": 1080,
+     "y": 1403,
+     "w": 200,
+     "h": 191,
+     "ox": 85,
+     "oy": 170
+    },
+    "fatty/death_side_2": {
+     "x": 1282,
+     "y": 1403,
+     "w": 236,
+     "h": 191,
+     "ox": 92,
+     "oy": 142
+    },
+    "hoodie/walk_down_0": {
+     "x": 1520,
+     "y": 1403,
+     "w": 109,
+     "h": 191,
+     "ox": 149,
+     "oy": 107
+    },
+    "fatty/walk_down_3": {
+     "x": 1631,
+     "y": 1403,
+     "w": 142,
+     "h": 190,
+     "ox": 141,
+     "oy": 122
+    },
+    "fatty/walk_down_4": {
+     "x": 1775,
+     "y": 1403,
+     "w": 141,
+     "h": 190,
+     "ox": 139,
+     "oy": 116
+    },
+    "hoodie/death_up_1": {
+     "x": 0,
+     "y": 1602,
+     "w": 163,
+     "h": 188,
+     "ox": 120,
+     "oy": 124
+    },
+    "hoodie/walk_down_2": {
+     "x": 165,
+     "y": 1602,
+     "w": 128,
+     "h": 184,
+     "ox": 137,
+     "oy": 129
+    },
+    "walker/death_side_4": {
+     "x": 295,
+     "y": 1602,
+     "w": 235,
+     "h": 180,
+     "ox": 104,
+     "oy": 175
+    },
+    "walker/death_side_3": {
+     "x": 532,
+     "y": 1602,
+     "w": 238,
+     "h": 178,
+     "ox": 102,
+     "oy": 176
+    },
+    "walker/death_up_4": {
+     "x": 772,
+     "y": 1602,
+     "w": 225,
+     "h": 177,
+     "ox": 109,
+     "oy": 142
+    },
+    "hoodie/death_side_3": {
+     "x": 999,
+     "y": 1602,
+     "w": 213,
+     "h": 176,
+     "ox": 111,
+     "oy": 167
+    },
+    "walker/death_side_2": {
+     "x": 1214,
+     "y": 1602,
+     "w": 244,
+     "h": 175,
+     "ox": 92,
+     "oy": 162
+    },
+    "hoodie/walk_down_3": {
+     "x": 1460,
+     "y": 1602,
+     "w": 135,
+     "h": 173,
+     "ox": 134,
+     "oy": 134
+    },
+    "hoodie/walk_down_4": {
+     "x": 1597,
+     "y": 1602,
+     "w": 139,
+     "h": 172,
+     "ox": 130,
+     "oy": 129
+    },
+    "hoodie/death_side_4": {
+     "x": 1738,
+     "y": 1602,
+     "w": 210,
+     "h": 171,
+     "ox": 114,
+     "oy": 171
+    },
+    "hoodie/death_up_4": {
+     "x": 0,
+     "y": 1792,
+     "w": 240,
+     "h": 170,
+     "ox": 98,
+     "oy": 145
+    },
+    "hoodie/death_down_1": {
+     "x": 242,
+     "y": 1792,
+     "w": 172,
+     "h": 169,
+     "ox": 127,
+     "oy": 125
+    },
+    "hoodie/death_side_2": {
+     "x": 416,
+     "y": 1792,
+     "w": 218,
+     "h": 169,
+     "ox": 106,
+     "oy": 161
+    },
+    "hoodie/walk_down_5": {
+     "x": 636,
+     "y": 1792,
+     "w": 129,
+     "h": 168,
+     "ox": 144,
+     "oy": 128
+    }
+   }
+  },
+  "zombies_elite_atlas_0": {
+   "png": "zombies_elite_atlas_0.png",
+   "webp": "zombies_elite_atlas_0.webp",
+   "size": [
+    2048,
+    2048
+   ],
+   "frames": {
+    "brute/death_up_0": {
+     "x": 0,
+     "y": 0,
+     "w": 377,
+     "h": 499,
+     "ox": 193,
+     "oy": 68
+    },
+    "brute/walk_up_1": {
+     "x": 379,
+     "y": 0,
+     "w": 465,
+     "h": 478,
+     "ox": 111,
+     "oy": 70
+    },
+    "brute/walk_up_4": {
+     "x": 846,
+     "y": 0,
+     "w": 467,
+     "h": 478,
+     "ox": 123,
+     "oy": 87
+    },
+    "brute/walk_up_5": {
+     "x": 1315,
+     "y": 0,
+     "w": 477,
+     "h": 476,
+     "ox": 121,
+     "oy": 81
+    },
+    "brute/walk_up_2": {
+     "x": 0,
+     "y": 501,
+     "w": 460,
+     "h": 467,
+     "ox": 124,
+     "oy": 96
+    },
+    "brute/walk_up_3": {
+     "x": 462,
+     "y": 501,
+     "w": 477,
+     "h": 465,
+     "ox": 126,
+     "oy": 89
+    },
+    "brute/death_up_1": {
+     "x": 941,
+     "y": 501,
+     "w": 355,
+     "h": 457,
+     "ox": 216,
+     "oy": 183
+    },
+    "brute/walk_up_0": {
+     "x": 1298,
+     "y": 501,
+     "w": 447,
+     "h": 457,
+     "ox": 118,
+     "oy": 67
+    },
+    "brute/walk_side_0": {
+     "x": 0,
+     "y": 970,
+     "w": 334,
+     "h": 449,
+     "ox": 293,
+     "oy": 119
+    },
+    "brute/walk_side_1": {
+     "x": 336,
+     "y": 970,
+     "w": 356,
+     "h": 436,
+     "ox": 243,
+     "oy": 128
+    },
+    "brute/death_up_3": {
+     "x": 694,
+     "y": 970,
+     "w": 361,
+     "h": 430,
+     "ox": 196,
+     "oy": 284
+    },
+    "brute/death_side_0": {
+     "x": 1057,
+     "y": 970,
+     "w": 327,
+     "h": 428,
+     "ox": 298,
+     "oy": 109
+    },
+    "brute/walk_down_2": {
+     "x": 1386,
+     "y": 970,
+     "w": 489,
+     "h": 417,
+     "ox": 95,
+     "oy": 264
+    },
+    "brute/walk_down_5": {
+     "x": 0,
+     "y": 1421,
+     "w": 490,
+     "h": 410,
+     "ox": 115,
+     "oy": 264
+    },
+    "brute/walk_side_2": {
+     "x": 492,
+     "y": 1421,
+     "w": 356,
+     "h": 409,
+     "ox": 229,
+     "oy": 148
+    },
+    "brute/walk_side_3": {
+     "x": 850,
+     "y": 1421,
+     "w": 308,
+     "h": 407,
+     "ox": 286,
+     "oy": 146
+    },
+    "brute/walk_down_3": {
+     "x": 1160,
+     "y": 1421,
+     "w": 481,
+     "h": 402,
+     "ox": 116,
+     "oy": 267
+    },
+    "brute/walk_side_4": {
+     "x": 1643,
+     "y": 1421,
+     "w": 341,
+     "h": 398,
+     "ox": 241,
+     "oy": 149
+    }
+   }
+  },
+  "zombies_elite_atlas_1": {
+   "png": "zombies_elite_atlas_1.png",
+   "webp": "zombies_elite_atlas_1.webp",
+   "size": [
+    2048,
+    2048
+   ],
+   "frames": {
+    "brute/death_up_2": {
+     "x": 0,
+     "y": 0,
+     "w": 417,
+     "h": 400,
+     "ox": 174,
+     "oy": 314
+    },
+    "brute/walk_down_1": {
+     "x": 419,
+     "y": 0,
+     "w": 486,
+     "h": 397,
+     "ox": 98,
+     "oy": 262
+    },
+    "brute/walk_down_4": {
+     "x": 907,
+     "y": 0,
+     "w": 485,
+     "h": 396,
+     "ox": 120,
+     "oy": 268
+    },
+    "brute/death_down_2": {
+     "x": 1394,
+     "y": 0,
+     "w": 352,
+     "h": 392,
+     "ox": 158,
+     "oy": 297
+    },
+    "brute/walk_side_5": {
+     "x": 0,
+     "y": 402,
+     "w": 336,
+     "h": 392,
+     "ox": 247,
+     "oy": 143
+    },
+    "brute/walk_down_0": {
+     "x": 338,
+     "y": 402,
+     "w": 475,
+     "h": 376,
+     "ox": 134,
+     "oy": 262
+    },
+    "brute/death_side_2": {
+     "x": 815,
+     "y": 402,
+     "w": 412,
+     "h": 363,
+     "ox": 184,
+     "oy": 321
+    },
+    "brute/death_down_0": {
+     "x": 1229,
+     "y": 402,
+     "w": 352,
+     "h": 361,
+     "ox": 168,
+     "oy": 230
+    },
+    "brute/death_side_1": {
+     "x": 1583,
+     "y": 402,
+     "w": 356,
+     "h": 359,
+     "ox": 237,
+     "oy": 215
+    },
+    "brute/death_down_1": {
+     "x": 0,
+     "y": 796,
+     "w": 336,
+     "h": 355,
+     "ox": 187,
+     "oy": 306
+    },
+    "brute/death_side_3": {
+     "x": 338,
+     "y": 796,
+     "w": 446,
+     "h": 302,
+     "ox": 144,
+     "oy": 353
+    },
+    "brute/death_side_4": {
+     "x": 786,
+     "y": 796,
+     "w": 431,
+     "h": 301,
+     "ox": 151,
+     "oy": 357
+    },
+    "brute/death_up_4": {
+     "x": 1219,
+     "y": 796,
+     "w": 448,
+     "h": 295,
+     "ox": 116,
+     "oy": 332
+    },
+    "brute/death_down_3": {
+     "x": 1669,
+     "y": 796,
+     "w": 370,
+     "h": 272,
+     "ox": 131,
+     "oy": 374
+    },
+    "brute/death_down_4": {
+     "x": 0,
+     "y": 1153,
+     "w": 370,
+     "h": 272,
+     "ox": 131,
+     "oy": 374
+    }
+   }
+  }
+ },
+ "frames": {
+  "walker/walk_down_0": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    809,
+    1403,
+    116,
+    192
+   ],
+   "flipX": false,
+   "trim_offset": [
+    154,
+    89
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    50.0,
+    166.0
+   ],
+   "shadow": "frames/walker/shadow_walk_down_0.png"
+  },
+  "walker/walk_down_1": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    397,
+    988,
+    109,
+    208
+   ],
+   "flipX": false,
+   "trim_offset": [
+    150,
+    95
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    54.0,
+    160.0
+   ],
+   "shadow": "frames/walker/shadow_walk_down_1.png"
+  },
+  "walker/walk_down_2": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1649,
+    1199,
+    113,
+    198
+   ],
+   "flipX": false,
+   "trim_offset": [
+    151,
+    109
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    53.0,
+    146.0
+   ],
+   "shadow": "frames/walker/shadow_walk_down_2.png"
+  },
+  "walker/walk_down_3": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    391,
+    1199,
+    129,
+    200
+   ],
+   "flipX": false,
+   "trim_offset": [
+    140,
+    128
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    64.0,
+    127.0
+   ],
+   "shadow": "frames/walker/shadow_walk_down_3.png"
+  },
+  "walker/walk_down_4": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1900,
+    1199,
+    135,
+    197
+   ],
+   "flipX": false,
+   "trim_offset": [
+    132,
+    110
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    72.0,
+    145.0
+   ],
+   "shadow": "frames/walker/shadow_walk_down_4.png"
+  },
+  "walker/walk_down_5": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    541,
+    1403,
+    123,
+    193
+   ],
+   "flipX": false,
+   "trim_offset": [
+    148,
+    113
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    56.0,
+    142.0
+   ],
+   "shadow": "frames/walker/shadow_walk_down_5.png"
+  },
+  "walker/walk_up_0": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1216,
+    270,
+    137,
+    241
+   ],
+   "flipX": false,
+   "trim_offset": [
+    128,
+    56
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    76.0,
+    199.0
+   ],
+   "shadow": "frames/walker/shadow_walk_up_0.png"
+  },
+  "walker/walk_up_1": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    277,
+    0,
+    140,
+    258
+   ],
+   "flipX": false,
+   "trim_offset": [
+    146,
+    55
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    58.0,
+    200.0
+   ],
+   "shadow": "frames/walker/shadow_walk_up_1.png"
+  },
+  "walker/walk_up_2": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    700,
+    0,
+    138,
+    256
+   ],
+   "flipX": false,
+   "trim_offset": [
+    127,
+    52
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    77.0,
+    203.0
+   ],
+   "shadow": "frames/walker/shadow_walk_up_2.png"
+  },
+  "walker/walk_up_3": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    139,
+    0,
+    136,
+    259
+   ],
+   "flipX": false,
+   "trim_offset": [
+    132,
+    55
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    72.0,
+    200.0
+   ],
+   "shadow": "frames/walker/shadow_walk_up_3.png"
+  },
+  "walker/walk_up_4": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    419,
+    0,
+    140,
+    258
+   ],
+   "flipX": false,
+   "trim_offset": [
+    140,
+    47
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    64.0,
+    208.0
+   ],
+   "shadow": "frames/walker/shadow_walk_up_4.png"
+  },
+  "walker/walk_up_5": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    561,
+    0,
+    137,
+    258
+   ],
+   "flipX": false,
+   "trim_offset": [
+    137,
+    50
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    67.0,
+    205.0
+   ],
+   "shadow": "frames/walker/shadow_walk_up_5.png"
+  },
+  "walker/walk_side_0": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1679,
+    523,
+    159,
+    227
+   ],
+   "flipX": false,
+   "trim_offset": [
+    154,
+    72
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    50.0,
+    183.0
+   ],
+   "shadow": "frames/walker/shadow_walk_side_0.png"
+  },
+  "walker/walk_side_1": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    257,
+    523,
+    170,
+    233
+   ],
+   "flipX": false,
+   "trim_offset": [
+    154,
+    73
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    50.0,
+    182.0
+   ],
+   "shadow": "frames/walker/shadow_walk_side_1.png"
+  },
+  "walker/walk_side_2": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    551,
+    523,
+    180,
+    232
+   ],
+   "flipX": false,
+   "trim_offset": [
+    146,
+    81
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    58.0,
+    174.0
+   ],
+   "shadow": "frames/walker/shadow_walk_side_2.png"
+  },
+  "walker/walk_side_3": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1516,
+    270,
+    187,
+    236
+   ],
+   "flipX": false,
+   "trim_offset": [
+    134,
+    83
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    70.0,
+    172.0
+   ],
+   "shadow": "frames/walker/shadow_walk_side_3.png"
+  },
+  "walker/walk_side_4": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1705,
+    270,
+    187,
+    236
+   ],
+   "flipX": false,
+   "trim_offset": [
+    132,
+    76
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    72.0,
+    179.0
+   ],
+   "shadow": "frames/walker/shadow_walk_side_4.png"
+  },
+  "walker/walk_side_5": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    733,
+    523,
+    187,
+    230
+   ],
+   "flipX": false,
+   "trim_offset": [
+    141,
+    64
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    63.0,
+    191.0
+   ],
+   "shadow": "frames/walker/shadow_walk_side_5.png"
+  },
+  "walker/walk_sideL_0": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1679,
+    523,
+    159,
+    227
+   ],
+   "flipX": true,
+   "trim_offset": [
+    95,
+    72
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    109.0,
+    183.0
+   ],
+   "shadow": "frames/walker/shadow_walk_sideL_0.png"
+  },
+  "walker/walk_sideL_1": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    257,
+    523,
+    170,
+    233
+   ],
+   "flipX": true,
+   "trim_offset": [
+    84,
+    73
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    120.0,
+    182.0
+   ],
+   "shadow": "frames/walker/shadow_walk_sideL_1.png"
+  },
+  "walker/walk_sideL_2": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    551,
+    523,
+    180,
+    232
+   ],
+   "flipX": true,
+   "trim_offset": [
+    82,
+    81
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    122.0,
+    174.0
+   ],
+   "shadow": "frames/walker/shadow_walk_sideL_2.png"
+  },
+  "walker/walk_sideL_3": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1516,
+    270,
+    187,
+    236
+   ],
+   "flipX": true,
+   "trim_offset": [
+    87,
+    83
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    117.0,
+    172.0
+   ],
+   "shadow": "frames/walker/shadow_walk_sideL_3.png"
+  },
+  "walker/walk_sideL_4": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1705,
+    270,
+    187,
+    236
+   ],
+   "flipX": true,
+   "trim_offset": [
+    89,
+    76
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    115.0,
+    179.0
+   ],
+   "shadow": "frames/walker/shadow_walk_sideL_4.png"
+  },
+  "walker/walk_sideL_5": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    733,
+    523,
+    187,
+    230
+   ],
+   "flipX": true,
+   "trim_offset": [
+    80,
+    64
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    124.0,
+    191.0
+   ],
+   "shadow": "frames/walker/shadow_walk_sideL_5.png"
+  },
+  "walker/death_down_0": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    0,
+    0,
+    137,
+    268
+   ],
+   "flipX": false,
+   "trim_offset": [
+    136,
+    38
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    68.0,
+    217.0
+   ],
+   "shadow": "frames/walker/shadow_death_down_0.png"
+  },
+  "walker/death_down_1": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    226,
+    1403,
+    172,
+    196
+   ],
+   "flipX": false,
+   "trim_offset": [
+    120,
+    109
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    84.0,
+    146.0
+   ],
+   "shadow": "frames/walker/shadow_death_down_1.png"
+  },
+  "walker/death_down_2": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1104,
+    761,
+    205,
+    212
+   ],
+   "flipX": false,
+   "trim_offset": [
+    96,
+    152
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    108.0,
+    103.0
+   ],
+   "shadow": "frames/walker/shadow_death_down_2.png"
+  },
+  "walker/death_down_3": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    934,
+    1199,
+    199,
+    199
+   ],
+   "flipX": false,
+   "trim_offset": [
+    86,
+    167
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    118.0,
+    88.0
+   ],
+   "shadow": "frames/walker/shadow_death_down_3.png"
+  },
+  "walker/death_down_4": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1080,
+    1403,
+    200,
+    191
+   ],
+   "flipX": false,
+   "trim_offset": [
+    85,
+    170
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    119.0,
+    85.0
+   ],
+   "shadow": "frames/walker/shadow_death_down_4.png"
+  },
+  "walker/death_up_0": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    718,
+    270,
+    126,
+    245
+   ],
+   "flipX": false,
+   "trim_offset": [
+    154,
+    63
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    50.0,
+    192.0
+   ],
+   "shadow": "frames/walker/shadow_death_up_0.png"
+  },
+  "walker/death_up_1": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1011,
+    988,
+    176,
+    207
+   ],
+   "flipX": false,
+   "trim_offset": [
+    123,
+    115
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    81.0,
+    140.0
+   ],
+   "shadow": "frames/walker/shadow_death_up_1.png"
+  },
+  "walker/death_up_2": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    198,
+    988,
+    197,
+    208
+   ],
+   "flipX": false,
+   "trim_offset": [
+    114,
+    141
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    90.0,
+    114.0
+   ],
+   "shadow": "frames/walker/shadow_death_up_2.png"
+  },
+  "walker/death_up_3": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    550,
+    761,
+    157,
+    216
+   ],
+   "flipX": false,
+   "trim_offset": [
+    134,
+    125
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    70.0,
+    130.0
+   ],
+   "shadow": "frames/walker/shadow_death_up_3.png"
+  },
+  "walker/death_up_4": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    772,
+    1602,
+    225,
+    177
+   ],
+   "flipX": false,
+   "trim_offset": [
+    109,
+    142
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    95.0,
+    113.0
+   ],
+   "shadow": "frames/walker/shadow_death_up_4.png"
+  },
+  "walker/death_side_0": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    147,
+    523,
+    108,
+    235
+   ],
+   "flipX": false,
+   "trim_offset": [
+    153,
+    69
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    51.0,
+    186.0
+   ],
+   "shadow": "frames/walker/shadow_death_side_0.png"
+  },
+  "walker/death_side_1": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1764,
+    1199,
+    134,
+    197
+   ],
+   "flipX": false,
+   "trim_offset": [
+    131,
+    113
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    73.0,
+    142.0
+   ],
+   "shadow": "frames/walker/shadow_death_side_1.png"
+  },
+  "walker/death_side_2": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1214,
+    1602,
+    244,
+    175
+   ],
+   "flipX": false,
+   "trim_offset": [
+    92,
+    162
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    112.0,
+    93.0
+   ],
+   "shadow": "frames/walker/shadow_death_side_2.png"
+  },
+  "walker/death_side_3": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    532,
+    1602,
+    238,
+    178
+   ],
+   "flipX": false,
+   "trim_offset": [
+    102,
+    176
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    102.0,
+    79.0
+   ],
+   "shadow": "frames/walker/shadow_death_side_3.png"
+  },
+  "walker/death_side_4": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    295,
+    1602,
+    235,
+    180
+   ],
+   "flipX": false,
+   "trim_offset": [
+    104,
+    175
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    100.0,
+    80.0
+   ],
+   "shadow": "frames/walker/shadow_death_side_4.png"
+  },
+  "walker/death_sideL_0": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    147,
+    523,
+    108,
+    235
+   ],
+   "flipX": true,
+   "trim_offset": [
+    147,
+    69
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    57.0,
+    186.0
+   ],
+   "shadow": "frames/walker/shadow_death_sideL_0.png"
+  },
+  "walker/death_sideL_1": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1764,
+    1199,
+    134,
+    197
+   ],
+   "flipX": true,
+   "trim_offset": [
+    143,
+    113
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    61.0,
+    142.0
+   ],
+   "shadow": "frames/walker/shadow_death_sideL_1.png"
+  },
+  "walker/death_sideL_2": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1214,
+    1602,
+    244,
+    175
+   ],
+   "flipX": true,
+   "trim_offset": [
+    72,
+    162
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    132.0,
+    93.0
+   ],
+   "shadow": "frames/walker/shadow_death_sideL_2.png"
+  },
+  "walker/death_sideL_3": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    532,
+    1602,
+    238,
+    178
+   ],
+   "flipX": true,
+   "trim_offset": [
+    68,
+    176
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    136.0,
+    79.0
+   ],
+   "shadow": "frames/walker/shadow_death_sideL_3.png"
+  },
+  "walker/death_sideL_4": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    295,
+    1602,
+    235,
+    180
+   ],
+   "flipX": true,
+   "trim_offset": [
+    69,
+    175
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    255.0
+   ],
+   "anchor_in_rect": [
+    135.0,
+    80.0
+   ],
+   "shadow": "frames/walker/shadow_death_sideL_4.png"
+  },
+  "fatty/walk_down_0": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    677,
+    988,
+    138,
+    208
+   ],
+   "flipX": false,
+   "trim_offset": [
+    139,
+    93
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    65.0,
+    158.4
+   ],
+   "shadow": "frames/fatty/shadow_walk_down_0.png"
+  },
+  "fatty/walk_down_1": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1516,
+    988,
+    140,
+    206
+   ],
+   "flipX": false,
+   "trim_offset": [
+    134,
+    92
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    70.0,
+    159.4
+   ],
+   "shadow": "frames/fatty/shadow_walk_down_1.png"
+  },
+  "fatty/walk_down_2": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1351,
+    1199,
+    137,
+    199
+   ],
+   "flipX": false,
+   "trim_offset": [
+    141,
+    115
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    63.0,
+    136.4
+   ],
+   "shadow": "frames/fatty/shadow_walk_down_2.png"
+  },
+  "fatty/walk_down_3": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1631,
+    1403,
+    142,
+    190
+   ],
+   "flipX": false,
+   "trim_offset": [
+    141,
+    122
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    63.0,
+    129.4
+   ],
+   "shadow": "frames/fatty/shadow_walk_down_3.png"
+  },
+  "fatty/walk_down_4": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1775,
+    1403,
+    141,
+    190
+   ],
+   "flipX": false,
+   "trim_offset": [
+    139,
+    116
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    65.0,
+    135.4
+   ],
+   "shadow": "frames/fatty/shadow_walk_down_4.png"
+  },
+  "fatty/walk_down_5": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    400,
+    1403,
+    139,
+    196
+   ],
+   "flipX": false,
+   "trim_offset": [
+    145,
+    109
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    59.0,
+    142.4
+   ],
+   "shadow": "frames/fatty/shadow_walk_down_5.png"
+  },
+  "fatty/walk_up_0": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    564,
+    270,
+    152,
+    247
+   ],
+   "flipX": false,
+   "trim_offset": [
+    121,
+    19
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    83.0,
+    232.4
+   ],
+   "shadow": "frames/fatty/shadow_walk_up_0.png"
+  },
+  "fatty/walk_up_1": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1668,
+    0,
+    156,
+    251
+   ],
+   "flipX": false,
+   "trim_offset": [
+    123,
+    16
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    81.0,
+    235.4
+   ],
+   "shadow": "frames/fatty/shadow_walk_up_1.png"
+  },
+  "fatty/walk_up_2": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1826,
+    0,
+    153,
+    251
+   ],
+   "flipX": false,
+   "trim_offset": [
+    128,
+    15
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    76.0,
+    236.4
+   ],
+   "shadow": "frames/fatty/shadow_walk_up_2.png"
+  },
+  "fatty/walk_up_3": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    840,
+    0,
+    156,
+    255
+   ],
+   "flipX": false,
+   "trim_offset": [
+    123,
+    14
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    81.0,
+    237.4
+   ],
+   "shadow": "frames/fatty/shadow_walk_up_3.png"
+  },
+  "fatty/walk_up_4": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1147,
+    0,
+    157,
+    254
+   ],
+   "flipX": false,
+   "trim_offset": [
+    122,
+    15
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    82.0,
+    236.4
+   ],
+   "shadow": "frames/fatty/shadow_walk_up_4.png"
+  },
+  "fatty/walk_up_5": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    0,
+    270,
+    151,
+    251
+   ],
+   "flipX": false,
+   "trim_offset": [
+    124,
+    28
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    80.0,
+    223.4
+   ],
+   "shadow": "frames/fatty/shadow_walk_up_5.png"
+  },
+  "fatty/walk_side_0": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1355,
+    270,
+    159,
+    238
+   ],
+   "flipX": false,
+   "trim_offset": [
+    155,
+    55
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    49.0,
+    196.4
+   ],
+   "shadow": "frames/fatty/shadow_walk_side_0.png"
+  },
+  "fatty/walk_side_1": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1044,
+    270,
+    170,
+    242
+   ],
+   "flipX": false,
+   "trim_offset": [
+    161,
+    55
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    43.0,
+    196.4
+   ],
+   "shadow": "frames/fatty/shadow_walk_side_1.png"
+  },
+  "fatty/walk_side_2": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    846,
+    270,
+    196,
+    244
+   ],
+   "flipX": false,
+   "trim_offset": [
+    146,
+    65
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    58.0,
+    186.4
+   ],
+   "shadow": "frames/fatty/shadow_walk_side_2.png"
+  },
+  "fatty/walk_side_3": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    153,
+    270,
+    200,
+    249
+   ],
+   "flipX": false,
+   "trim_offset": [
+    138,
+    68
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    66.0,
+    183.4
+   ],
+   "shadow": "frames/fatty/shadow_walk_side_3.png"
+  },
+  "fatty/walk_side_4": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    355,
+    270,
+    207,
+    247
+   ],
+   "flipX": false,
+   "trim_offset": [
+    135,
+    64
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    69.0,
+    187.4
+   ],
+   "shadow": "frames/fatty/shadow_walk_side_4.png"
+  },
+  "fatty/walk_side_5": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1465,
+    0,
+    201,
+    251
+   ],
+   "flipX": false,
+   "trim_offset": [
+    137,
+    55
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    67.0,
+    196.4
+   ],
+   "shadow": "frames/fatty/shadow_walk_side_5.png"
+  },
+  "fatty/walk_sideL_0": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1355,
+    270,
+    159,
+    238
+   ],
+   "flipX": true,
+   "trim_offset": [
+    94,
+    55
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    110.0,
+    196.4
+   ],
+   "shadow": "frames/fatty/shadow_walk_sideL_0.png"
+  },
+  "fatty/walk_sideL_1": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1044,
+    270,
+    170,
+    242
+   ],
+   "flipX": true,
+   "trim_offset": [
+    77,
+    55
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    127.0,
+    196.4
+   ],
+   "shadow": "frames/fatty/shadow_walk_sideL_1.png"
+  },
+  "fatty/walk_sideL_2": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    846,
+    270,
+    196,
+    244
+   ],
+   "flipX": true,
+   "trim_offset": [
+    66,
+    65
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    138.0,
+    186.4
+   ],
+   "shadow": "frames/fatty/shadow_walk_sideL_2.png"
+  },
+  "fatty/walk_sideL_3": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    153,
+    270,
+    200,
+    249
+   ],
+   "flipX": true,
+   "trim_offset": [
+    70,
+    68
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    134.0,
+    183.4
+   ],
+   "shadow": "frames/fatty/shadow_walk_sideL_3.png"
+  },
+  "fatty/walk_sideL_4": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    355,
+    270,
+    207,
+    247
+   ],
+   "flipX": true,
+   "trim_offset": [
+    66,
+    64
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    138.0,
+    187.4
+   ],
+   "shadow": "frames/fatty/shadow_walk_sideL_4.png"
+  },
+  "fatty/walk_sideL_5": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1465,
+    0,
+    201,
+    251
+   ],
+   "flipX": true,
+   "trim_offset": [
+    70,
+    55
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    134.0,
+    196.4
+   ],
+   "shadow": "frames/fatty/shadow_walk_sideL_5.png"
+  },
+  "fatty/death_down_0": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1306,
+    0,
+    157,
+    252
+   ],
+   "flipX": false,
+   "trim_offset": [
+    127,
+    39
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    77.0,
+    212.4
+   ],
+   "shadow": "frames/fatty/shadow_death_down_0.png"
+  },
+  "fatty/death_down_1": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    924,
+    761,
+    178,
+    214
+   ],
+   "flipX": false,
+   "trim_offset": [
+    107,
+    109
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    97.0,
+    142.4
+   ],
+   "shadow": "frames/fatty/shadow_death_down_1.png"
+  },
+  "fatty/death_down_2": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    0,
+    761,
+    204,
+    225
+   ],
+   "flipX": false,
+   "trim_offset": [
+    91,
+    141
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    113.0,
+    110.4
+   ],
+   "shadow": "frames/fatty/shadow_death_down_2.png"
+  },
+  "fatty/death_down_3": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1518,
+    761,
+    207,
+    210
+   ],
+   "flipX": false,
+   "trim_offset": [
+    92,
+    162
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    112.0,
+    89.4
+   ],
+   "shadow": "frames/fatty/shadow_death_down_3.png"
+  },
+  "fatty/death_down_4": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1189,
+    988,
+    205,
+    207
+   ],
+   "flipX": false,
+   "trim_offset": [
+    92,
+    163
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    112.0,
+    88.4
+   ],
+   "shadow": "frames/fatty/shadow_death_down_4.png"
+  },
+  "fatty/death_up_0": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    0,
+    523,
+    145,
+    236
+   ],
+   "flipX": false,
+   "trim_offset": [
+    135,
+    49
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    69.0,
+    202.4
+   ],
+   "shadow": "frames/fatty/shadow_death_up_0.png"
+  },
+  "fatty/death_up_1": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    508,
+    988,
+    167,
+    208
+   ],
+   "flipX": false,
+   "trim_offset": [
+    122,
+    103
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    82.0,
+    148.4
+   ],
+   "shadow": "frames/fatty/shadow_death_up_1.png"
+  },
+  "fatty/death_up_2": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1658,
+    988,
+    185,
+    203
+   ],
+   "flipX": false,
+   "trim_offset": [
+    105,
+    116
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    99.0,
+    135.4
+   ],
+   "shadow": "frames/fatty/shadow_death_up_2.png"
+  },
+  "fatty/death_up_3": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    347,
+    761,
+    201,
+    217
+   ],
+   "flipX": false,
+   "trim_offset": [
+    93,
+    111
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    111.0,
+    140.4
+   ],
+   "shadow": "frames/fatty/shadow_death_up_3.png"
+  },
+  "fatty/death_up_4": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1135,
+    1199,
+    214,
+    199
+   ],
+   "flipX": false,
+   "trim_offset": [
+    87,
+    137
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    117.0,
+    114.4
+   ],
+   "shadow": "frames/fatty/shadow_death_up_4.png"
+  },
+  "fatty/death_side_0": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1894,
+    270,
+    124,
+    236
+   ],
+   "flipX": false,
+   "trim_offset": [
+    145,
+    65
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    59.0,
+    186.4
+   ],
+   "shadow": "frames/fatty/shadow_death_side_0.png"
+  },
+  "fatty/death_side_1": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1840,
+    523,
+    161,
+    226
+   ],
+   "flipX": false,
+   "trim_offset": [
+    126,
+    111
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    78.0,
+    140.4
+   ],
+   "shadow": "frames/fatty/shadow_death_side_1.png"
+  },
+  "fatty/death_side_2": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1282,
+    1403,
+    236,
+    191
+   ],
+   "flipX": false,
+   "trim_offset": [
+    92,
+    142
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    112.0,
+    109.4
+   ],
+   "shadow": "frames/fatty/shadow_death_side_2.png"
+  },
+  "fatty/death_side_3": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    0,
+    1403,
+    224,
+    197
+   ],
+   "flipX": false,
+   "trim_offset": [
+    91,
+    151
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    113.0,
+    100.4
+   ],
+   "shadow": "frames/fatty/shadow_death_side_3.png"
+  },
+  "fatty/death_side_4": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    522,
+    1199,
+    225,
+    200
+   ],
+   "flipX": false,
+   "trim_offset": [
+    91,
+    150
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    113.0,
+    101.4
+   ],
+   "shadow": "frames/fatty/shadow_death_side_4.png"
+  },
+  "fatty/death_sideL_0": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1894,
+    270,
+    124,
+    236
+   ],
+   "flipX": true,
+   "trim_offset": [
+    139,
+    65
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    65.0,
+    186.4
+   ],
+   "shadow": "frames/fatty/shadow_death_sideL_0.png"
+  },
+  "fatty/death_sideL_1": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1840,
+    523,
+    161,
+    226
+   ],
+   "flipX": true,
+   "trim_offset": [
+    121,
+    111
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    83.0,
+    140.4
+   ],
+   "shadow": "frames/fatty/shadow_death_sideL_1.png"
+  },
+  "fatty/death_sideL_2": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1282,
+    1403,
+    236,
+    191
+   ],
+   "flipX": true,
+   "trim_offset": [
+    80,
+    142
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    124.0,
+    109.4
+   ],
+   "shadow": "frames/fatty/shadow_death_sideL_2.png"
+  },
+  "fatty/death_sideL_3": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    0,
+    1403,
+    224,
+    197
+   ],
+   "flipX": true,
+   "trim_offset": [
+    93,
+    151
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    111.0,
+    100.4
+   ],
+   "shadow": "frames/fatty/shadow_death_sideL_3.png"
+  },
+  "fatty/death_sideL_4": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    522,
+    1199,
+    225,
+    200
+   ],
+   "flipX": true,
+   "trim_offset": [
+    92,
+    150
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    251.4
+   ],
+   "anchor_in_rect": [
+    112.0,
+    101.4
+   ],
+   "shadow": "frames/fatty/shadow_death_sideL_4.png"
+  },
+  "hoodie/walk_down_0": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1520,
+    1403,
+    109,
+    191
+   ],
+   "flipX": false,
+   "trim_offset": [
+    149,
+    107
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    55.0,
+    146.0
+   ],
+   "shadow": "frames/hoodie/shadow_walk_down_0.png"
+  },
+  "hoodie/walk_down_1": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1396,
+    988,
+    118,
+    207
+   ],
+   "flipX": false,
+   "trim_offset": [
+    147,
+    105
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    57.0,
+    148.0
+   ],
+   "shadow": "frames/hoodie/shadow_walk_down_1.png"
+  },
+  "hoodie/walk_down_2": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    165,
+    1602,
+    128,
+    184
+   ],
+   "flipX": false,
+   "trim_offset": [
+    137,
+    129
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    67.0,
+    124.0
+   ],
+   "shadow": "frames/hoodie/shadow_walk_down_2.png"
+  },
+  "hoodie/walk_down_3": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1460,
+    1602,
+    135,
+    173
+   ],
+   "flipX": false,
+   "trim_offset": [
+    134,
+    134
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    70.0,
+    119.0
+   ],
+   "shadow": "frames/hoodie/shadow_walk_down_3.png"
+  },
+  "hoodie/walk_down_4": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1597,
+    1602,
+    139,
+    172
+   ],
+   "flipX": false,
+   "trim_offset": [
+    130,
+    129
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    74.0,
+    124.0
+   ],
+   "shadow": "frames/hoodie/shadow_walk_down_4.png"
+  },
+  "hoodie/walk_down_5": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    636,
+    1792,
+    129,
+    168
+   ],
+   "flipX": false,
+   "trim_offset": [
+    144,
+    128
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    60.0,
+    125.0
+   ],
+   "shadow": "frames/hoodie/shadow_walk_down_5.png"
+  },
+  "hoodie/walk_up_0": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1171,
+    523,
+    115,
+    229
+   ],
+   "flipX": false,
+   "trim_offset": [
+    148,
+    48
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    56.0,
+    205.0
+   ],
+   "shadow": "frames/hoodie/shadow_walk_up_0.png"
+  },
+  "hoodie/walk_up_1": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1288,
+    523,
+    118,
+    229
+   ],
+   "flipX": false,
+   "trim_offset": [
+    146,
+    63
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    58.0,
+    190.0
+   ],
+   "shadow": "frames/hoodie/shadow_walk_up_1.png"
+  },
+  "hoodie/walk_up_2": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1556,
+    523,
+    121,
+    228
+   ],
+   "flipX": false,
+   "trim_offset": [
+    141,
+    65
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    63.0,
+    188.0
+   ],
+   "shadow": "frames/hoodie/shadow_walk_up_2.png"
+  },
+  "hoodie/walk_up_3": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    922,
+    523,
+    120,
+    230
+   ],
+   "flipX": false,
+   "trim_offset": [
+    138,
+    71
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    66.0,
+    182.0
+   ],
+   "shadow": "frames/hoodie/shadow_walk_up_3.png"
+  },
+  "hoodie/walk_up_4": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    429,
+    523,
+    120,
+    233
+   ],
+   "flipX": false,
+   "trim_offset": [
+    144,
+    63
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    60.0,
+    190.0
+   ],
+   "shadow": "frames/hoodie/shadow_walk_up_4.png"
+  },
+  "hoodie/walk_up_5": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1044,
+    523,
+    125,
+    230
+   ],
+   "flipX": false,
+   "trim_offset": [
+    137,
+    65
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    67.0,
+    188.0
+   ],
+   "shadow": "frames/hoodie/shadow_walk_up_5.png"
+  },
+  "hoodie/walk_side_0": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    927,
+    1403,
+    151,
+    192
+   ],
+   "flipX": false,
+   "trim_offset": [
+    167,
+    97
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    37.0,
+    156.0
+   ],
+   "shadow": "frames/hoodie/shadow_walk_side_0.png"
+  },
+  "hoodie/walk_side_1": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1490,
+    1199,
+    157,
+    199
+   ],
+   "flipX": false,
+   "trim_offset": [
+    164,
+    97
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    40.0,
+    156.0
+   ],
+   "shadow": "frames/hoodie/shadow_walk_side_1.png"
+  },
+  "hoodie/walk_side_2": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    204,
+    1199,
+    185,
+    202
+   ],
+   "flipX": false,
+   "trim_offset": [
+    145,
+    104
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    59.0,
+    149.0
+   ],
+   "shadow": "frames/hoodie/shadow_walk_side_2.png"
+  },
+  "hoodie/walk_side_3": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    817,
+    988,
+    192,
+    208
+   ],
+   "flipX": false,
+   "trim_offset": [
+    135,
+    103
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    69.0,
+    150.0
+   ],
+   "shadow": "frames/hoodie/shadow_walk_side_3.png"
+  },
+  "hoodie/walk_side_4": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    0,
+    988,
+    196,
+    209
+   ],
+   "flipX": false,
+   "trim_offset": [
+    131,
+    100
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    73.0,
+    153.0
+   ],
+   "shadow": "frames/hoodie/shadow_walk_side_4.png"
+  },
+  "hoodie/walk_side_5": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    749,
+    1199,
+    183,
+    200
+   ],
+   "flipX": false,
+   "trim_offset": [
+    137,
+    94
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    67.0,
+    159.0
+   ],
+   "shadow": "frames/hoodie/shadow_walk_side_5.png"
+  },
+  "hoodie/walk_sideL_0": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    927,
+    1403,
+    151,
+    192
+   ],
+   "flipX": true,
+   "trim_offset": [
+    90,
+    97
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    114.0,
+    156.0
+   ],
+   "shadow": "frames/hoodie/shadow_walk_sideL_0.png"
+  },
+  "hoodie/walk_sideL_1": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1490,
+    1199,
+    157,
+    199
+   ],
+   "flipX": true,
+   "trim_offset": [
+    87,
+    97
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    117.0,
+    156.0
+   ],
+   "shadow": "frames/hoodie/shadow_walk_sideL_1.png"
+  },
+  "hoodie/walk_sideL_2": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    204,
+    1199,
+    185,
+    202
+   ],
+   "flipX": true,
+   "trim_offset": [
+    78,
+    104
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    126.0,
+    149.0
+   ],
+   "shadow": "frames/hoodie/shadow_walk_sideL_2.png"
+  },
+  "hoodie/walk_sideL_3": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    817,
+    988,
+    192,
+    208
+   ],
+   "flipX": true,
+   "trim_offset": [
+    81,
+    103
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    123.0,
+    150.0
+   ],
+   "shadow": "frames/hoodie/shadow_walk_sideL_3.png"
+  },
+  "hoodie/walk_sideL_4": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    0,
+    988,
+    196,
+    209
+   ],
+   "flipX": true,
+   "trim_offset": [
+    81,
+    100
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    123.0,
+    153.0
+   ],
+   "shadow": "frames/hoodie/shadow_walk_sideL_4.png"
+  },
+  "hoodie/walk_sideL_5": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    749,
+    1199,
+    183,
+    200
+   ],
+   "flipX": true,
+   "trim_offset": [
+    88,
+    94
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    116.0,
+    159.0
+   ],
+   "shadow": "frames/hoodie/shadow_walk_sideL_5.png"
+  },
+  "hoodie/death_down_0": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    998,
+    0,
+    147,
+    255
+   ],
+   "flipX": false,
+   "trim_offset": [
+    119,
+    66
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    85.0,
+    187.0
+   ],
+   "shadow": "frames/hoodie/shadow_death_down_0.png"
+  },
+  "hoodie/death_down_1": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    242,
+    1792,
+    172,
+    169
+   ],
+   "flipX": false,
+   "trim_offset": [
+    127,
+    125
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    77.0,
+    128.0
+   ],
+   "shadow": "frames/hoodie/shadow_death_down_1.png"
+  },
+  "hoodie/death_down_2": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1311,
+    761,
+    205,
+    212
+   ],
+   "flipX": false,
+   "trim_offset": [
+    102,
+    155
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    102.0,
+    98.0
+   ],
+   "shadow": "frames/hoodie/shadow_death_down_2.png"
+  },
+  "hoodie/death_down_3": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    709,
+    761,
+    213,
+    215
+   ],
+   "flipX": false,
+   "trim_offset": [
+    90,
+    161
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    114.0,
+    92.0
+   ],
+   "shadow": "frames/hoodie/shadow_death_down_3.png"
+  },
+  "hoodie/death_down_4": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1727,
+    761,
+    217,
+    209
+   ],
+   "flipX": false,
+   "trim_offset": [
+    89,
+    164
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    115.0,
+    89.0
+   ],
+   "shadow": "frames/hoodie/shadow_death_down_4.png"
+  },
+  "hoodie/death_up_0": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1408,
+    523,
+    146,
+    228
+   ],
+   "flipX": false,
+   "trim_offset": [
+    131,
+    66
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    73.0,
+    187.0
+   ],
+   "shadow": "frames/hoodie/shadow_death_up_0.png"
+  },
+  "hoodie/death_up_1": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    0,
+    1602,
+    163,
+    188
+   ],
+   "flipX": false,
+   "trim_offset": [
+    120,
+    124
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    84.0,
+    129.0
+   ],
+   "shadow": "frames/hoodie/shadow_death_up_1.png"
+  },
+  "hoodie/death_up_2": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    0,
+    1199,
+    202,
+    202
+   ],
+   "flipX": false,
+   "trim_offset": [
+    104,
+    130
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    100.0,
+    123.0
+   ],
+   "shadow": "frames/hoodie/shadow_death_up_2.png"
+  },
+  "hoodie/death_up_3": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1845,
+    988,
+    200,
+    203
+   ],
+   "flipX": false,
+   "trim_offset": [
+    105,
+    135
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    99.0,
+    118.0
+   ],
+   "shadow": "frames/hoodie/shadow_death_up_3.png"
+  },
+  "hoodie/death_up_4": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    0,
+    1792,
+    240,
+    170
+   ],
+   "flipX": false,
+   "trim_offset": [
+    98,
+    145
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    106.0,
+    108.0
+   ],
+   "shadow": "frames/hoodie/shadow_death_up_4.png"
+  },
+  "hoodie/death_side_0": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    206,
+    761,
+    139,
+    219
+   ],
+   "flipX": false,
+   "trim_offset": [
+    154,
+    81
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    50.0,
+    172.0
+   ],
+   "shadow": "frames/hoodie/shadow_death_side_0.png"
+  },
+  "hoodie/death_side_1": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    666,
+    1403,
+    141,
+    193
+   ],
+   "flipX": false,
+   "trim_offset": [
+    134,
+    124
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    70.0,
+    129.0
+   ],
+   "shadow": "frames/hoodie/shadow_death_side_1.png"
+  },
+  "hoodie/death_side_2": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    416,
+    1792,
+    218,
+    169
+   ],
+   "flipX": false,
+   "trim_offset": [
+    106,
+    161
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    98.0,
+    92.0
+   ],
+   "shadow": "frames/hoodie/shadow_death_side_2.png"
+  },
+  "hoodie/death_side_3": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    999,
+    1602,
+    213,
+    176
+   ],
+   "flipX": false,
+   "trim_offset": [
+    111,
+    167
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    93.0,
+    86.0
+   ],
+   "shadow": "frames/hoodie/shadow_death_side_3.png"
+  },
+  "hoodie/death_side_4": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1738,
+    1602,
+    210,
+    171
+   ],
+   "flipX": false,
+   "trim_offset": [
+    114,
+    171
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    90.0,
+    82.0
+   ],
+   "shadow": "frames/hoodie/shadow_death_side_4.png"
+  },
+  "hoodie/death_sideL_0": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    206,
+    761,
+    139,
+    219
+   ],
+   "flipX": true,
+   "trim_offset": [
+    115,
+    81
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    89.0,
+    172.0
+   ],
+   "shadow": "frames/hoodie/shadow_death_sideL_0.png"
+  },
+  "hoodie/death_sideL_1": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    666,
+    1403,
+    141,
+    193
+   ],
+   "flipX": true,
+   "trim_offset": [
+    133,
+    124
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    71.0,
+    129.0
+   ],
+   "shadow": "frames/hoodie/shadow_death_sideL_1.png"
+  },
+  "hoodie/death_sideL_2": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    416,
+    1792,
+    218,
+    169
+   ],
+   "flipX": true,
+   "trim_offset": [
+    84,
+    161
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    120.0,
+    92.0
+   ],
+   "shadow": "frames/hoodie/shadow_death_sideL_2.png"
+  },
+  "hoodie/death_sideL_3": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    999,
+    1602,
+    213,
+    176
+   ],
+   "flipX": true,
+   "trim_offset": [
+    84,
+    167
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    120.0,
+    86.0
+   ],
+   "shadow": "frames/hoodie/shadow_death_sideL_3.png"
+  },
+  "hoodie/death_sideL_4": {
+   "atlas": "zombies_normal_atlas",
+   "rect": [
+    1738,
+    1602,
+    210,
+    171
+   ],
+   "flipX": true,
+   "trim_offset": [
+    84,
+    171
+   ],
+   "frame_px": [
+    408,
+    408
+   ],
+   "anchor_px": [
+    204.0,
+    253.0
+   ],
+   "anchor_in_rect": [
+    120.0,
+    82.0
+   ],
+   "shadow": "frames/hoodie/shadow_death_sideL_4.png"
+  },
+  "brute/walk_down_0": {
+   "atlas": "zombies_elite_atlas_1",
+   "rect": [
+    338,
+    402,
+    475,
+    376
+   ],
+   "flipX": false,
+   "trim_offset": [
+    134,
+    262
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    223.0,
+    202.9
+   ],
+   "shadow": "frames/brute/shadow_walk_down_0.png"
+  },
+  "brute/walk_down_1": {
+   "atlas": "zombies_elite_atlas_1",
+   "rect": [
+    419,
+    0,
+    486,
+    397
+   ],
+   "flipX": false,
+   "trim_offset": [
+    98,
+    262
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    259.0,
+    202.9
+   ],
+   "shadow": "frames/brute/shadow_walk_down_1.png"
+  },
+  "brute/walk_down_2": {
+   "atlas": "zombies_elite_atlas_0",
+   "rect": [
+    1386,
+    970,
+    489,
+    417
+   ],
+   "flipX": false,
+   "trim_offset": [
+    95,
+    264
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    262.0,
+    200.9
+   ],
+   "shadow": "frames/brute/shadow_walk_down_2.png"
+  },
+  "brute/walk_down_3": {
+   "atlas": "zombies_elite_atlas_0",
+   "rect": [
+    1160,
+    1421,
+    481,
+    402
+   ],
+   "flipX": false,
+   "trim_offset": [
+    116,
+    267
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    241.0,
+    197.9
+   ],
+   "shadow": "frames/brute/shadow_walk_down_3.png"
+  },
+  "brute/walk_down_4": {
+   "atlas": "zombies_elite_atlas_1",
+   "rect": [
+    907,
+    0,
+    485,
+    396
+   ],
+   "flipX": false,
+   "trim_offset": [
+    120,
+    268
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    237.0,
+    196.9
+   ],
+   "shadow": "frames/brute/shadow_walk_down_4.png"
+  },
+  "brute/walk_down_5": {
+   "atlas": "zombies_elite_atlas_0",
+   "rect": [
+    0,
+    1421,
+    490,
+    410
+   ],
+   "flipX": false,
+   "trim_offset": [
+    115,
+    264
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    242.0,
+    200.9
+   ],
+   "shadow": "frames/brute/shadow_walk_down_5.png"
+  },
+  "brute/walk_up_0": {
+   "atlas": "zombies_elite_atlas_0",
+   "rect": [
+    1298,
+    501,
+    447,
+    457
+   ],
+   "flipX": false,
+   "trim_offset": [
+    118,
+    67
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    239.0,
+    397.9
+   ],
+   "shadow": "frames/brute/shadow_walk_up_0.png"
+  },
+  "brute/walk_up_1": {
+   "atlas": "zombies_elite_atlas_0",
+   "rect": [
+    379,
+    0,
+    465,
+    478
+   ],
+   "flipX": false,
+   "trim_offset": [
+    111,
+    70
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    246.0,
+    394.9
+   ],
+   "shadow": "frames/brute/shadow_walk_up_1.png"
+  },
+  "brute/walk_up_2": {
+   "atlas": "zombies_elite_atlas_0",
+   "rect": [
+    0,
+    501,
+    460,
+    467
+   ],
+   "flipX": false,
+   "trim_offset": [
+    124,
+    96
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    233.0,
+    368.9
+   ],
+   "shadow": "frames/brute/shadow_walk_up_2.png"
+  },
+  "brute/walk_up_3": {
+   "atlas": "zombies_elite_atlas_0",
+   "rect": [
+    462,
+    501,
+    477,
+    465
+   ],
+   "flipX": false,
+   "trim_offset": [
+    126,
+    89
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    231.0,
+    375.9
+   ],
+   "shadow": "frames/brute/shadow_walk_up_3.png"
+  },
+  "brute/walk_up_4": {
+   "atlas": "zombies_elite_atlas_0",
+   "rect": [
+    846,
+    0,
+    467,
+    478
+   ],
+   "flipX": false,
+   "trim_offset": [
+    123,
+    87
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    234.0,
+    377.9
+   ],
+   "shadow": "frames/brute/shadow_walk_up_4.png"
+  },
+  "brute/walk_up_5": {
+   "atlas": "zombies_elite_atlas_0",
+   "rect": [
+    1315,
+    0,
+    477,
+    476
+   ],
+   "flipX": false,
+   "trim_offset": [
+    121,
+    81
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    236.0,
+    383.9
+   ],
+   "shadow": "frames/brute/shadow_walk_up_5.png"
+  },
+  "brute/walk_side_0": {
+   "atlas": "zombies_elite_atlas_0",
+   "rect": [
+    0,
+    970,
+    334,
+    449
+   ],
+   "flipX": false,
+   "trim_offset": [
+    293,
+    119
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    64.0,
+    345.9
+   ],
+   "shadow": "frames/brute/shadow_walk_side_0.png"
+  },
+  "brute/walk_side_1": {
+   "atlas": "zombies_elite_atlas_0",
+   "rect": [
+    336,
+    970,
+    356,
+    436
+   ],
+   "flipX": false,
+   "trim_offset": [
+    243,
+    128
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    114.0,
+    336.9
+   ],
+   "shadow": "frames/brute/shadow_walk_side_1.png"
+  },
+  "brute/walk_side_2": {
+   "atlas": "zombies_elite_atlas_0",
+   "rect": [
+    492,
+    1421,
+    356,
+    409
+   ],
+   "flipX": false,
+   "trim_offset": [
+    229,
+    148
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    128.0,
+    316.9
+   ],
+   "shadow": "frames/brute/shadow_walk_side_2.png"
+  },
+  "brute/walk_side_3": {
+   "atlas": "zombies_elite_atlas_0",
+   "rect": [
+    850,
+    1421,
+    308,
+    407
+   ],
+   "flipX": false,
+   "trim_offset": [
+    286,
+    146
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    71.0,
+    318.9
+   ],
+   "shadow": "frames/brute/shadow_walk_side_3.png"
+  },
+  "brute/walk_side_4": {
+   "atlas": "zombies_elite_atlas_0",
+   "rect": [
+    1643,
+    1421,
+    341,
+    398
+   ],
+   "flipX": false,
+   "trim_offset": [
+    241,
+    149
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    116.0,
+    315.9
+   ],
+   "shadow": "frames/brute/shadow_walk_side_4.png"
+  },
+  "brute/walk_side_5": {
+   "atlas": "zombies_elite_atlas_1",
+   "rect": [
+    0,
+    402,
+    336,
+    392
+   ],
+   "flipX": false,
+   "trim_offset": [
+    247,
+    143
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    110.0,
+    321.9
+   ],
+   "shadow": "frames/brute/shadow_walk_side_5.png"
+  },
+  "brute/walk_sideL_0": {
+   "atlas": "zombies_elite_atlas_0",
+   "rect": [
+    0,
+    970,
+    334,
+    449
+   ],
+   "flipX": true,
+   "trim_offset": [
+    87,
+    119
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    270.0,
+    345.9
+   ],
+   "shadow": "frames/brute/shadow_walk_sideL_0.png"
+  },
+  "brute/walk_sideL_1": {
+   "atlas": "zombies_elite_atlas_0",
+   "rect": [
+    336,
+    970,
+    356,
+    436
+   ],
+   "flipX": true,
+   "trim_offset": [
+    115,
+    128
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    242.0,
+    336.9
+   ],
+   "shadow": "frames/brute/shadow_walk_sideL_1.png"
+  },
+  "brute/walk_sideL_2": {
+   "atlas": "zombies_elite_atlas_0",
+   "rect": [
+    492,
+    1421,
+    356,
+    409
+   ],
+   "flipX": true,
+   "trim_offset": [
+    129,
+    148
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    228.0,
+    316.9
+   ],
+   "shadow": "frames/brute/shadow_walk_sideL_2.png"
+  },
+  "brute/walk_sideL_3": {
+   "atlas": "zombies_elite_atlas_0",
+   "rect": [
+    850,
+    1421,
+    308,
+    407
+   ],
+   "flipX": true,
+   "trim_offset": [
+    120,
+    146
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    237.0,
+    318.9
+   ],
+   "shadow": "frames/brute/shadow_walk_sideL_3.png"
+  },
+  "brute/walk_sideL_4": {
+   "atlas": "zombies_elite_atlas_0",
+   "rect": [
+    1643,
+    1421,
+    341,
+    398
+   ],
+   "flipX": true,
+   "trim_offset": [
+    132,
+    149
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    225.0,
+    315.9
+   ],
+   "shadow": "frames/brute/shadow_walk_sideL_4.png"
+  },
+  "brute/walk_sideL_5": {
+   "atlas": "zombies_elite_atlas_1",
+   "rect": [
+    0,
+    402,
+    336,
+    392
+   ],
+   "flipX": true,
+   "trim_offset": [
+    131,
+    143
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    226.0,
+    321.9
+   ],
+   "shadow": "frames/brute/shadow_walk_sideL_5.png"
+  },
+  "brute/death_down_0": {
+   "atlas": "zombies_elite_atlas_1",
+   "rect": [
+    1229,
+    402,
+    352,
+    361
+   ],
+   "flipX": false,
+   "trim_offset": [
+    168,
+    230
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    189.0,
+    234.9
+   ],
+   "shadow": "frames/brute/shadow_death_down_0.png"
+  },
+  "brute/death_down_1": {
+   "atlas": "zombies_elite_atlas_1",
+   "rect": [
+    0,
+    796,
+    336,
+    355
+   ],
+   "flipX": false,
+   "trim_offset": [
+    187,
+    306
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    170.0,
+    158.9
+   ],
+   "shadow": "frames/brute/shadow_death_down_1.png"
+  },
+  "brute/death_down_2": {
+   "atlas": "zombies_elite_atlas_1",
+   "rect": [
+    1394,
+    0,
+    352,
+    392
+   ],
+   "flipX": false,
+   "trim_offset": [
+    158,
+    297
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    199.0,
+    167.9
+   ],
+   "shadow": "frames/brute/shadow_death_down_2.png"
+  },
+  "brute/death_down_3": {
+   "atlas": "zombies_elite_atlas_1",
+   "rect": [
+    1669,
+    796,
+    370,
+    272
+   ],
+   "flipX": false,
+   "trim_offset": [
+    131,
+    374
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    226.0,
+    90.9
+   ],
+   "shadow": "frames/brute/shadow_death_down_3.png"
+  },
+  "brute/death_down_4": {
+   "atlas": "zombies_elite_atlas_1",
+   "rect": [
+    0,
+    1153,
+    370,
+    272
+   ],
+   "flipX": false,
+   "trim_offset": [
+    131,
+    374
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    226.0,
+    90.9
+   ],
+   "shadow": "frames/brute/shadow_death_down_4.png"
+  },
+  "brute/death_up_0": {
+   "atlas": "zombies_elite_atlas_0",
+   "rect": [
+    0,
+    0,
+    377,
+    499
+   ],
+   "flipX": false,
+   "trim_offset": [
+    193,
+    68
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    164.0,
+    396.9
+   ],
+   "shadow": "frames/brute/shadow_death_up_0.png"
+  },
+  "brute/death_up_1": {
+   "atlas": "zombies_elite_atlas_0",
+   "rect": [
+    941,
+    501,
+    355,
+    457
+   ],
+   "flipX": false,
+   "trim_offset": [
+    216,
+    183
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    141.0,
+    281.9
+   ],
+   "shadow": "frames/brute/shadow_death_up_1.png"
+  },
+  "brute/death_up_2": {
+   "atlas": "zombies_elite_atlas_1",
+   "rect": [
+    0,
+    0,
+    417,
+    400
+   ],
+   "flipX": false,
+   "trim_offset": [
+    174,
+    314
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    183.0,
+    150.9
+   ],
+   "shadow": "frames/brute/shadow_death_up_2.png"
+  },
+  "brute/death_up_3": {
+   "atlas": "zombies_elite_atlas_0",
+   "rect": [
+    694,
+    970,
+    361,
+    430
+   ],
+   "flipX": false,
+   "trim_offset": [
+    196,
+    284
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    161.0,
+    180.9
+   ],
+   "shadow": "frames/brute/shadow_death_up_3.png"
+  },
+  "brute/death_up_4": {
+   "atlas": "zombies_elite_atlas_1",
+   "rect": [
+    1219,
+    796,
+    448,
+    295
+   ],
+   "flipX": false,
+   "trim_offset": [
+    116,
+    332
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    241.0,
+    132.9
+   ],
+   "shadow": "frames/brute/shadow_death_up_4.png"
+  },
+  "brute/death_side_0": {
+   "atlas": "zombies_elite_atlas_0",
+   "rect": [
+    1057,
+    970,
+    327,
+    428
+   ],
+   "flipX": false,
+   "trim_offset": [
+    298,
+    109
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    59.0,
+    355.9
+   ],
+   "shadow": "frames/brute/shadow_death_side_0.png"
+  },
+  "brute/death_side_1": {
+   "atlas": "zombies_elite_atlas_1",
+   "rect": [
+    1583,
+    402,
+    356,
+    359
+   ],
+   "flipX": false,
+   "trim_offset": [
+    237,
+    215
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    120.0,
+    249.9
+   ],
+   "shadow": "frames/brute/shadow_death_side_1.png"
+  },
+  "brute/death_side_2": {
+   "atlas": "zombies_elite_atlas_1",
+   "rect": [
+    815,
+    402,
+    412,
+    363
+   ],
+   "flipX": false,
+   "trim_offset": [
+    184,
+    321
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    173.0,
+    143.9
+   ],
+   "shadow": "frames/brute/shadow_death_side_2.png"
+  },
+  "brute/death_side_3": {
+   "atlas": "zombies_elite_atlas_1",
+   "rect": [
+    338,
+    796,
+    446,
+    302
+   ],
+   "flipX": false,
+   "trim_offset": [
+    144,
+    353
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    213.0,
+    111.9
+   ],
+   "shadow": "frames/brute/shadow_death_side_3.png"
+  },
+  "brute/death_side_4": {
+   "atlas": "zombies_elite_atlas_1",
+   "rect": [
+    786,
+    796,
+    431,
+    301
+   ],
+   "flipX": false,
+   "trim_offset": [
+    151,
+    357
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    206.0,
+    107.9
+   ],
+   "shadow": "frames/brute/shadow_death_side_4.png"
+  },
+  "brute/death_sideL_0": {
+   "atlas": "zombies_elite_atlas_0",
+   "rect": [
+    1057,
+    970,
+    327,
+    428
+   ],
+   "flipX": true,
+   "trim_offset": [
+    89,
+    109
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    268.0,
+    355.9
+   ],
+   "shadow": "frames/brute/shadow_death_sideL_0.png"
+  },
+  "brute/death_sideL_1": {
+   "atlas": "zombies_elite_atlas_1",
+   "rect": [
+    1583,
+    402,
+    356,
+    359
+   ],
+   "flipX": true,
+   "trim_offset": [
+    121,
+    215
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    236.0,
+    249.9
+   ],
+   "shadow": "frames/brute/shadow_death_sideL_1.png"
+  },
+  "brute/death_sideL_2": {
+   "atlas": "zombies_elite_atlas_1",
+   "rect": [
+    815,
+    402,
+    412,
+    363
+   ],
+   "flipX": true,
+   "trim_offset": [
+    118,
+    321
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    239.0,
+    143.9
+   ],
+   "shadow": "frames/brute/shadow_death_sideL_2.png"
+  },
+  "brute/death_sideL_3": {
+   "atlas": "zombies_elite_atlas_1",
+   "rect": [
+    338,
+    796,
+    446,
+    302
+   ],
+   "flipX": true,
+   "trim_offset": [
+    124,
+    353
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    233.0,
+    111.9
+   ],
+   "shadow": "frames/brute/shadow_death_sideL_3.png"
+  },
+  "brute/death_sideL_4": {
+   "atlas": "zombies_elite_atlas_1",
+   "rect": [
+    786,
+    796,
+    431,
+    301
+   ],
+   "flipX": true,
+   "trim_offset": [
+    132,
+    357
+   ],
+   "frame_px": [
+    714,
+    714
+   ],
+   "anchor_px": [
+    357.0,
+    464.9
+   ],
+   "anchor_in_rect": [
+    225.0,
+    107.9
+   ],
+   "shadow": "frames/brute/shadow_death_sideL_4.png"
+  }
+ }
+}

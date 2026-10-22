@@ -1,0 +1,848 @@
+{
+ "design_size_pt": [
+  360,
+  640
+ ],
+ "export_scale": 2.5,
+ "font": "Source Han Sans SC Bold (NotoSansCJK-Bold.ttc idx2, SIL OFL)",
+ "style_ref": "lobby_final/build.py panel()",
+ "alpha_note": "HUD 底板 α≈0.80（大厅 0.93），弱于主角战车，避免抢视觉",
+ "parts": {
+  "btn_pause": {
+   "file": "parts/btn_pause.png",
+   "size_pt": [
+    40,
+    40
+   ],
+   "size_px": [
+    100,
+    100
+   ],
+   "anchor": [
+    0,
+    0
+   ],
+   "nine_slice_px": null,
+   "note": "按下态：整体 ×0.94 缩放 + 亮度 0.85",
+   "atlas_rect": [
+    810,
+    364,
+    100,
+    100
+   ]
+  },
+  "btn_pause_pressed": {
+   "file": "parts/btn_pause_pressed.png",
+   "size_pt": [
+    40,
+    40
+   ],
+   "size_px": [
+    100,
+    100
+   ],
+   "anchor": [
+    0,
+    0
+   ],
+   "nine_slice_px": null,
+   "note": "",
+   "atlas_rect": [
+    912,
+    364,
+    100,
+    100
+   ]
+  },
+  "timer_bg": {
+   "file": "parts/timer_bg.png",
+   "size_pt": [
+    96,
+    40
+   ],
+   "size_px": [
+    240,
+    100
+   ],
+   "anchor": [
+    0.5,
+    0
+   ],
+   "nine_slice_px": [
+    25,
+    25,
+    25,
+    25
+   ],
+   "note": "九宫格 L/T/R/B=25px(10pt)，可横向拉伸",
+   "atlas_rect": [
+    0,
+    526,
+    240,
+    100
+   ]
+  },
+  "wave_track": {
+   "file": "parts/wave_track.png",
+   "size_pt": [
+    328,
+    12
+   ],
+   "size_px": [
+    820,
+    30
+   ],
+   "anchor": [
+    0,
+    0
+   ],
+   "nine_slice_px": [
+    15,
+    15,
+    15,
+    15
+   ],
+   "note": "r2：同定稿 12pt，海军蓝 α230；九宫格横向拉伸",
+   "atlas_rect": [
+    0,
+    628,
+    820,
+    30
+   ]
+  },
+  "wave_fill": {
+   "file": "parts/wave_fill.png",
+   "size_pt": [
+    160,
+    10
+   ],
+   "size_px": [
+    400,
+    25
+   ],
+   "anchor": [
+    0,
+    0
+   ],
+   "nine_slice_px": [
+    13,
+    0,
+    13,
+    0
+   ],
+   "note": "r2：定稿橙 #FFA028 实心条（上高光下暗边），宽=进度×326pt",
+   "atlas_rect": [
+    0,
+    660,
+    400,
+    25
+   ]
+  },
+  "wave_tick": {
+   "file": "parts/wave_tick.png",
+   "size_pt": [
+    2,
+    12
+   ],
+   "size_px": [
+    5,
+    30
+   ],
+   "anchor": [
+    0.5,
+    0
+   ],
+   "nine_slice_px": null,
+   "note": "波次分隔，按波数等分放置",
+   "atlas_rect": [
+    822,
+    628,
+    5,
+    30
+   ]
+  },
+  "icon_survivor": {
+   "file": "parts/icon_survivor.png",
+   "size_pt": [
+    20,
+    24
+   ],
+   "size_px": [
+    50,
+    60
+   ],
+   "anchor": [
+    0.5,
+    1
+   ],
+   "nine_slice_px": null,
+   "note": "r2：定稿样式 蓝底人形+对话框尾巴；同图用作幸存者头顶标记（锚点=尾尖）",
+   "atlas_rect": [
+    706,
+    526,
+    50,
+    60
+   ]
+  },
+  "rescue_bg": {
+   "file": "parts/rescue_bg.png",
+   "size_pt": [
+    80,
+    40
+   ],
+   "size_px": [
+    200,
+    100
+   ],
+   "anchor": [
+    1,
+    0
+   ],
+   "nine_slice_px": [
+    25,
+    25,
+    25,
+    25
+   ],
+   "note": "",
+   "atlas_rect": [
+    242,
+    526,
+    200,
+    100
+   ]
+  },
+  "skill_spread": {
+   "file": "parts/skill_spread.png",
+   "size_pt": [
+    64,
+    64
+   ],
+   "size_px": [
+    160,
+    160
+   ],
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "nine_slice_px": null,
+   "note": "图标取 battle_final/ui 同名图标内圆，外框换大厅样式",
+   "atlas_rect": [
+    202,
+    0,
+    160,
+    160
+   ]
+  },
+  "skill_fire": {
+   "file": "parts/skill_fire.png",
+   "size_pt": [
+    64,
+    64
+   ],
+   "size_px": [
+    160,
+    160
+   ],
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "nine_slice_px": null,
+   "note": "图标取 battle_final/ui 同名图标内圆，外框换大厅样式",
+   "atlas_rect": [
+    364,
+    0,
+    160,
+    160
+   ]
+  },
+  "skill_cd_mask": {
+   "file": "parts/skill_cd_mask.png",
+   "size_pt": [
+    64,
+    64
+   ],
+   "size_px": [
+    160,
+    160
+   ],
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "nine_slice_px": null,
+   "note": "运行时按进度做径向（顺时针自 12 点）裁切；或用 skill_cd_00..11",
+   "atlas_rect": [
+    526,
+    0,
+    160,
+    160
+   ]
+  },
+  "skill_cd_00": {
+   "file": "parts/skill_cd_00.png",
+   "size_pt": [
+    64,
+    64
+   ],
+   "size_px": [
+    160,
+    160
+   ],
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "nine_slice_px": null,
+   "note": "剩余 100%",
+   "atlas_rect": [
+    688,
+    0,
+    160,
+    160
+   ]
+  },
+  "skill_cd_01": {
+   "file": "parts/skill_cd_01.png",
+   "size_pt": [
+    64,
+    64
+   ],
+   "size_px": [
+    160,
+    160
+   ],
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "nine_slice_px": null,
+   "note": "剩余 92%",
+   "atlas_rect": [
+    850,
+    0,
+    160,
+    160
+   ]
+  },
+  "skill_cd_02": {
+   "file": "parts/skill_cd_02.png",
+   "size_pt": [
+    64,
+    64
+   ],
+   "size_px": [
+    160,
+    160
+   ],
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "nine_slice_px": null,
+   "note": "剩余 84%",
+   "atlas_rect": [
+    0,
+    202,
+    160,
+    160
+   ]
+  },
+  "skill_cd_03": {
+   "file": "parts/skill_cd_03.png",
+   "size_pt": [
+    64,
+    64
+   ],
+   "size_px": [
+    160,
+    160
+   ],
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "nine_slice_px": null,
+   "note": "剩余 75%",
+   "atlas_rect": [
+    162,
+    202,
+    160,
+    160
+   ]
+  },
+  "skill_cd_04": {
+   "file": "parts/skill_cd_04.png",
+   "size_pt": [
+    64,
+    64
+   ],
+   "size_px": [
+    160,
+    160
+   ],
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "nine_slice_px": null,
+   "note": "剩余 67%",
+   "atlas_rect": [
+    324,
+    202,
+    160,
+    160
+   ]
+  },
+  "skill_cd_05": {
+   "file": "parts/skill_cd_05.png",
+   "size_pt": [
+    64,
+    64
+   ],
+   "size_px": [
+    160,
+    160
+   ],
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "nine_slice_px": null,
+   "note": "剩余 59%",
+   "atlas_rect": [
+    486,
+    202,
+    160,
+    160
+   ]
+  },
+  "skill_cd_06": {
+   "file": "parts/skill_cd_06.png",
+   "size_pt": [
+    64,
+    64
+   ],
+   "size_px": [
+    160,
+    160
+   ],
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "nine_slice_px": null,
+   "note": "剩余 50%",
+   "atlas_rect": [
+    648,
+    202,
+    160,
+    160
+   ]
+  },
+  "skill_cd_07": {
+   "file": "parts/skill_cd_07.png",
+   "size_pt": [
+    64,
+    64
+   ],
+   "size_px": [
+    160,
+    160
+   ],
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "nine_slice_px": null,
+   "note": "剩余 42%",
+   "atlas_rect": [
+    810,
+    202,
+    160,
+    160
+   ]
+  },
+  "skill_cd_08": {
+   "file": "parts/skill_cd_08.png",
+   "size_pt": [
+    64,
+    64
+   ],
+   "size_px": [
+    160,
+    160
+   ],
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "nine_slice_px": null,
+   "note": "剩余 34%",
+   "atlas_rect": [
+    0,
+    364,
+    160,
+    160
+   ]
+  },
+  "skill_cd_09": {
+   "file": "parts/skill_cd_09.png",
+   "size_pt": [
+    64,
+    64
+   ],
+   "size_px": [
+    160,
+    160
+   ],
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "nine_slice_px": null,
+   "note": "剩余 25%",
+   "atlas_rect": [
+    162,
+    364,
+    160,
+    160
+   ]
+  },
+  "skill_cd_10": {
+   "file": "parts/skill_cd_10.png",
+   "size_pt": [
+    64,
+    64
+   ],
+   "size_px": [
+    160,
+    160
+   ],
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "nine_slice_px": null,
+   "note": "剩余 17%",
+   "atlas_rect": [
+    324,
+    364,
+    160,
+    160
+   ]
+  },
+  "skill_cd_11": {
+   "file": "parts/skill_cd_11.png",
+   "size_pt": [
+    64,
+    64
+   ],
+   "size_px": [
+    160,
+    160
+   ],
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "nine_slice_px": null,
+   "note": "剩余 9%",
+   "atlas_rect": [
+    486,
+    364,
+    160,
+    160
+   ]
+  },
+  "skill_cd_ring": {
+   "file": "parts/skill_cd_ring.png",
+   "size_pt": [
+    64,
+    64
+   ],
+   "size_px": [
+    160,
+    160
+   ],
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "nine_slice_px": null,
+   "note": "按进度绘制弧长（同 battle_final 规则）",
+   "atlas_rect": [
+    648,
+    364,
+    160,
+    160
+   ]
+  },
+  "skill_ready_glow": {
+   "file": "parts/skill_ready_glow.png",
+   "size_pt": [
+    80,
+    80
+   ],
+   "size_px": [
+    200,
+    200
+   ],
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "nine_slice_px": null,
+   "note": "冷却结束 0.4s 闪一次，加色",
+   "atlas_rect": [
+    0,
+    0,
+    200,
+    200
+   ]
+  },
+  "label_extraction": {
+   "file": "parts/label_extraction.png",
+   "size_pt": [
+    104,
+    28
+   ],
+   "size_px": [
+    260,
+    70
+   ],
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "nine_slice_px": [
+    25,
+    25,
+    25,
+    25
+   ],
+   "note": "世界空间跟随停机坪（屏外时贴屏幕边缘并旋转 arrow）；文字运行时：H@(18,14) #0A1028 9pt，\"撤离点 {d}m\"@(60,14) 白 9pt 描边1pt",
+   "atlas_rect": [
+    444,
+    526,
+    260,
+    70
+   ]
+  },
+  "arrow_extraction": {
+   "file": "parts/arrow_extraction.png",
+   "size_pt": [
+    16,
+    16
+   ],
+   "size_px": [
+    40,
+    40
+   ],
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "nine_slice_px": null,
+   "note": "朝上为 0°，运行时旋转指向停机坪；贴在 label 外侧 4pt",
+   "atlas_rect": [
+    870,
+    526,
+    40,
+    40
+   ]
+  },
+  "badge_passenger": {
+   "file": "parts/badge_passenger.png",
+   "size_pt": [
+    44,
+    24
+   ],
+   "size_px": [
+    110,
+    60
+   ],
+   "anchor": [
+    0.5,
+    1
+   ],
+   "nine_slice_px": [
+    18,
+    18,
+    18,
+    18
+   ],
+   "note": "世界空间跟随战车（车顶上方 8pt）；文字运行时 \"×{n}\"@(30,12) 白 10pt 描边1pt",
+   "atlas_rect": [
+    758,
+    526,
+    110,
+    60
+   ]
+  }
+ },
+ "layout_pt": {
+  "btn_pause": {
+   "x": 16,
+   "y": 16,
+   "w": 40,
+   "h": 40
+  },
+  "timer_bg": {
+   "x": 132,
+   "y": 16,
+   "w": 96,
+   "h": 40
+  },
+  "wave_track": {
+   "x": 16,
+   "y": 64,
+   "w": 328,
+   "h": 12
+  },
+  "wave_fill": {
+   "x": 17,
+   "y": 65
+  },
+  "rescue_bg": {
+   "x": 264,
+   "y": 16,
+   "w": 80,
+   "h": 40
+  },
+  "icon_survivor": {
+   "x": 271,
+   "y": 24,
+   "w": 20,
+   "h": 24
+  },
+  "skill_spread": {
+   "x": 16,
+   "y": 560,
+   "w": 64,
+   "h": 64
+  },
+  "skill_fire": {
+   "x": 280,
+   "y": 560,
+   "w": 64,
+   "h": 64
+  },
+  "label_extraction": {
+   "x": 236,
+   "y": 520,
+   "w": 104,
+   "h": 28
+  },
+  "badge_passenger": {
+   "x": 229,
+   "y": 382,
+   "w": 44,
+   "h": 24
+  }
+ },
+ "texts": [
+  {
+   "id": "timer",
+   "sample": "02:14",
+   "x": 180,
+   "y": 30,
+   "size_pt": 15,
+   "color": "#FFFFFF",
+   "stroke": "#0A1028 1pt",
+   "anchor": "mm",
+   "note": "≤10s 变色 #FF6A4A 并 1Hz 脉冲"
+  },
+  {
+   "id": "wave_label",
+   "sample": "第 2 波 / 5",
+   "x": 180,
+   "y": 48,
+   "size_pt": 7.5,
+   "color": "#AAC8EB",
+   "anchor": "mm"
+  },
+  {
+   "id": "rescue",
+   "sample": "3/8",
+   "x": 318,
+   "y": 36,
+   "size_pt": 13,
+   "color": "#FFCE54",
+   "stroke": "#0A1028 1pt",
+   "anchor": "mm",
+   "note": "+1 时 0.25s 放大 1.25→1"
+  },
+  {
+   "id": "skill_spread_label",
+   "sample": "散射弹幕",
+   "x": 48,
+   "y": 632,
+   "size_pt": 8,
+   "color": "#DCE6F5",
+   "stroke": "#0A1028 1pt",
+   "anchor": "mm"
+  },
+  {
+   "id": "skill_fire_label",
+   "sample": "燃烧弹",
+   "x": 312,
+   "y": 632,
+   "size_pt": 8,
+   "color": "#DCE6F5",
+   "stroke": "#0A1028 1pt",
+   "anchor": "mm"
+  },
+  {
+   "id": "skill_cd",
+   "sample": "6",
+   "x": "skill中心",
+   "y": "skill中心",
+   "size_pt": 16,
+   "color": "#FFFFFF",
+   "stroke": "#0A1028 1.2pt",
+   "anchor": "mm"
+  },
+  {
+   "id": "extraction",
+   "sample": "撤离点 86m",
+   "x": "label+60",
+   "y": "label+14",
+   "size_pt": 9,
+   "color": "#FFFFFF",
+   "stroke": "#0A1028 1pt",
+   "anchor": "mm"
+  },
+  {
+   "id": "heli_H",
+   "sample": "H",
+   "x": "label+14",
+   "y": "label+14",
+   "size_pt": 9,
+   "color": "#0A1028",
+   "anchor": "mm"
+  },
+  {
+   "id": "passenger",
+   "sample": "×4",
+   "x": "badge+30",
+   "y": "badge+12",
+   "size_pt": 10,
+   "color": "#FFFFFF",
+   "stroke": "#0A1028 1pt",
+   "anchor": "mm"
+  }
+ ],
+ "atlas": {
+  "png": "hud_atlas.png",
+  "webp": "hud_atlas.webp",
+  "size": [
+   1024,
+   1024
+  ],
+  "webp_kb": 43.1,
+  "decoded_mb": 4.0
+ }
+}
