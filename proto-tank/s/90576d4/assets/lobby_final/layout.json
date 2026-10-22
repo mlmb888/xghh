@@ -1,0 +1,686 @@
+{
+ "design_size_pt": [
+  360,
+  640
+ ],
+ "export_scale": 2.5,
+ "grid_pt": 8,
+ "font": {
+  "family": "Source Han Sans SC Bold / 思源黑体 Bold",
+  "file": "NotoSansCJK-Bold.ttc",
+  "license": "SIL OFL 1.1"
+ },
+ "layers": [
+  {
+   "name": "bg",
+   "file": "bg.png",
+   "x": 0,
+   "y": 0,
+   "w": 360,
+   "h": 640,
+   "z": 0
+  },
+  {
+   "name": "car",
+   "file": "car.png",
+   "x": 64,
+   "y": 152,
+   "w": 232,
+   "h": 224,
+   "z": 1,
+   "note": "战车 3/4 展示图；与战斗 v6/jeep_top.png 同一设计"
+  },
+  {
+   "name": "avatar_frame",
+   "file": "ui/avatar_frame.png",
+   "x": 16,
+   "y": 16,
+   "w": 40,
+   "h": 40,
+   "z": 2
+  },
+  {
+   "name": "avatar_level_badge",
+   "file": "ui/avatar_level_badge.png",
+   "x": 24,
+   "y": 48,
+   "w": 24,
+   "h": 12,
+   "z": 3
+  },
+  {
+   "name": "currency_fuel_bg",
+   "file": "ui/currency_fuel_bg.png",
+   "x": 64,
+   "y": 20,
+   "w": 64,
+   "h": 32,
+   "z": 2
+  },
+  {
+   "name": "icon_fuel",
+   "file": "ui/icon_fuel.png",
+   "x": 68,
+   "y": 26,
+   "w": 18,
+   "h": 20,
+   "z": 3
+  },
+  {
+   "name": "currency_coin_bg",
+   "file": "ui/currency_coin_bg.png",
+   "x": 136,
+   "y": 20,
+   "w": 64,
+   "h": 32,
+   "z": 2
+  },
+  {
+   "name": "icon_coin",
+   "file": "ui/icon_coin.png",
+   "x": 140,
+   "y": 26,
+   "w": 19,
+   "h": 20,
+   "z": 3
+  },
+  {
+   "name": "currency_coin_plus",
+   "file": "ui/currency_coin_plus.png",
+   "x": 182,
+   "y": 29,
+   "w": 14,
+   "h": 14,
+   "z": 3
+  },
+  {
+   "name": "currency_diamond_bg",
+   "file": "ui/currency_diamond_bg.png",
+   "x": 208,
+   "y": 20,
+   "w": 64,
+   "h": 32,
+   "z": 2
+  },
+  {
+   "name": "icon_diamond",
+   "file": "ui/icon_diamond.png",
+   "x": 212,
+   "y": 26,
+   "w": 20,
+   "h": 18,
+   "z": 3
+  },
+  {
+   "name": "currency_diamond_plus",
+   "file": "ui/currency_diamond_plus.png",
+   "x": 254,
+   "y": 29,
+   "w": 14,
+   "h": 14,
+   "z": 3
+  },
+  {
+   "name": "currency_core_bg",
+   "file": "ui/currency_core_bg.png",
+   "x": 280,
+   "y": 20,
+   "w": 64,
+   "h": 32,
+   "z": 2
+  },
+  {
+   "name": "icon_core",
+   "file": "ui/icon_core.png",
+   "x": 284,
+   "y": 26,
+   "w": 17,
+   "h": 20,
+   "z": 3
+  },
+  {
+   "name": "currency_core_plus",
+   "file": "ui/currency_core_plus.png",
+   "x": 326,
+   "y": 29,
+   "w": 14,
+   "h": 14,
+   "z": 3
+  },
+  {
+   "name": "rescue_banner_bg",
+   "file": "ui/rescue_banner_bg.png",
+   "x": 16,
+   "y": 64,
+   "w": 208,
+   "h": 40,
+   "z": 2
+  },
+  {
+   "name": "rescue_bar_track",
+   "file": "ui/rescue_bar_track.png",
+   "x": 24,
+   "y": 88,
+   "w": 176,
+   "h": 8,
+   "z": 3
+  },
+  {
+   "name": "rescue_bar_fill",
+   "file": "ui/rescue_bar_fill.png",
+   "x": 24,
+   "y": 88,
+   "w": 113,
+   "h": 8,
+   "z": 4,
+   "note": "宽度按进度缩放，0.64=3842/6000"
+  },
+  {
+   "name": "side_left_0_bg",
+   "file": "ui/side_left_0_bg.png",
+   "x": 16,
+   "y": 112,
+   "w": 48,
+   "h": 48,
+   "z": 2
+  },
+  {
+   "name": "icon_gift",
+   "file": "ui/icon_gift.png",
+   "x": 24,
+   "y": 119,
+   "w": 32,
+   "h": 34,
+   "z": 3
+  },
+  {
+   "name": "side_left_1_bg",
+   "file": "ui/side_left_1_bg.png",
+   "x": 16,
+   "y": 184,
+   "w": 48,
+   "h": 48,
+   "z": 2
+  },
+  {
+   "name": "icon_medal",
+   "file": "ui/icon_medal.png",
+   "x": 26,
+   "y": 191,
+   "w": 28,
+   "h": 34,
+   "z": 3
+  },
+  {
+   "name": "side_left_2_bg",
+   "file": "ui/side_left_2_bg.png",
+   "x": 16,
+   "y": 256,
+   "w": 48,
+   "h": 48,
+   "z": 2
+  },
+  {
+   "name": "icon_calendar",
+   "file": "ui/icon_calendar.png",
+   "x": 25,
+   "y": 263,
+   "w": 30,
+   "h": 34,
+   "z": 3
+  },
+  {
+   "name": "side_right_0_bg",
+   "file": "ui/side_right_0_bg.png",
+   "x": 296,
+   "y": 112,
+   "w": 48,
+   "h": 48,
+   "z": 2
+  },
+  {
+   "name": "icon_megaphone",
+   "file": "ui/icon_megaphone.png",
+   "x": 303,
+   "y": 119,
+   "w": 34,
+   "h": 34,
+   "z": 3
+  },
+  {
+   "name": "side_right_1_bg",
+   "file": "ui/side_right_1_bg.png",
+   "x": 296,
+   "y": 184,
+   "w": 48,
+   "h": 48,
+   "z": 2
+  },
+  {
+   "name": "icon_chest",
+   "file": "ui/icon_chest.png",
+   "x": 303,
+   "y": 192,
+   "w": 34,
+   "h": 31,
+   "z": 3
+  },
+  {
+   "name": "side_right_2_bg",
+   "file": "ui/side_right_2_bg.png",
+   "x": 296,
+   "y": 256,
+   "w": 48,
+   "h": 48,
+   "z": 2
+  },
+  {
+   "name": "icon_mail",
+   "file": "ui/icon_mail.png",
+   "x": 303,
+   "y": 266,
+   "w": 34,
+   "h": 28,
+   "z": 3
+  },
+  {
+   "name": "reddot",
+   "file": "ui/reddot.png",
+   "x": 58,
+   "y": 108,
+   "w": 10,
+   "h": 10,
+   "z": 4
+  },
+  {
+   "name": "nameplate_bg",
+   "file": "ui/nameplate_bg.png",
+   "x": 88,
+   "y": 384,
+   "w": 184,
+   "h": 40,
+   "z": 2
+  },
+  {
+   "name": "chapter_card_bg",
+   "file": "ui/chapter_card_bg.png",
+   "x": 16,
+   "y": 432,
+   "w": 328,
+   "h": 72,
+   "z": 2
+  },
+  {
+   "name": "chapter_thumb",
+   "file": "ui/chapter_thumb.png",
+   "x": 40,
+   "y": 438,
+   "w": 100,
+   "h": 60,
+   "z": 3,
+   "note": "章节缩略图，按章节替换"
+  },
+  {
+   "name": "chapter_arrow_l",
+   "file": "ui/chapter_arrow_l.png",
+   "x": 20,
+   "y": 457,
+   "w": 16,
+   "h": 22,
+   "z": 3
+  },
+  {
+   "name": "chapter_arrow_r",
+   "file": "ui/chapter_arrow_r.png",
+   "x": 326,
+   "y": 457,
+   "w": 16,
+   "h": 22,
+   "z": 3
+  },
+  {
+   "name": "go_button",
+   "file": "ui/go_button.png",
+   "x": 16,
+   "y": 512,
+   "w": 328,
+   "h": 56,
+   "z": 2,
+   "note": "最醒目元素"
+  },
+  {
+   "name": "go_fuel_icon",
+   "file": "ui/go_fuel_icon.png",
+   "x": 252,
+   "y": 530,
+   "w": 18,
+   "h": 20,
+   "z": 3
+  },
+  {
+   "name": "tabbar_bg",
+   "file": "ui/tabbar_bg.png",
+   "x": 16,
+   "y": 576,
+   "w": 328,
+   "h": 56,
+   "z": 2
+  },
+  {
+   "name": "tab_icon_shop",
+   "file": "ui/tab_icon_shop.png",
+   "x": 37,
+   "y": 586,
+   "w": 24,
+   "h": 22,
+   "z": 4
+  },
+  {
+   "name": "tab_icon_wrench",
+   "file": "ui/tab_icon_wrench.png",
+   "x": 105,
+   "y": 586,
+   "w": 21,
+   "h": 24,
+   "z": 4
+  },
+  {
+   "name": "tab_active_bg",
+   "file": "ui/tab_active_bg.png",
+   "x": 149,
+   "y": 568,
+   "w": 64,
+   "h": 64,
+   "z": 3
+  },
+  {
+   "name": "tab_icon_swords",
+   "file": "ui/tab_icon_swords.png",
+   "x": 166,
+   "y": 584,
+   "w": 30,
+   "h": 28,
+   "z": 4
+  },
+  {
+   "name": "tab_icon_house",
+   "file": "ui/tab_icon_house.png",
+   "x": 235,
+   "y": 586,
+   "w": 24,
+   "h": 19,
+   "z": 4
+  },
+  {
+   "name": "tab_icon_bolt",
+   "file": "ui/tab_icon_bolt.png",
+   "x": 304,
+   "y": 586,
+   "w": 19,
+   "h": 24,
+   "z": 4
+  }
+ ],
+ "texts": [
+  {
+   "id": "avatar_level",
+   "text": "Lv.27",
+   "x": 36,
+   "y": 54,
+   "size_pt": 8,
+   "color": "#FFFFFF",
+   "anchor": "mm",
+   "stroke": null
+  },
+  {
+   "id": "currency_fuel",
+   "text": "24/30",
+   "x": 90,
+   "y": 36,
+   "size_pt": 9.5,
+   "color": "#FFFFFF",
+   "anchor": "lm",
+   "stroke": "#0A1028 1pt"
+  },
+  {
+   "id": "currency_coin",
+   "text": "18,640",
+   "x": 162,
+   "y": 36,
+   "size_pt": 9.5,
+   "color": "#FFFFFF",
+   "anchor": "lm",
+   "stroke": "#0A1028 1pt"
+  },
+  {
+   "id": "currency_diamond",
+   "text": "320",
+   "x": 234,
+   "y": 36,
+   "size_pt": 9.5,
+   "color": "#FFFFFF",
+   "anchor": "lm",
+   "stroke": "#0A1028 1pt"
+  },
+  {
+   "id": "currency_core",
+   "text": "35",
+   "x": 306,
+   "y": 36,
+   "size_pt": 9.5,
+   "color": "#FFFFFF",
+   "anchor": "lm",
+   "stroke": "#0A1028 1pt"
+  },
+  {
+   "id": "rescue_title",
+   "text": "累计救援",
+   "x": 24,
+   "y": 76,
+   "size_pt": 8,
+   "color": "#AAC8EB",
+   "anchor": "lm",
+   "stroke": null
+  },
+  {
+   "id": "rescue_level",
+   "text": "Lv.12 避难所",
+   "x": 72,
+   "y": 76,
+   "size_pt": 10,
+   "color": "#FFCE54",
+   "anchor": "lm",
+   "stroke": "#0A1028 1pt"
+  },
+  {
+   "id": "rescue_value",
+   "text": "3,842 / 6,000 人",
+   "x": 208,
+   "y": 76,
+   "size_pt": 8,
+   "color": "#FFFFFF",
+   "anchor": "rm",
+   "stroke": null
+  },
+  {
+   "id": "side_gift_label",
+   "text": "首充",
+   "x": 40,
+   "y": 168,
+   "size_pt": 9,
+   "color": "#FFFFFF",
+   "anchor": "mm",
+   "stroke": "#0A1028 1.2pt"
+  },
+  {
+   "id": "side_medal_label",
+   "text": "战令",
+   "x": 40,
+   "y": 240,
+   "size_pt": 9,
+   "color": "#FFFFFF",
+   "anchor": "mm",
+   "stroke": "#0A1028 1.2pt"
+  },
+  {
+   "id": "side_calendar_label",
+   "text": "签到",
+   "x": 40,
+   "y": 312,
+   "size_pt": 9,
+   "color": "#FFFFFF",
+   "anchor": "mm",
+   "stroke": "#0A1028 1.2pt"
+  },
+  {
+   "id": "side_megaphone_label",
+   "text": "活动",
+   "x": 320,
+   "y": 168,
+   "size_pt": 9,
+   "color": "#FFFFFF",
+   "anchor": "mm",
+   "stroke": "#0A1028 1.2pt"
+  },
+  {
+   "id": "side_chest_label",
+   "text": "宝箱",
+   "x": 320,
+   "y": 240,
+   "size_pt": 9,
+   "color": "#FFFFFF",
+   "anchor": "mm",
+   "stroke": "#0A1028 1.2pt"
+  },
+  {
+   "id": "side_mail_label",
+   "text": "邮件",
+   "x": 320,
+   "y": 312,
+   "size_pt": 9,
+   "color": "#FFFFFF",
+   "anchor": "mm",
+   "stroke": "#0A1028 1.2pt"
+  },
+  {
+   "id": "car_name",
+   "text": "荒原铁犀 · 史诗 ★4",
+   "x": 180,
+   "y": 396,
+   "size_pt": 9.5,
+   "color": "#DCCDFF",
+   "anchor": "mm",
+   "stroke": null
+  },
+  {
+   "id": "power_label",
+   "text": "战力",
+   "x": 150,
+   "y": 413,
+   "size_pt": 8,
+   "color": "#AAC8EB",
+   "anchor": "mm",
+   "stroke": null
+  },
+  {
+   "id": "power_value",
+   "text": "12,860",
+   "x": 196,
+   "y": 413,
+   "size_pt": 11,
+   "color": "#FFCE54",
+   "anchor": "mm",
+   "stroke": "#0A1028 1pt"
+  },
+  {
+   "id": "chapter_title",
+   "text": "第 3 章 · 死城加油站",
+   "x": 152,
+   "y": 456,
+   "size_pt": 12,
+   "color": "#FFFFFF",
+   "anchor": "lm",
+   "stroke": "#0A1028 1pt"
+  },
+  {
+   "id": "chapter_sub",
+   "text": "救援目标 8 人   最高 2/3 波",
+   "x": 152,
+   "y": 482,
+   "size_pt": 8.5,
+   "color": "#AAC8EB",
+   "anchor": "lm",
+   "stroke": null
+  },
+  {
+   "id": "go_label",
+   "text": "出 发",
+   "x": 164,
+   "y": 540,
+   "size_pt": 24,
+   "color": "#5A1E00",
+   "anchor": "mm",
+   "stroke": null
+  },
+  {
+   "id": "go_cost",
+   "text": "-5",
+   "x": 280,
+   "y": 540,
+   "size_pt": 14,
+   "color": "#5A1E00",
+   "anchor": "lm",
+   "stroke": null
+  },
+  {
+   "id": "tab_shop",
+   "text": "商店",
+   "x": 49,
+   "y": 622,
+   "size_pt": 9,
+   "color": "#DCE6F5",
+   "anchor": "mm",
+   "stroke": "#0A1028 1pt"
+  },
+  {
+   "id": "tab_wrench",
+   "text": "战车改装",
+   "x": 115,
+   "y": 622,
+   "size_pt": 9,
+   "color": "#DCE6F5",
+   "anchor": "mm",
+   "stroke": "#0A1028 1pt"
+  },
+  {
+   "id": "tab_swords",
+   "text": "出征",
+   "x": 181,
+   "y": 622,
+   "size_pt": 10,
+   "color": "#FFCE54",
+   "anchor": "mm",
+   "stroke": "#0A1028 1pt"
+  },
+  {
+   "id": "tab_house",
+   "text": "基地",
+   "x": 247,
+   "y": 622,
+   "size_pt": 9,
+   "color": "#DCE6F5",
+   "anchor": "mm",
+   "stroke": "#0A1028 1pt"
+  },
+  {
+   "id": "tab_bolt",
+   "text": "天赋",
+   "x": 313,
+   "y": 622,
+   "size_pt": 9,
+   "color": "#DCE6F5",
+   "anchor": "mm",
+   "stroke": "#0A1028 1pt"
+  }
+ ]
+}

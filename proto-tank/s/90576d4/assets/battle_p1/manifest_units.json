@@ -1,0 +1,118 @@
+{
+ "scale": 2.5,
+ "design_width_pt": 360,
+ "units": {
+  "zombie_walker": {
+   "frame_px": [
+    76,
+    111
+   ],
+   "frame_pt": [
+    30.4,
+    44.4
+   ],
+   "body_width_pt": 24,
+   "anchor_px": [
+    38,
+    103
+   ],
+   "anchor": "feet_center",
+   "fps": 7,
+   "directions": {
+    "down": 4,
+    "up": 4,
+    "side_right": 4,
+    "side_left": "mirror side_right (flipX)"
+   },
+   "files": "zombie_walker_{dir}_{0-3}.png, strip: zombie_walker_{dir}_strip.png",
+   "shadow": "baked",
+   "outline": "#10122A"
+  },
+  "zombie_fatty": {
+   "frame_px": [
+    94,
+    126
+   ],
+   "frame_pt": [
+    37.6,
+    50.4
+   ],
+   "body_width_pt": 30,
+   "anchor_px": [
+    47,
+    118
+   ],
+   "anchor": "feet_center",
+   "fps": 7,
+   "directions": {
+    "down": 4,
+    "up": 4,
+    "side_right": 4,
+    "side_left": "mirror side_right (flipX)"
+   },
+   "files": "zombie_fatty_{dir}_{0-3}.png, strip: zombie_fatty_{dir}_strip.png",
+   "shadow": "baked",
+   "outline": "#10122A"
+  },
+  "zombie_runner": {
+   "frame_px": [
+    116,
+    117
+   ],
+   "frame_pt": [
+    46.4,
+    46.8
+   ],
+   "body_width_pt": 24,
+   "anchor_px": [
+    58,
+    109
+   ],
+   "anchor": "feet_center",
+   "fps": 10,
+   "directions": {
+    "down": 4,
+    "up": 4,
+    "side_right": 4,
+    "side_left": "mirror side_right (flipX)"
+   },
+   "files": "zombie_runner_{dir}_{0-3}.png, strip: zombie_runner_{dir}_strip.png",
+   "shadow": "baked",
+   "outline": "#10122A"
+  },
+  "survivor": {
+   "frame_px": [
+    100,
+    116
+   ],
+   "frame_pt": [
+    40.0,
+    46.4
+   ],
+   "body_width_pt": 20,
+   "anchor_px": [
+    50,
+    108
+   ],
+   "anchor": "feet_center",
+   "fps": 10,
+   "directions": {
+    "down": 4,
+    "up": 4,
+    "side_right": 4,
+    "side_left": "mirror side_right (flipX)"
+   },
+   "files": "survivor_{dir}_{0-3}.png, strip: survivor_{dir}_strip.png",
+   "shadow": "baked",
+   "outline": "#10122A",
+   "marker": {
+    "file": "survivor_marker.png",
+    "offset_from_anchor_pt": [
+     0,
+     -50
+    ],
+    "note": "draw above head, bob ±2pt in code"
+   }
+  }
+ }
+}
