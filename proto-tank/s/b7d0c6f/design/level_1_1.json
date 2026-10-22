@@ -1,0 +1,439 @@
+{
+ "id": "1-1",
+ "tile_pt": 40,
+ "cols": 27,
+ "rows": 96,
+ "origin": "左上(0,0)，y向南增大；出生点在南端",
+ "spawn": {
+  "x": 13,
+  "y": 92,
+  "face": "N"
+ },
+ "legend": {
+  ".": "废城地面 可走",
+  "r": "柏油路 可走",
+  "p": "广场 可走",
+  "#": "楼体/墙 不可走 沿墙滑",
+  "~": "河 不可走",
+  "=": "桥 可走"
+ },
+ "capacity": 30,
+ "total_survivors": 44,
+ "stars_pct": [
+  55,
+  82,
+  95
+ ],
+ "stars_count": [
+  25,
+  37,
+  42
+ ],
+ "time_limit_s": 240,
+ "tiles": [
+  "#..........rrrrr..........#",
+  "#..........rrrrr..........#",
+  "#..........rrrrr..........#",
+  "#..........rrrrr..........#",
+  "#...ppppppppppppppppppp...#",
+  "#...ppppppppppppppppppp...#",
+  "#...ppppppppppppppppppp...#",
+  "#...ppppppppppppppppppp...#",
+  "#...ppppppppppppppppppp...#",
+  "#...ppppppppppppppppppp...#",
+  "#...ppppppppppppppppppp...#",
+  "#...ppppppppppppppppppp...#",
+  "#...ppppppppppppppppppp...#",
+  "#...ppppppppppppppppppp...#",
+  "#...ppppppppppppppppppp...#",
+  "#...ppppppppppppppppppp...#",
+  "#...ppppppppppppppppppp...#",
+  "#...ppppppppppppppppppp...#",
+  "#...ppppppppppppppppppp...#",
+  "#..........rrrrr..........#",
+  "#..........rrrrr..........#",
+  "#..........rrrrr..........#",
+  "#..........rrrrr..........#",
+  "#..........rrrrr..........#",
+  "#..........rrrrr..........#",
+  "#..........rrrrr..........#",
+  "#..........rrrrr..........#",
+  "#..........rrrrr..........#",
+  "#..rrrrrrrrrrrrrrrrrrrrr..#",
+  "#..rrrrrrrrrrrrrrrrrrrrr..#",
+  "#~~====~~~~~~~~~~~~~====~~#",
+  "#~~====~~~~~~~~~~~~~====~~#",
+  "#..rrrrr...rrrrr...rrrrr..#",
+  "#..rrrrr...rrrrr...rrrrr..#",
+  "#..rrrrr###########rrrrr..#",
+  "#..rrrrr###########rrrrr..#",
+  "#..rrrrr###########rrrrr..#",
+  "#..rrrrr###########rrrrr..#",
+  "#..rrrrr###########rrrrr..#",
+  "#..rrrrr###########rrrrr..#",
+  "#..rrrrr###########rrrrr..#",
+  "#..rrrrr###########rrrrr..#",
+  "#..rrrrr###########rrrrr..#",
+  "#..rrrrr###########rrrrr..#",
+  "#..rrrrr###########rrrrr..#",
+  "#..rrrrr###########rrrrr..#",
+  "#..rrrrr###########rrrrr..#",
+  "#..rrrrr###########rrrrr..#",
+  "#..rrrrr###########rrrrr..#",
+  "#..rrrrr###########rrrrr..#",
+  "#..rrrrr###########rrrrr..#",
+  "#..rrrrr###########rrrrr..#",
+  "#..rrrrr###########rrrrr..#",
+  "#..rrrrr###########rrrrr..#",
+  "#..rrrrr###########rrrrr..#",
+  "#..rrrrr###########rrrrr..#",
+  "#..rrrrr###########rrrrr..#",
+  "#..rrrrr###########rrrrr..#",
+  "#..rrrrr###########rrrrr..#",
+  "#..rrrrr###########rrrrr..#",
+  "#..rrrrr###########rrrrr..#",
+  "#..rrrrr###########rrrrr..#",
+  "#..rrrrr###########rrrrr..#",
+  "#..rrrrrrrrrrrrrrrrrrrrr..#",
+  "#..rrrrrrrrrrrrrrrrrrrrr..#",
+  "#..rrrrrrrrrrrrrrrrrrrrr..#",
+  "#..rrrrrrrrrrrrrrrrrrrrr..#",
+  "#..........rrrrr..........#",
+  "#..........rrrrr..........#",
+  "#..........rrrrr..........#",
+  "#~~~~~~~~~~=====~~~~~~~~~~#",
+  "#~~~~~~~~~~=====~~~~~~~~~~#",
+  "#~~~~~~~~~~=====~~~~~~~~~~#",
+  "#########..rrrrr..........#",
+  "#########..rrrrr..........#",
+  "#########..rrrrr..........#",
+  "#########..rrrrr..........#",
+  "#########..rrrrr..........#",
+  "#########..rrrrr..........#",
+  "#########..rrrrr..........#",
+  "#..........rrrrr..........#",
+  "#..........rrrrr..........#",
+  "#..........rrrrr..........#",
+  "#..........rrrrr..........#",
+  "#..........rrrrr..........#",
+  "#..........rrrrr..........#",
+  "#..........rrrrr..........#",
+  "#..........rrrrr..........#",
+  "#..........rrrrr..........#",
+  "#..........rrrrr..........#",
+  "#..........rrrrr..........#",
+  "#..........rrrrr..........#",
+  "#..........rrrrr..........#",
+  "#..........rrrrr..........#",
+  "#..........rrrrr..........#",
+  "#..........rrrrr..........#"
+ ],
+ "camps": [
+  {
+   "id": "A",
+   "x": 19,
+   "y": 80,
+   "w": 4,
+   "h": 3,
+   "survivors": 7,
+   "gate_hp": 150,
+   "guards": 6,
+   "note": "开局教学营地，出生点右前方"
+  },
+  {
+   "id": "C",
+   "x": 2,
+   "y": 45,
+   "w": 5,
+   "h": 4,
+   "survivors": 9,
+   "gate_hp": 300,
+   "guards": 14,
+   "elites": 2,
+   "note": "左岔：人多危险"
+  },
+  {
+   "id": "D",
+   "x": 20,
+   "y": 50,
+   "w": 4,
+   "h": 3,
+   "survivors": 7,
+   "gate_hp": 200,
+   "guards": 8,
+   "note": "右岔：人少+补给"
+  },
+  {
+   "id": "E",
+   "x": 3,
+   "y": 22,
+   "w": 4,
+   "h": 3,
+   "survivors": 7,
+   "gate_hp": 250,
+   "guards": 10
+  },
+  {
+   "id": "F",
+   "x": 20,
+   "y": 22,
+   "w": 4,
+   "h": 3,
+   "survivors": 7,
+   "gate_hp": 250,
+   "guards": 10,
+   "miniboss": "mutant_chief"
+  },
+  {
+   "id": "G",
+   "x": 12,
+   "y": 20,
+   "w": 3,
+   "h": 3,
+   "survivors": 7,
+   "gate_hp": 300,
+   "guards": 12,
+   "note": "Boss 场前最后一营"
+  }
+ ],
+ "helipads": [
+  {
+   "id": "H1",
+   "x": 13,
+   "y": 67,
+   "r": 2,
+   "type": "mid",
+   "note": "过桥后中途送人点，不限时"
+  },
+  {
+   "id": "H2",
+   "x": 13,
+   "y": 2,
+   "r": 2,
+   "type": "final",
+   "countdown_s": 60,
+   "note": "Boss 死后或 T=180s 起直升机倒计时"
+  }
+ ],
+ "spawners": [
+  {
+   "id": "horde_S",
+   "x": 13,
+   "y": 95,
+   "type": "chase_horde",
+   "start_s": 35,
+   "interval_s": 4,
+   "count": 6,
+   "speed_ratio": 0.85,
+   "note": "追击尸潮，从南沿主路推进"
+  },
+  {
+   "id": "sp_L",
+   "x": 2,
+   "y": 40,
+   "type": "ambush",
+   "trigger": "tr_left",
+   "count": 12
+  },
+  {
+   "id": "sp_R",
+   "x": 24,
+   "y": 56,
+   "type": "ambush",
+   "trigger": "tr_right",
+   "count": 6
+  },
+  {
+   "id": "sp_N",
+   "x": 13,
+   "y": 26,
+   "type": "wave",
+   "start_s": 120,
+   "interval_s": 6,
+   "count": 8
+  }
+ ],
+ "enemies": [
+  {
+   "id": "elite1",
+   "type": "elite",
+   "x": 5,
+   "y": 43
+  },
+  {
+   "id": "elite2",
+   "type": "elite",
+   "x": 5,
+   "y": 52
+  },
+  {
+   "id": "chief",
+   "type": "mutant_chief",
+   "x": 21,
+   "y": 25,
+   "hp": 1200
+  },
+  {
+   "id": "boss",
+   "type": "giant_mutant",
+   "x": 13,
+   "y": 10,
+   "arms": 2,
+   "spawn": "tr_boss"
+  }
+ ],
+ "obstacles": [
+  {
+   "type": "wreck_car",
+   "x": 12,
+   "y": 86,
+   "w": 2,
+   "h": 1
+  },
+  {
+   "type": "wreck_car",
+   "x": 15,
+   "y": 60,
+   "w": 2,
+   "h": 1
+  },
+  {
+   "type": "wreck_bus",
+   "x": 4,
+   "y": 57,
+   "w": 3,
+   "h": 1,
+   "note": "左岔窄口，过车需贴墙滑"
+  },
+  {
+   "type": "barricade",
+   "x": 11,
+   "y": 69,
+   "w": 5,
+   "h": 1,
+   "hp": 80,
+   "note": "桥南路障，开局第一个可打破物"
+  },
+  {
+   "type": "barricade",
+   "x": 19,
+   "y": 32,
+   "w": 5,
+   "h": 1,
+   "hp": 120
+  },
+  {
+   "type": "barricade",
+   "x": 3,
+   "y": 32,
+   "w": 5,
+   "h": 1,
+   "hp": 120
+  },
+  {
+   "type": "fuel_barrel",
+   "x": 4,
+   "y": 48,
+   "w": 1,
+   "h": 1,
+   "blast_r": 2,
+   "count_hint": "左营地周围3个"
+  },
+  {
+   "type": "fuel_barrel",
+   "x": 6,
+   "y": 44,
+   "w": 1,
+   "h": 1,
+   "blast_r": 2
+  },
+  {
+   "type": "fuel_barrel",
+   "x": 3,
+   "y": 50,
+   "w": 1,
+   "h": 1,
+   "blast_r": 2
+  },
+  {
+   "type": "debris",
+   "x": 17,
+   "y": 14,
+   "w": 2,
+   "h": 2
+  },
+  {
+   "type": "debris",
+   "x": 7,
+   "y": 8,
+   "w": 2,
+   "h": 2
+  }
+ ],
+ "pickups": [
+  {
+   "type": "supply_crate",
+   "x": 21,
+   "y": 44,
+   "gives": "repair_50%+free_card"
+  },
+  {
+   "type": "supply_crate",
+   "x": 21,
+   "y": 58,
+   "gives": "ammo_burst_10s"
+  }
+ ],
+ "triggers": [
+  {
+   "id": "tr_intro",
+   "x": 11,
+   "y": 88,
+   "w": 5,
+   "h": 4,
+   "on_enter": "hint_arrow:A"
+  },
+  {
+   "id": "tr_bridge",
+   "x": 11,
+   "y": 72,
+   "w": 5,
+   "h": 2,
+   "on_enter": "hint:过桥北上"
+  },
+  {
+   "id": "tr_left",
+   "x": 3,
+   "y": 60,
+   "w": 5,
+   "h": 2,
+   "on_enter": "spawn:sp_L;banner:左路 人多·危险"
+  },
+  {
+   "id": "tr_right",
+   "x": 19,
+   "y": 60,
+   "w": 5,
+   "h": 2,
+   "on_enter": "spawn:sp_R;banner:右路 补给"
+  },
+  {
+   "id": "tr_boss",
+   "x": 4,
+   "y": 18,
+   "w": 19,
+   "h": 1,
+   "on_enter": "spawn:boss;lock_camera_y:4-18"
+  }
+ ],
+ "card_pickups": {
+  "rule": "每交付/击杀累计经验满即三选一",
+  "target_times": [
+   30,
+   70,
+   110,
+   150,
+   185
+  ]
+ }
+}

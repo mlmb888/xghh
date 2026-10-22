@@ -1,0 +1,1733 @@
+{
+ "version": "vfx_v1_r4",
+ "date": "2026-10-22",
+ "version_round": 4,
+ "scale_note": "尺寸口径（保持r1）：导出=battle_final(900x1600, 已含1.7x镜头)实测显示尺寸×2.5；引擎按 1/2.5 显示。glow 层为半分辨率，显示时×2 拉伸。",
+ "layers": {
+  "expl_l": {
+   "base": [
+    {
+     "i": 0,
+     "atlas": "vfx_base_0.webp",
+     "rect": [
+      0,
+      0,
+      429,
+      408
+     ]
+    },
+    {
+     "i": 1,
+     "atlas": "vfx_base_0.webp",
+     "rect": [
+      431,
+      0,
+      429,
+      408
+     ]
+    },
+    {
+     "i": 2,
+     "atlas": "vfx_base_0.webp",
+     "rect": [
+      862,
+      0,
+      429,
+      408
+     ]
+    },
+    {
+     "i": 3,
+     "atlas": "vfx_base_0.webp",
+     "rect": [
+      1293,
+      0,
+      429,
+      408
+     ]
+    },
+    {
+     "i": 4,
+     "atlas": "vfx_base_0.webp",
+     "rect": [
+      0,
+      410,
+      429,
+      408
+     ]
+    },
+    {
+     "i": 5,
+     "atlas": "vfx_base_0.webp",
+     "rect": [
+      431,
+      410,
+      429,
+      408
+     ]
+    },
+    {
+     "i": 6,
+     "atlas": "vfx_base_0.webp",
+     "rect": [
+      862,
+      410,
+      429,
+      408
+     ]
+    },
+    {
+     "i": 7,
+     "atlas": "vfx_base_0.webp",
+     "rect": [
+      1293,
+      410,
+      429,
+      408
+     ]
+    }
+   ],
+   "glow": [
+    {
+     "i": 0,
+     "atlas": "vfx_glow_0.webp",
+     "rect": [
+      0,
+      0,
+      215,
+      204
+     ]
+    },
+    {
+     "i": 1,
+     "atlas": "vfx_glow_0.webp",
+     "rect": [
+      217,
+      0,
+      215,
+      204
+     ]
+    },
+    {
+     "i": 2,
+     "atlas": "vfx_glow_0.webp",
+     "rect": [
+      434,
+      0,
+      215,
+      204
+     ]
+    },
+    {
+     "i": 3,
+     "atlas": "vfx_glow_0.webp",
+     "rect": [
+      651,
+      0,
+      215,
+      204
+     ]
+    },
+    {
+     "i": 4,
+     "atlas": "vfx_glow_0.webp",
+     "rect": [
+      0,
+      206,
+      215,
+      204
+     ]
+    },
+    {
+     "i": 5,
+     "atlas": "vfx_glow_0.webp",
+     "rect": [
+      217,
+      206,
+      215,
+      204
+     ]
+    },
+    {
+     "i": 6,
+     "atlas": "vfx_glow_0.webp",
+     "rect": [
+      434,
+      206,
+      215,
+      204
+     ]
+    },
+    {
+     "i": 7,
+     "atlas": "vfx_glow_0.webp",
+     "rect": [
+      651,
+      206,
+      215,
+      204
+     ]
+    }
+   ],
+   "anchor": [
+    0.473,
+    0.693
+   ],
+   "fps": 16,
+   "loop": false,
+   "frames": 8,
+   "frame_px": [
+    429,
+    408
+   ],
+   "display_pt": [
+    171.6,
+    163.2
+   ],
+   "blend": {
+    "base": "normal(premultiplied off, 含#10122A暗描边衬底)",
+    "glow": "additive(lighter)，程序控制叠加层数，建议≤3层/每帧且同屏≤40个"
+   }
+  },
+  "fl_evo_plasma": {
+   "base": [
+    {
+     "i": 0,
+     "atlas": "vfx_base_0.webp",
+     "rect": [
+      0,
+      820,
+      757,
+      336
+     ]
+    },
+    {
+     "i": 1,
+     "atlas": "vfx_base_0.webp",
+     "rect": [
+      759,
+      820,
+      757,
+      336
+     ]
+    },
+    {
+     "i": 2,
+     "atlas": "vfx_base_0.webp",
+     "rect": [
+      0,
+      1158,
+      757,
+      336
+     ]
+    },
+    {
+     "i": 3,
+     "atlas": "vfx_base_0.webp",
+     "rect": [
+      759,
+      1158,
+      757,
+      336
+     ]
+    },
+    {
+     "i": 4,
+     "atlas": "vfx_base_0.webp",
+     "rect": [
+      0,
+      1496,
+      757,
+      336
+     ]
+    },
+    {
+     "i": 5,
+     "atlas": "vfx_base_0.webp",
+     "rect": [
+      759,
+      1496,
+      757,
+      336
+     ]
+    }
+   ],
+   "glow": [
+    {
+     "i": 0,
+     "atlas": "vfx_glow_0.webp",
+     "rect": [
+      0,
+      412,
+      378,
+      168
+     ]
+    },
+    {
+     "i": 1,
+     "atlas": "vfx_glow_0.webp",
+     "rect": [
+      380,
+      412,
+      378,
+      168
+     ]
+    },
+    {
+     "i": 2,
+     "atlas": "vfx_glow_0.webp",
+     "rect": [
+      0,
+      582,
+      378,
+      168
+     ]
+    },
+    {
+     "i": 3,
+     "atlas": "vfx_glow_0.webp",
+     "rect": [
+      380,
+      582,
+      378,
+      168
+     ]
+    },
+    {
+     "i": 4,
+     "atlas": "vfx_glow_0.webp",
+     "rect": [
+      0,
+      752,
+      378,
+      168
+     ]
+    },
+    {
+     "i": 5,
+     "atlas": "vfx_glow_0.webp",
+     "rect": [
+      380,
+      752,
+      378,
+      168
+     ]
+    }
+   ],
+   "anchor": [
+    0,
+    0.494
+   ],
+   "fps": 15,
+   "loop": true,
+   "frames": 6,
+   "frame_px": [
+    757,
+    336
+   ],
+   "display_pt": [
+    302.8,
+    134.4
+   ],
+   "blend": {
+    "base": "normal(premultiplied off, 含#10122A暗描边衬底)",
+    "glow": "additive(lighter)，程序控制叠加层数，建议≤3层/每帧且同屏≤40个"
+   },
+   "orient": "锥口在x=0，朝+x；绑定车尾挂点旋转，可按射程 scaleX"
+  },
+  "fl_flame": {
+   "base": [
+    {
+     "i": 0,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      0,
+      0,
+      757,
+      336
+     ]
+    },
+    {
+     "i": 1,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      759,
+      0,
+      757,
+      336
+     ]
+    },
+    {
+     "i": 2,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      0,
+      338,
+      757,
+      336
+     ]
+    },
+    {
+     "i": 3,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      759,
+      338,
+      757,
+      336
+     ]
+    },
+    {
+     "i": 4,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      0,
+      676,
+      757,
+      336
+     ]
+    },
+    {
+     "i": 5,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      759,
+      676,
+      757,
+      336
+     ]
+    }
+   ],
+   "glow": [
+    {
+     "i": 0,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      0,
+      0,
+      378,
+      168
+     ]
+    },
+    {
+     "i": 1,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      380,
+      0,
+      378,
+      168
+     ]
+    },
+    {
+     "i": 2,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      0,
+      170,
+      378,
+      168
+     ]
+    },
+    {
+     "i": 3,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      380,
+      170,
+      378,
+      168
+     ]
+    },
+    {
+     "i": 4,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      0,
+      340,
+      378,
+      168
+     ]
+    },
+    {
+     "i": 5,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      380,
+      340,
+      378,
+      168
+     ]
+    }
+   ],
+   "anchor": [
+    0,
+    0.494
+   ],
+   "fps": 15,
+   "loop": true,
+   "frames": 6,
+   "frame_px": [
+    757,
+    336
+   ],
+   "display_pt": [
+    302.8,
+    134.4
+   ],
+   "blend": {
+    "base": "normal(premultiplied off, 含#10122A暗描边衬底)",
+    "glow": "additive(lighter)，程序控制叠加层数，建议≤3层/每帧且同屏≤40个"
+   },
+   "orient": "锥口在x=0，朝+x；绑定车尾挂点旋转，可按射程 scaleX"
+  },
+  "mn_blast": {
+   "base": [
+    {
+     "i": 0,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      1518,
+      676,
+      321,
+      306
+     ]
+    },
+    {
+     "i": 1,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      0,
+      1014,
+      321,
+      306
+     ]
+    },
+    {
+     "i": 2,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      323,
+      1014,
+      321,
+      306
+     ]
+    },
+    {
+     "i": 3,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      646,
+      1014,
+      321,
+      306
+     ]
+    },
+    {
+     "i": 4,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      969,
+      1014,
+      321,
+      306
+     ]
+    },
+    {
+     "i": 5,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      1292,
+      1014,
+      321,
+      306
+     ]
+    }
+   ],
+   "glow": [
+    {
+     "i": 0,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      760,
+      340,
+      160,
+      152
+     ]
+    },
+    {
+     "i": 1,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      0,
+      510,
+      160,
+      152
+     ]
+    },
+    {
+     "i": 2,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      162,
+      510,
+      160,
+      152
+     ]
+    },
+    {
+     "i": 3,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      324,
+      510,
+      160,
+      152
+     ]
+    },
+    {
+     "i": 4,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      486,
+      510,
+      160,
+      152
+     ]
+    },
+    {
+     "i": 5,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      648,
+      510,
+      160,
+      152
+     ]
+    }
+   ],
+   "anchor": [
+    0.474,
+    0.67
+   ],
+   "fps": 16,
+   "loop": false,
+   "frames": 6,
+   "frame_px": [
+    321,
+    306
+   ],
+   "display_pt": [
+    128.4,
+    122.4
+   ],
+   "blend": {
+    "base": "normal(premultiplied off, 含#10122A暗描边衬底)",
+    "glow": "additive(lighter)，程序控制叠加层数，建议≤3层/每帧且同屏≤40个"
+   },
+   "note": "地雷专用：偏红爆炸；配合 zb_splat_decal 类焦痕可复用 expl_* 帧"
+  },
+  "expl_m": {
+   "base": [
+    {
+     "i": 0,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      1615,
+      1014,
+      307,
+      292
+     ]
+    },
+    {
+     "i": 1,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      0,
+      1322,
+      307,
+      292
+     ]
+    },
+    {
+     "i": 2,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      309,
+      1322,
+      307,
+      292
+     ]
+    },
+    {
+     "i": 3,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      618,
+      1322,
+      307,
+      292
+     ]
+    },
+    {
+     "i": 4,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      927,
+      1322,
+      307,
+      292
+     ]
+    },
+    {
+     "i": 5,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      1236,
+      1322,
+      307,
+      292
+     ]
+    },
+    {
+     "i": 6,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      1545,
+      1322,
+      307,
+      292
+     ]
+    }
+   ],
+   "glow": [
+    {
+     "i": 0,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      810,
+      510,
+      153,
+      146
+     ]
+    },
+    {
+     "i": 1,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      0,
+      664,
+      153,
+      146
+     ]
+    },
+    {
+     "i": 2,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      155,
+      664,
+      153,
+      146
+     ]
+    },
+    {
+     "i": 3,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      310,
+      664,
+      153,
+      146
+     ]
+    },
+    {
+     "i": 4,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      465,
+      664,
+      153,
+      146
+     ]
+    },
+    {
+     "i": 5,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      620,
+      664,
+      153,
+      146
+     ]
+    },
+    {
+     "i": 6,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      775,
+      664,
+      153,
+      146
+     ]
+    }
+   ],
+   "anchor": [
+    0.472,
+    0.669
+   ],
+   "fps": 18,
+   "loop": false,
+   "frames": 7,
+   "frame_px": [
+    307,
+    292
+   ],
+   "display_pt": [
+    122.8,
+    116.8
+   ],
+   "blend": {
+    "base": "normal(premultiplied off, 含#10122A暗描边衬底)",
+    "glow": "additive(lighter)，程序控制叠加层数，建议≤3层/每帧且同屏≤40个"
+   }
+  },
+  "mg_muzzle": {
+   "base": [
+    {
+     "i": 0,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      0,
+      1616,
+      214,
+      215
+     ]
+    },
+    {
+     "i": 1,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      216,
+      1616,
+      214,
+      215
+     ]
+    },
+    {
+     "i": 2,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      432,
+      1616,
+      214,
+      215
+     ]
+    }
+   ],
+   "glow": [
+    {
+     "i": 0,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      0,
+      812,
+      106,
+      107
+     ]
+    },
+    {
+     "i": 1,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      108,
+      812,
+      106,
+      107
+     ]
+    },
+    {
+     "i": 2,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      216,
+      812,
+      106,
+      107
+     ]
+    }
+   ],
+   "anchor": [
+    0.079,
+    0.498
+   ],
+   "fps": 30,
+   "loop": false,
+   "frames": 3,
+   "frame_px": [
+    214,
+    215
+   ],
+   "display_pt": [
+    85.6,
+    86.0
+   ],
+   "blend": {
+    "base": "normal(premultiplied off, 含#10122A暗描边衬底)",
+    "glow": "additive(lighter)，程序控制叠加层数，建议≤3层/每帧且同屏≤40个"
+   }
+  },
+  "zb_splat": {
+   "base": [
+    {
+     "i": 0,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      648,
+      1616,
+      129,
+      160
+     ]
+    },
+    {
+     "i": 1,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      779,
+      1616,
+      129,
+      160
+     ]
+    },
+    {
+     "i": 2,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      910,
+      1616,
+      129,
+      160
+     ]
+    },
+    {
+     "i": 3,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      1041,
+      1616,
+      129,
+      160
+     ]
+    },
+    {
+     "i": 4,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      1172,
+      1616,
+      129,
+      160
+     ]
+    },
+    {
+     "i": 5,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      1303,
+      1616,
+      129,
+      160
+     ]
+    }
+   ],
+   "anchor": [
+    0.527,
+    0.5
+   ],
+   "fps": 18,
+   "loop": false,
+   "frames": 6,
+   "frame_px": [
+    129,
+    160
+   ],
+   "display_pt": [
+    51.6,
+    64.0
+   ],
+   "blend": {
+    "base": "normal"
+   }
+  },
+  "expl_s": {
+   "base": [
+    {
+     "i": 0,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      1434,
+      1616,
+      157,
+      149
+     ]
+    },
+    {
+     "i": 1,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      1593,
+      1616,
+      157,
+      149
+     ]
+    },
+    {
+     "i": 2,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      1752,
+      1616,
+      157,
+      149
+     ]
+    },
+    {
+     "i": 3,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      0,
+      1833,
+      157,
+      149
+     ]
+    },
+    {
+     "i": 4,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      159,
+      1833,
+      157,
+      149
+     ]
+    },
+    {
+     "i": 5,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      318,
+      1833,
+      157,
+      149
+     ]
+    }
+   ],
+   "glow": [
+    {
+     "i": 0,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      324,
+      812,
+      79,
+      75
+     ]
+    },
+    {
+     "i": 1,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      405,
+      812,
+      79,
+      75
+     ]
+    },
+    {
+     "i": 2,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      486,
+      812,
+      79,
+      75
+     ]
+    },
+    {
+     "i": 3,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      567,
+      812,
+      79,
+      75
+     ]
+    },
+    {
+     "i": 4,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      648,
+      812,
+      79,
+      75
+     ]
+    },
+    {
+     "i": 5,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      729,
+      812,
+      79,
+      75
+     ]
+    }
+   ],
+   "anchor": [
+    0.471,
+    0.668
+   ],
+   "fps": 20,
+   "loop": false,
+   "frames": 6,
+   "frame_px": [
+    157,
+    149
+   ],
+   "display_pt": [
+    62.8,
+    59.6
+   ],
+   "blend": {
+    "base": "normal(premultiplied off, 含#10122A暗描边衬底)",
+    "glow": "additive(lighter)，程序控制叠加层数，建议≤3层/每帧且同屏≤40个"
+   }
+  },
+  "zb_splat_decal": {
+   "base": [
+    {
+     "i": 0,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      477,
+      1833,
+      118,
+      147
+     ]
+    }
+   ],
+   "anchor": [
+    0.534,
+    0.503
+   ],
+   "fps": 0,
+   "loop": false,
+   "frames": 1,
+   "frame_px": [
+    118,
+    147
+   ],
+   "display_pt": [
+    47.2,
+    58.8
+   ],
+   "blend": {
+    "base": "normal"
+   }
+  },
+  "rk_smoke": {
+   "base": [
+    {
+     "i": 0,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      597,
+      1833,
+      113,
+      113
+     ]
+    },
+    {
+     "i": 1,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      712,
+      1833,
+      113,
+      113
+     ]
+    },
+    {
+     "i": 2,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      827,
+      1833,
+      113,
+      113
+     ]
+    },
+    {
+     "i": 3,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      942,
+      1833,
+      113,
+      113
+     ]
+    },
+    {
+     "i": 4,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      1057,
+      1833,
+      113,
+      113
+     ]
+    },
+    {
+     "i": 5,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      1172,
+      1833,
+      113,
+      113
+     ]
+    }
+   ],
+   "anchor": [
+    0.513,
+    0.487
+   ],
+   "fps": 12,
+   "loop": false,
+   "frames": 6,
+   "frame_px": [
+    113,
+    113
+   ],
+   "display_pt": [
+    45.2,
+    45.2
+   ],
+   "blend": {
+    "base": "normal"
+   },
+   "note": "尾烟粒子：每 40ms 在火箭尾部生成一个，随机旋转/0.8-1.2缩放"
+  },
+  "mg_hit": {
+   "base": [
+    {
+     "i": 0,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      1287,
+      1833,
+      93,
+      90
+     ]
+    },
+    {
+     "i": 1,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      1382,
+      1833,
+      93,
+      90
+     ]
+    },
+    {
+     "i": 2,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      1477,
+      1833,
+      93,
+      90
+     ]
+    },
+    {
+     "i": 3,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      1572,
+      1833,
+      93,
+      90
+     ]
+    }
+   ],
+   "glow": [
+    {
+     "i": 0,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      810,
+      812,
+      47,
+      46
+     ]
+    },
+    {
+     "i": 1,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      859,
+      812,
+      47,
+      46
+     ]
+    },
+    {
+     "i": 2,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      908,
+      812,
+      47,
+      46
+     ]
+    },
+    {
+     "i": 3,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      957,
+      812,
+      47,
+      46
+     ]
+    }
+   ],
+   "anchor": [
+    0.591,
+    0.478
+   ],
+   "fps": 24,
+   "loop": false,
+   "frames": 4,
+   "frame_px": [
+    93,
+    90
+   ],
+   "display_pt": [
+    37.2,
+    36.0
+   ],
+   "blend": {
+    "base": "normal(premultiplied off, 含#10122A暗描边衬底)",
+    "glow": "additive(lighter)，程序控制叠加层数，建议≤3层/每帧且同屏≤40个"
+   }
+  },
+  "mg_tracer": {
+   "base": [
+    {
+     "i": 0,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      1667,
+      1833,
+      188,
+      66
+     ]
+    },
+    {
+     "i": 1,
+     "atlas": "vfx_base_1.webp",
+     "rect": [
+      1857,
+      1833,
+      188,
+      66
+     ]
+    }
+   ],
+   "glow": [
+    {
+     "i": 0,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      192,
+      921,
+      94,
+      33
+     ]
+    },
+    {
+     "i": 1,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      288,
+      921,
+      94,
+      33
+     ]
+    }
+   ],
+   "anchor": [
+    1,
+    0.5
+   ],
+   "fps": 30,
+   "loop": true,
+   "frames": 2,
+   "frame_px": [
+    188,
+    66
+   ],
+   "display_pt": [
+    75.2,
+    26.4
+   ],
+   "blend": {
+    "base": "normal(premultiplied off, 含#10122A暗描边衬底)",
+    "glow": "additive(lighter)，程序控制叠加层数，建议≤3层/每帧且同屏≤40个"
+   },
+   "orient": "朝+x，锚点在弹头；沿速度方向旋转",
+   "fire_interval_ms": {
+    "lv1": 70,
+    "lv2": 55,
+    "evo": 45,
+    "note": "每枪管交替，双管错开半周期；同屏≤24发"
+   }
+  },
+  "mg_tracer_cyan": {
+   "base": [
+    {
+     "i": 0,
+     "atlas": "vfx_base_2.webp",
+     "rect": [
+      0,
+      0,
+      188,
+      66
+     ]
+    },
+    {
+     "i": 1,
+     "atlas": "vfx_base_2.webp",
+     "rect": [
+      190,
+      0,
+      188,
+      66
+     ]
+    }
+   ],
+   "glow": [
+    {
+     "i": 0,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      0,
+      921,
+      94,
+      33
+     ]
+    },
+    {
+     "i": 1,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      96,
+      921,
+      94,
+      33
+     ]
+    }
+   ],
+   "anchor": [
+    1,
+    0.5
+   ],
+   "fps": 30,
+   "loop": true,
+   "frames": 2,
+   "frame_px": [
+    188,
+    66
+   ],
+   "display_pt": [
+    75.2,
+    26.4
+   ],
+   "blend": {
+    "base": "normal(premultiplied off, 含#10122A暗描边衬底)",
+    "glow": "additive(lighter)，程序控制叠加层数，建议≤3层/每帧且同屏≤40个"
+   },
+   "orient": "朝+x，锚点在弹头；沿速度方向旋转",
+   "fire_interval_ms": {
+    "lv1": 70,
+    "lv2": 55,
+    "evo": 45,
+    "note": "与橙色弹流交替(左右挂点各一色)，或暴击/易伤弹用青色"
+   }
+  },
+  "mg_evo_tracer": {
+   "base": [
+    {
+     "i": 0,
+     "atlas": "vfx_base_2.webp",
+     "rect": [
+      380,
+      0,
+      296,
+      60
+     ]
+    },
+    {
+     "i": 1,
+     "atlas": "vfx_base_2.webp",
+     "rect": [
+      678,
+      0,
+      296,
+      60
+     ]
+    }
+   ],
+   "glow": [
+    {
+     "i": 0,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      384,
+      921,
+      148,
+      30
+     ]
+    },
+    {
+     "i": 1,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      534,
+      921,
+      148,
+      30
+     ]
+    }
+   ],
+   "anchor": [
+    1,
+    0.5
+   ],
+   "fps": 30,
+   "loop": true,
+   "frames": 2,
+   "frame_px": [
+    296,
+    60
+   ],
+   "display_pt": [
+    118.4,
+    24.0
+   ],
+   "blend": {
+    "base": "normal(premultiplied off, 含#10122A暗描边衬底)",
+    "glow": "additive(lighter)，程序控制叠加层数，建议≤3层/每帧且同屏≤40个"
+   },
+   "orient": "朝+x，锚点在弹头；沿速度方向旋转",
+   "fire_interval_ms": {
+    "evo": 90
+   }
+  },
+  "mn_mine": {
+   "base": [
+    {
+     "i": 0,
+     "atlas": "vfx_base_2.webp",
+     "rect": [
+      976,
+      0,
+      68,
+      56
+     ]
+    },
+    {
+     "i": 1,
+     "atlas": "vfx_base_2.webp",
+     "rect": [
+      1046,
+      0,
+      68,
+      56
+     ]
+    }
+   ],
+   "anchor": [
+    0.5,
+    0.5
+   ],
+   "fps": 4,
+   "loop": true,
+   "frames": 2,
+   "frame_px": [
+    68,
+    56
+   ],
+   "display_pt": [
+    27.2,
+    22.4
+   ],
+   "blend": {
+    "base": "normal"
+   }
+  },
+  "rk_rocket": {
+   "base": [
+    {
+     "i": 0,
+     "atlas": "vfx_base_2.webp",
+     "rect": [
+      1116,
+      0,
+      93,
+      38
+     ]
+    },
+    {
+     "i": 1,
+     "atlas": "vfx_base_2.webp",
+     "rect": [
+      1211,
+      0,
+      93,
+      38
+     ]
+    }
+   ],
+   "glow": [
+    {
+     "i": 0,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      684,
+      921,
+      46,
+      18
+     ]
+    },
+    {
+     "i": 1,
+     "atlas": "vfx_glow_1.webp",
+     "rect": [
+      732,
+      921,
+      46,
+      18
+     ]
+    }
+   ],
+   "anchor": [
+    0.484,
+    0.5
+   ],
+   "fps": 20,
+   "loop": true,
+   "frames": 2,
+   "frame_px": [
+    93,
+    38
+   ],
+   "display_pt": [
+    37.2,
+    15.2
+   ],
+   "blend": {
+    "base": "normal(premultiplied off, 含#10122A暗描边衬底)",
+    "glow": "additive(lighter)，程序控制叠加层数，建议≤3层/每帧且同屏≤40个"
+   }
+  }
+ },
+ "atlases": {
+  "base": [
+   {
+    "file": "vfx_base_0.webp",
+    "size": [
+     1724,
+     1832
+    ]
+   },
+   {
+    "file": "vfx_base_1.webp",
+    "size": [
+     2048,
+     1984
+    ]
+   },
+   {
+    "file": "vfx_base_2.webp",
+    "size": [
+     1304,
+     68
+    ]
+   }
+  ],
+  "glow": [
+   {
+    "file": "vfx_glow_0.webp",
+    "size": [
+     868,
+     920
+    ]
+   },
+   {
+    "file": "vfx_glow_1.webp",
+    "size": [
+     1004,
+     956
+    ]
+   }
+  ]
+ },
+ "gpu_mem_MB_rgba": 34.59,
+ "dmg_numbers": {
+  "file": "icons/dmg_numbers.png",
+  "cell": [
+   64,
+   80
+  ],
+  "rows": {
+   "normal": 0,
+   "crit": 1
+  },
+  "chars": "0123456789",
+  "display_pt": [
+   26,
+   32
+  ],
+  "outline": "#10122A",
+  "note": "伤害飘字由程序叠加，不进特效序列。"
+ },
+ "icons": {
+  "atlas": "icons_atlas.webp",
+  "cell": 256,
+  "order": [
+   "mg_lv1",
+   "mg_lv2",
+   "mg_core",
+   "mg_evo",
+   "rk_lv1",
+   "rk_lv2",
+   "rk_core",
+   "rk_evo",
+   "fl_lv1",
+   "fl_lv2",
+   "fl_core",
+   "fl_evo",
+   "mn_lv1",
+   "mn_lv2",
+   "mn_core",
+   "mn_evo"
+  ],
+  "display_pt": 102,
+  "note": "4线×(Lv1/Lv2质变/核心卡/进化)；核心卡顶部三角+粗边，进化金边"
+ },
+ "gpu_mem_MB_rgba_incl_icons": 38.59
+}
