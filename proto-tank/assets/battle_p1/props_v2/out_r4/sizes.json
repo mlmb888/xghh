@@ -1,0 +1,245 @@
+{
+ "car_ns": {
+  "frame_px": [
+   202,
+   233
+  ],
+  "body_px": [
+   184,
+   223
+  ],
+  "body_pt": [
+   73.6,
+   89.2
+  ],
+  "px_per_m": 55.5,
+  "draw_order": [
+   "car_ns_ground_back",
+   "car_ns_shadow",
+   "car_ns",
+   "car_ns_ground_front"
+  ],
+  "patch_lib": [
+   "asphalt",
+   "concrete_slab",
+   "crack",
+   "stain",
+   "rubble",
+   "weed",
+   "moss"
+  ],
+  "note": "r4 新增：南北向残车，碰撞 1×2 格，yaw -86°"
+ },
+ "barricade": {
+  "frame_px": [
+   352,
+   89
+  ],
+  "body_px": [
+   308,
+   65
+  ],
+  "body_pt": [
+   123.2,
+   26.0
+  ],
+  "px_per_m": 55.5,
+  "draw_order": [
+   "barricade_ground_back",
+   "barricade_shadow",
+   "barricade",
+   "barricade_ground_front"
+  ],
+  "patch_lib": [
+   "concrete_slab",
+   "asphalt",
+   "crack",
+   "stain",
+   "rubble",
+   "weed",
+   "moss"
+  ],
+  "note": "r4：完整 5 段 jersey（每段 1.02m），总长 5.4m=3 格"
+ },
+ "barrel": {
+  "frame_px": [
+   81,
+   83
+  ],
+  "body_px": [
+   55,
+   68
+  ],
+  "body_pt": [
+   22.0,
+   27.2
+  ],
+  "px_per_m": 55.5,
+  "draw_order": [
+   "barrel_ground_back",
+   "barrel_shadow",
+   "barrel",
+   "barrel_ground_front"
+  ],
+  "patch_lib": [
+   "asphalt",
+   "concrete_slab",
+   "crack",
+   "stain",
+   "rubble",
+   "weed",
+   "moss"
+  ],
+  "note": "r4：52° 重做，1 格，r0.29m h0.88m"
+ },
+ "heli": {
+  "frame_px": [
+   502,
+   454
+  ],
+  "body_px": [
+   441,
+   425
+  ],
+  "body_pt": [
+   176.4,
+   170.0
+  ],
+  "px_per_m": 55.5,
+  "draw_order": [
+   "heli_ground_back",
+   "heli_shadow",
+   "heli",
+   "heli_ground_front"
+  ],
+  "patch_lib": [
+   "concrete_slab",
+   "asphalt",
+   "crack",
+   "stain",
+   "rubble",
+   "weed",
+   "moss"
+  ],
+  "note": "r4 新增：八角停机坪，外径 7.5m≈4 格(r=2)，地面物体无投影描边弱化，中心对齐 helipads(x+.5,y+.5)"
+ },
+ "bus": {
+  "frame_px": [
+   336,
+   606
+  ],
+  "body_px": [
+   291,
+   569
+  ],
+  "body_pt": [
+   116.4,
+   227.6
+  ],
+  "px_per_m": 55.5,
+  "draw_order": [
+   "bus_ground_back",
+   "bus_shadow",
+   "bus",
+   "bus_ground_front"
+  ],
+  "patch_lib": [
+   "concrete_slab",
+   "asphalt",
+   "crack",
+   "stain",
+   "rubble",
+   "weed",
+   "moss"
+  ],
+  "note": "沿用 out_r3"
+ },
+ "car": {
+  "frame_px": [
+   304,
+   173
+  ],
+  "body_px": [
+   262,
+   158
+  ],
+  "body_pt": [
+   104.8,
+   63.2
+  ],
+  "px_per_m": 55.5,
+  "draw_order": [
+   "car_ground_back",
+   "car_shadow",
+   "car",
+   "car_ground_front"
+  ],
+  "patch_lib": [
+   "asphalt",
+   "concrete_slab",
+   "crack",
+   "stain",
+   "rubble",
+   "weed",
+   "moss"
+  ],
+  "note": "沿用 out_r3"
+ },
+ "chopper": {
+  "frame_px": [
+   562,
+   449
+  ],
+  "body_px": [
+   491,
+   417
+  ],
+  "body_pt": [
+   196.4,
+   166.8
+  ],
+  "px_per_m": 55.5,
+  "draw_order": [
+   "heli_ground",
+   "heli",
+   "heli_halo_base",
+   "heli_halo(add)",
+   "chopper_shadow",
+   "chopper"
+  ],
+  "patch_lib": [
+   "asphalt",
+   "concrete_slab",
+   "crack",
+   "stain",
+   "rubble",
+   "weed",
+   "moss"
+  ],
+  "note": "r4 新增：52° 直升机（白 #E9DFD8 / 蓝 #0456CA 同 jeep），Blender toon + patch_lib 细节 + battle_final 直升机贴片高频笔触；中心对齐停机坪中心，撤离阶段显示"
+ },
+ "heli_halo": {
+  "frame_px": [
+   520,
+   520
+  ],
+  "anchor_px": [
+   260.0,
+   260.0
+  ],
+  "blend": "additive (或 screen)，单独一层，在 heli 之上、chopper 之下；可做 0.8–1.0 呼吸",
+  "note": "r=2 格屏幕圆（直径 400px 内环 392px），青 #28DCFF + 橙虚线 #FFAA28",
+  "place": "中心=(helipad.x+.5, helipad.y+.5)格"
+ },
+ "heli_halo_base": {
+  "frame_px": [
+   520,
+   520
+  ],
+  "anchor_px": [
+   260.0,
+   260.0
+  ],
+  "blend": "normal，压在 heli_halo 之下（深海军蓝衬底，保证亮地面上霓虹色不被洗白）"
+ }
+}

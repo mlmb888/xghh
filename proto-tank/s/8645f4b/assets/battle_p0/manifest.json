@@ -1,0 +1,223 @@
+{
+ "scale": 2.5,
+ "note": "显示尺寸单位 pt(逻辑像素,设计宽 360)；原图=显示×2.5；锚点为原图像素坐标(x右,y下)",
+ "assets": {
+  "jeep_body.png": {
+   "size": [
+    186,
+    412
+   ],
+   "display": [
+    74,
+    165
+   ],
+   "frames": 1,
+   "anchor_pivot": [
+    93,
+    206
+   ],
+   "hardpoints": {
+    "roof": [
+     94,
+     277
+    ],
+    "front": [
+     93,
+     25
+    ],
+    "left": [
+     15,
+     185
+    ],
+    "right": [
+     171,
+     185
+    ],
+    "rear": [
+     93,
+     371
+    ]
+   },
+   "facing": "up",
+   "lighting": "flat"
+  },
+  "mount_twin_mg.png": {
+   "size": [
+    58,
+    100
+   ],
+   "display": [
+    23,
+    40
+   ],
+   "frames": 1,
+   "anchor_pivot": [
+    28,
+    71
+   ],
+   "muzzle": [
+    29,
+    0
+   ],
+   "facing": "up",
+   "mount_on": "roof"
+  },
+  "mount_rocket_pod.png": {
+   "size": [
+    69,
+    90
+   ],
+   "display": [
+    28,
+    36
+   ],
+   "frames": 1,
+   "anchor_pivot": [
+    34,
+    63
+   ],
+   "muzzle": [
+    34,
+    0
+   ],
+   "facing": "up",
+   "mount_on": "roof/left/right/rear"
+  },
+  "mount_flamethrower.png": {
+   "size": [
+    48,
+    100
+   ],
+   "display": [
+    19,
+    40
+   ],
+   "frames": 1,
+   "anchor_pivot": [
+    23,
+    72
+   ],
+   "muzzle": [
+    24,
+    1
+   ],
+   "facing": "up",
+   "mount_on": "roof/left/right/rear"
+  },
+  "mount_side_cannon.png": {
+   "size": [
+    55,
+    120
+   ],
+   "display": [
+    22,
+    48
+   ],
+   "frames": 1,
+   "anchor_pivot": [
+    27,
+    86
+   ],
+   "muzzle": [
+    27,
+    0
+   ],
+   "facing": "up",
+   "mount_on": "left/right"
+  },
+  "jeep_turret.png": {
+   "size": [
+    58,
+    100
+   ],
+   "display": [
+    23,
+    40
+   ],
+   "frames": 1,
+   "anchor_pivot": [
+    28,
+    71
+   ],
+   "muzzle": [
+    29,
+    0
+   ],
+   "facing": "up",
+   "mount_on": "roof",
+   "note": "默认炮塔层=双管机枪；pivot 对齐 jeep_body hardpoints.roof"
+  },
+  "zombie_walker_[0-3].png": {
+   "size": [
+    68,
+    109
+   ],
+   "display": [
+    27,
+    44
+   ],
+   "frames": 4,
+   "fps": 8,
+   "anchor_pivot": [
+    34,
+    103
+   ],
+   "note": "脚底中心为锚点；四帧同尺寸，躯干中心对齐",
+   "strip": "zombie_walker_strip.png"
+  },
+  "zombie_fatty_[0-3].png": {
+   "size": [
+    90,
+    108
+   ],
+   "display": [
+    36,
+    43
+   ],
+   "frames": 4,
+   "fps": 8,
+   "anchor_pivot": [
+    45,
+    102
+   ],
+   "note": "脚底中心为锚点；四帧同尺寸，躯干中心对齐",
+   "strip": "zombie_fatty_strip.png"
+  },
+  "zombie_runner_[0-3].png": {
+   "size": [
+    74,
+    109
+   ],
+   "display": [
+    30,
+    44
+   ],
+   "frames": 4,
+   "fps": 8,
+   "anchor_pivot": [
+    37,
+    103
+   ],
+   "note": "脚底中心为锚点；四帧同尺寸，躯干中心对齐",
+   "strip": "zombie_runner_strip.png"
+  },
+  "survivor_run_[0-3].png": {
+   "size": [
+    66,
+    98
+   ],
+   "display": [
+    26,
+    39
+   ],
+   "frames": 4,
+   "fps": 8,
+   "anchor_pivot": [
+    33,
+    92
+   ],
+   "note": "脚底中心为锚点；四帧同尺寸，躯干中心对齐",
+   "strip": "survivor_run_strip.png"
+  }
+ }
+}
