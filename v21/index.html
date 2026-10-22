@@ -1027,7 +1027,7 @@ function updateEnemies(dt){const L=okShips();const A=ark();for(const e of enemie
  enemies=enemies.filter(e=>!e.dead&&e.x>-150&&e.x<W+150&&e.y<H+60);}
 function segHit(x1,y1,x2,y2,cx,cy,r){const dx=x2-x1,dy=y2-y1,l=dx*dx+dy*dy||1;const t=clamp(((cx-x1)*dx+(cy-y1)*dy)/l,0,1);return dist(x1+dx*t,y1+dy*t,cx,cy)<r}
 function updateBullets(dt){
- const HT=pbul.some(b=>b.home)?enemies.filter(e=>!e.dead&&e.y>-10&&e.y<H&&e.k!=='crate'):null;
+ const HT=pbul.some(b=>b.home)?enemies.filter(e=>!e.dead&&!e.v21skiff&&e.y>-10&&e.y<H&&e.k!=='crate'):null;
  for(const b of pbul){if(b.home&&HT&&HT.length){let bt=null,bd=1e9;for(const e of HT){const d=(e.x-b.x)**2+(e.y-b.y)**2;if(d<bd){bd=d;bt=e}}const ang=Math.atan2(b.vy,b.vx),ta=Math.atan2(bt.y-b.y,bt.x-b.x);let da=((ta-ang+Math.PI*3)%(Math.PI*2))-Math.PI;const na=ang+clamp(da,-9*dt,9*dt),sp=Math.min(1100,Math.hypot(b.vx,b.vy)+900*dt);b.vx=Math.cos(na)*sp;b.vy=Math.sin(na)*sp}const ox=b.x,oy=b.y;b.x+=b.vx*dt;b.y+=b.vy*dt;b.life-=dt;if(b.life<=0)continue;const crit=()=>Math.random()<.12;
   for(const e of enemies){if(e.dead||b.hit.includes(e))continue;if(e.k==='gt'&&(!gate||gate.y<100))continue;if(segHit(ox,oy,b.x,b.y,e.x,e.y,e.r+3)){const c=crit();hitFx(b.x,b.y,b.vx,b.vy,e.k==='heavy'||e.k==='gt');hurtEnemy(e,b.dmg*(c?2.2:1),c,b);b.hit.push(e);if(b.pierce-->0)continue;b.life=0;break}}
   if(b.life<=0||!cruiser||cruiser.state!=='fight')continue;
@@ -3649,7 +3649,7 @@ const form={
       if(!b||!b.v21home)continue;
       let best=null,bd=240;
       for(const e of enemies){
-        if(!e||e.dead||e.k==='crate')continue;
+        if(!e||e.dead||e.k==='crate'||e.v21skiff)continue;
         const d=dist(e.x,e.y,b.x,b.y);
         if(d<bd){bd=d;best=e}
       }
@@ -5031,7 +5031,7 @@ const day1={
     this._bonusN=0; this.bonusGot=0; this.bonusMiss=0; this.bonusPax=0;
     this.medic=0; this.medShield=0; this.medBlocked=0; this.medicPax=0; this._medAt=-9;
     this.escorts=[]; this.escortPax=0; this.residualPax=0; this.medHalf=0; this.chaseCap=0; this._flank=0;
-    this.paxBook={safe:0,transit:0,raided:0}; this.raidPops=[];
+    this.paxBook={safe:0,transit:0,raided:0}; this.raidPops=[]; this.intercepts=0; this.lastRaidWarn=0;
     this._pairPick=null; this.pairDoom=null;
     this.tierPopupAt=null; this.cardPopupAt=null; this.comboPopupAt=null;
     this.pendingRescue=null; this.pendingGunNote=0; this.staggerBad=0; this._pop=[];
@@ -5094,8 +5094,26 @@ const day1={
   campR(){return 86},
   inRing(e){return !!(e&&F&&dist(F.x,F.y,e.x,e.y)<this.campR())},
   /* 和玩家拖拽同一套目标点：只算出该去哪，不改 F.tx。显式 bot 和真实输入都走这里。 */
+  /* 袭扰艇不给自动瞄准锁。玩家要自己飞到它侧后方那条线上。 */
+  skiffAim(){
+    if(!F||typeof enemies==='undefined')return null;
+    let best=null, bd=1e9;
+    for(const e of enemies){
+      if(!e||e.dead||!e.v21skiff)continue;
+      const x=e.v21hx!=null?e.v21hx:e.x, y=e.v21hy!=null?e.v21hy:e.y;
+      const d=Math.hypot(F.x-x, F.y-y);
+      if(d<bd){bd=d; best={x:x, y:y}}
+    }
+    if(!best)return null;
+    const W0=(typeof W==='number')?W:390;
+    const Hn=(typeof H==='number')?H:844;
+    /* 落在战机活动区里，边界夹紧不会把玩家刚设的目标点改掉。 */
+    return {x:clamp(best.x, 48, W0-48), y:clamp(best.y+72, 150, Hn-140)};
+  },
   playerAim(prefer){
     if(!F||typeof enemies==='undefined')return null;
+    const threat=this.skiffAim();
+    if(threat)return threat;
     prefer=prefer==='right'?'right':'left';
     const camps=enemies.filter(e=>e&&!e.dead&&!e.v21done&&e.v21camp);
     if(camps.length>=2){
@@ -5431,26 +5449,12 @@ const day1={
   ram(e,src,n){
     if(!e||e.v21hit)return;
     e.v21hit=1; e.dead=true; e.hitArk=1;
-    const A=(typeof ark==='function')?ark():null;
-    const Hn=(typeof H==='number')?H:844;
-    let take=n!=null?n:this.leakCost(e);
+    /* 普通漏怪、撞机只记账，不改人数。唯一扣人是没拦住的袭扰艇。 */
     if(/漏/.test(src||'')){
       const kind=this.leakKind(e);
       this.leakBy=this.leakBy||{};
       this.leakBy[kind]=(this.leakBy[kind]||0)+1;
-      if(this.medShield>0&&take>0){
-        const block=Math.min(this.medShield, take);
-        this.medShield-=block;
-        this.medBlocked=(this.medBlocked||0)+block;
-        take-=block;
-        const now=(typeof T==='number')?T:0;
-        if(now-(this._medAt||-9)>0.45){
-          this._medAt=now;
-          try{nums.push({x:clamp(e.x,70,320), y:Math.max(168, Math.min(e.y, Hn-90)), v:-20, txt:'医务挡住', col:'#9dffc8', t:0, life:0.9, big:2})}catch(err){}
-        }
-      }
     }
-    if(A&&take>0)this.cut(A, take, src, {x:e.x, y:Math.min(e.y, Hn-80)});
   },
   /* 人已经在圈里修，或刚清完这一小段：单人红字先收起来。 */
   quietLoss(){
@@ -5494,8 +5498,8 @@ const day1={
     const parts=[];
     if(miss.length)parts.push('漏了 '+miss.join('、'));
     else parts.push('逃生舱都接回了');
-    parts.push('被撞掉 '+Math.round(this.impactN||0)+' 移民');
-    parts.push('漏过底线 '+Math.round(this.leakN||0)+' 移民');
+    parts.push('漏怪和撞机不扣人');
+    if((this.paxBook&&this.paxBook.raided)||0)parts.push('袭扰扣回 '+Math.round(this.paxBook.raided));
     return parts.join(' · ');
   },
   leakLine(){
@@ -5514,13 +5518,13 @@ const day1={
       const n=by[s[0]]|0;
       if(!n)return;
       seen[s[0]]=1;
-      parts.push(s[1]+'×'+n+'（-'+s[2]+'）');
+      parts.push(s[1]+'×'+n);
     });
     Object.keys(by).forEach(function(k){
       if(seen[k]||!(by[k]>0))return;
       parts.push(k+'×'+by[k]);
     });
-    return parts.length?('漏怪 '+parts.join('、')):'漏怪 没有漏过底线';
+    return parts.length?('漏怪不扣人 '+parts.join('、')):'漏怪 没有漏过底线';
   },
   routeLine(){
     const left=this.medic?('医护逃生舱 +'+Math.round(this.medicPax||0)+(this.medBlocked?(' · 医务挡住 '+Math.round(this.medBlocked)):'')):'医护逃生舱 没有';
@@ -5618,7 +5622,7 @@ const day1={
       tx:CX, ty:Hn-210
     };
     this.deliveries.push(hull);
-    /* 清舱这一帧人还在圈里，袭扰艇马上压下来，正对着的弹流打得掉。 */
+    /* 清舱这一帧就从侧后方放出袭扰艇。自动火力覆盖不到，要飞过去拦。 */
     this.spawnSkiff(hull);
     const base=e&&e.x!=null?e.x:CX, baseY=e&&e.y!=null?e.y:240;
     for(let i=0;i<10;i++){
@@ -5627,46 +5631,39 @@ const day1={
       this.shards.push({x:base, y:baseY, vx:Math.cos(a)*sp, vy:Math.sin(a)*sp*0.55, rot:a, t:0, life:0.42});
     }
   },
-  /* 袭扰艇不是漏怪。脚本钉住位置，只有玩家子弹打得掉。 */
-  pinSkiffs(){
+  /* 人没飞到袭扰艇旁边时，碰撞盒挪开，自动火力打不中也不吃子弹。 */
+  pinSkiffs(hide){
     if(typeof enemies==='undefined')return;
     for(const e of enemies){
       if(!e||e.dead||!e.v21skiff)continue;
-      if(e.v21hx!=null)e.x=e.v21hx;
-      if(e.v21hy!=null)e.y=e.v21hy;
+      const hx=e.v21hx!=null?e.v21hx:e.x;
+      const hy=e.v21hy!=null?e.v21hy:e.y;
+      const near=!!(F&&Math.hypot((F.x||0)-hx,(F.y||0)-hy)<112);
+      if(hide&&!near){e.x=-140; e.y=-12; e.r=1}
+      else{e.x=hx; e.y=hy; e.r=e.v21hr||26}
       e.vx=0; e.vy=0; e.fire=99; e.diveAt=1e9; e.life=0; e.tele=0; e.tgt=null;
     }
   },
   spawnSkiff(s){
     if(!s||s.skiffed||s.raided||!(s.n>0)||typeof enemies==='undefined')return;
     s.skiffed=1;
-    const x=s.x!=null?s.x:CX;
-    const y=Math.max(52, (s.y!=null?s.y:240)-110);
+    s.warn=0;
+    s.raidWait=1.5;
+    const W0=(typeof W==='number')?W:390;
+    const px=s.x!=null?s.x:CX;
+    const side=px<CX?1:-1;
+    s.boatSide=side;
+    const x=side>0?W0-30:30;
+    const y=Math.max(96, (s.y!=null?s.y:240)-36);
+    const hp=18;
     const e={
       k:'drone', v21skiff:1, v21show:1, chained:1,
-      x:x, y:y, v21hx:x, v21hy:y,
-      vx:0, vy:0, hp:6, maxHp:6, r:30,
-      fire:99, diveAt:1e9, life:0, flash:0, orb:0, tele:0, tgt:null, hunt:0,
-      _shot:(F&&F.shotN)||0
+      x:x, y:y, v21hx:x, v21hy:y, v21hr:26,
+      vx:0, vy:0, hp:hp, maxHp:hp, r:26,
+      fire:99, diveAt:1e9, life:0, flash:0, orb:0, tele:0, tgt:null, hunt:0
     };
     enemies.push(e);
     s.boat=e;
-  },
-  skiffShot(boat){
-    if(!boat||boat.dead)return false;
-    if(F&&!F.hangar){
-      const shot=F.shotN||0;
-      const prev=boat._shot==null?shot:boat._shot;
-      const aligned=Math.abs((F.x||0)-boat.x)<120;
-      boat._shot=shot;
-      if(aligned&&shot>prev)return true;
-    }
-    if(typeof pbul==='undefined')return false;
-    for(const b of pbul){
-      if(!b||!(b.life>0)||!(b.dmg>0))continue;
-      if(Math.abs(b.x-boat.x)<78&&Math.abs(b.y-boat.y)<80)return true;
-    }
-    return false;
   },
   raidHit(s, boat){
     if(!s||s.raided)return;
@@ -5676,8 +5673,10 @@ const day1={
     let d=0;
     if(A&&n>0)d=this.cut(A, n, '袭扰', {x:s.x, y:s.y}, {hush:1})||0;
     this.paxBook=this.paxBook||{safe:0,transit:0,raided:0};
-    this.paxBook.transit=Math.max(0,(this.paxBook.transit||0)-n);
+    if(s._landed)this.paxBook.safe=Math.max(0,(this.paxBook.safe||0)-n);
+    else this.paxBook.transit=Math.max(0,(this.paxBook.transit||0)-n);
     this.paxBook.raided=(this.paxBook.raided||0)+Math.round(d);
+    this.lastRaidWarn=+(s.warn||0).toFixed(2);
     s.n=0;
     if(boat&&!boat.dead)boat.dead=true;
     s.boat=null;
@@ -5696,6 +5695,23 @@ const day1={
       if(p.follow&&!p.follow.done){p.x=p.follow.x; p.y=p.follow.y}
     }
     this.raidPops=list.filter(function(p){return p.t<(p.life||1)});
+  },
+  drawRaidCue(e){
+    if(!e||typeof ctx==='undefined')return;
+    const W0=(typeof W==='number')?W:390;
+    const Hn=(typeof H==='number')?H:844;
+    const y=Math.max(150, Math.min(Hn-150, e.y||240));
+    const left=(e.x||0)<W0*0.5;
+    const ax=left?22:W0-22;
+    ctx.save();
+    ctx.translate(ax, y);
+    ctx.rotate(left?0:Math.PI);
+    ctx.fillStyle='#ff2438';
+    ctx.beginPath();
+    ctx.moveTo(18, 0); ctx.lineTo(-12, -10); ctx.lineTo(-12, 10); ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+    txt('袭扰', ax, y-18, 14, '#ffb4b8', 3, 'center', 900);
   },
   drawSkiff(e){
     if(!e||typeof ctx==='undefined')return;
@@ -6149,7 +6165,21 @@ const day1={
   },
   noteKill(e){
     if(!e)return;
-    if(e.v21skiff){this.playerKills++; return}
+    if(e.v21skiff){
+      this.playerKills++;
+      let hull=null;
+      for(const s of this.deliveries||[]){
+        if(s&&s.boat===e&&!s.raided){s.covered=1; hull=s; break}
+      }
+      this.intercepts=(this.intercepts||0)+1;
+      const x=hull&&hull.x!=null?hull.x:(e.v21hx!=null?e.v21hx:e.x);
+      const y=hull&&hull.y!=null?hull.y:(e.v21hy!=null?e.v21hy:e.y);
+      try{nums.push({x:clamp(x,70,320), y:Math.max(150,(y||240)-40), v:-28, txt:'拦截成功', col:'#d7ffe8', t:0, life:1.2, big:2})}catch(err){}
+      try{addTrauma(.42)}catch(err){}
+      try{kick(0,5)}catch(err){}
+      this.mark('evac_intercept', {x:Math.round(x||0), y:Math.round(y||0)});
+      return;
+    }
     if(e.v21camp){
       this.playerKills++;
       if(!e.v21fail)this.breach(e);
@@ -6329,31 +6359,41 @@ const day1={
     }
     const fx=F?F.x:CX, fy=F?F.y-10:((typeof H==='number'?H:844)-160);
     const Hdock=(typeof H==='number')?H:844;
+    this.pinSkiffs();
     for(const s of this.deliveries||[]){
       s.t+=(dt||0);
       if(s.phase==='fix'){
         if(s.t>=(s.fix||0.5)){s.phase='fly'; s.t=0; this.spawnSkiff(s)}
       }
+      s.warn=(s.warn||0)+(dt||0);
       const boat=s.boat;
-      if(boat&&!boat.dead&&!s.raided&&!s.covered&&this.skiffShot(boat)){
-        boat.hp=0;
-        try{hurtEnemy(boat, 99, false, {dmg:14, vx:0, vy:-1, x:boat.x, y:boat.y})}catch(err){boat.dead=true}
-      }
-      const live=!!(s.boat&&!s.boat.dead&&!s.raided&&!s.covered);
+      const live=!!(boat&&!boat.dead&&!s.raided&&!s.covered);
       if(s.phase!=='fix'&&!s.done){
         const dx=(s.tx!=null?s.tx:CX)-s.x, dy=(s.ty!=null?s.ty:Hdock-210)-s.y;
         const L=Math.hypot(dx,dy)||1;
-        const step=(live?120:460)*(dt||0);
+        const step=460*(dt||0);
         if(L<=step+16){s.x+=dx; s.y+=dy; s.done=1}
         else{s.x+=dx/L*step; s.y+=dy/L*step; s.rot=Math.atan2(dy,dx)+Math.PI/2}
       }
-      if(live&&s.boat&&!s.boat.dead){
-        const b=s.boat;
+      if(live){
+        const b=boat;
         const bx=b.v21hx!=null?b.v21hx:b.x, by=b.v21hy!=null?b.v21hy:b.y;
-        const dx=s.x-bx, dy=s.y-by, L=Math.hypot(dx,dy)||1;
-        const step=280*(dt||0);
-        if(L<=step+22)this.raidHit(s, b);
-        else{b.v21hx=bx+dx/L*step; b.v21hy=by+dy/L*step; b.x=b.v21hx; b.y=b.v21hy}
+        const W0=(typeof W==='number')?W:390;
+        const side=s.boatSide||1;
+        const holdX=clamp(s.x+side*130, 36, W0-36);
+        const holdY=clamp((s.y||240)-18, 96, Hdock-180);
+        const armed=(s.warn||0)>=(s.raidWait||1.5);
+        if(armed)this.raidHit(s, b);
+        else{
+          const dx=holdX-bx, dy=holdY-by, L=Math.hypot(dx,dy)||1;
+          const step=Math.min(L, 340*(dt||0));
+          b.v21hx=bx+dx/L*step; b.v21hy=by+dy/L*step; b.x=b.v21hx; b.y=b.v21hy;
+          s._ew=(s._ew||0)-(dt||0);
+          if(s._ew<=0){
+            s._ew=0.65;
+            try{edgeWarn(b.v21hx<W0*0.5, b.v21hy, '袭扰艇', '#ff2438')}catch(err){}
+          }
+        }
       }else if(s.boat&&!s.boat.dead){
         s.covered=1; s.boat.dead=true; s.boat=null;
       }else if(s.boat&&s.boat.dead){
@@ -6367,11 +6407,12 @@ const day1={
           this.paxBook.transit=Math.max(0,(this.paxBook.transit||0)-n);
           this.paxBook.safe=(this.paxBook.safe||0)+n;
         }
-        if(s.boat&&!s.boat.dead)s.boat.dead=true;
-        s.boat=null;
       }
     }
-    this.deliveries=(this.deliveries||[]).filter(function(s){return !s.done});
+    this.deliveries=(this.deliveries||[]).filter(function(s){
+      if(!s.done)return true;
+      return !!(s.boat&&!s.boat.dead&&!s.raided&&!s.covered);
+    });
     this.tickRaidPops(dt);
     if(this.pendingGunNote&&!this.popupBlock('gun')){
       this.pendingGunNote=0;
@@ -6498,9 +6539,7 @@ const day1={
           e.v21fail=1; e.v21done=1; e.dead=true;
           this.bonusMiss=(this.bonusMiss||0)+1;
           this.say('限时逃生舱离开了');
-          const A=(typeof ark==='function')?ark():null;
-          if(A)this.cut(A, 12, '漏过底线', {x:e.x, y:Math.min(e.y, (typeof H==='number'?H:844)-80)});
-          try{nums.push({x:clamp(e.x,70,320), y:Math.max(160, e.y-28), v:-18, txt:'限时舱漏了 -12', col:'#ff8a9a', t:0, life:1.2, big:2})}catch(err){}
+          try{nums.push({x:clamp(e.x,70,320), y:Math.max(160, e.y-28), v:-18, txt:'限时舱离开了', col:'#ffd0a0', t:0, life:1.2, big:2})}catch(err){}
         }else this.loseCamp(e,'drift');
       }
     }
@@ -6614,7 +6653,7 @@ const day1={
       }
     }
     if(typeof enemies!=='undefined'){
-      for(const e of enemies)if(e&&!e.dead&&e.v21skiff)this.drawSkiff(e);
+      for(const e of enemies)if(e&&!e.dead&&e.v21skiff){this.drawSkiff(e); this.drawRaidCue(e)}
     }
     for(const p of this.raidPops||[]){
       if(!(p.t<p.life)||!(p.n>0))continue;
@@ -6716,7 +6755,8 @@ const day1={
 };
 
 wrap('hurtShip',function(orig,args){
-  /* 1-1 两侧镖机只负责亮瞄准线。减人用脚本里那一下「−6 人」，避免弹雨把 50% 线提前打穿。 */
+  /* 1-1 船体受击不扣人。人数只在没拦住袭扰艇时从账上扣。 */
+  if(day1.on&&args[0]&&args[0].pax)return;
   if(day1.on&&(args[2]==='镖机炮火'||args[2]==='镖机'||args[2]==='重装机'))return;
   const s=args[0];
   const before=s&&s.k==='ark'?{hp:Math.min(s.hp,s.maxHp||s.hp),sh:s.shield||0}:null;
@@ -6905,7 +6945,7 @@ wrap('update',function(orig,args){
         for(const e of enemies)if(e&&!e.dead&&e.v21camp){
           e.x=e.v21homeX; e.y=e.v21homeY; e.vx=0; e.vy=0; e.fire=99; e.diveAt=1e9; e.life=0; e.tele=0; e.tgt=null;
         }
-        if(day1.pinSkiffs)day1.pinSkiffs();
+        if(day1.pinSkiffs)day1.pinSkiffs(true);
       }
     }
   }catch(e){}
@@ -6925,10 +6965,21 @@ wrap('update',function(orig,args){
     }
   }catch(e){}
   let snap=null;
+  let paxGuard=null;
   try{
     if(typeof fleet!=='undefined'&&fleet&&G)snap=fleet.map(s=>{if(s)s._v21frameLoss=0;return {s,p:s.paxNow||0,st:s.state,counted:countedShip(s)}});
+    if(day1.on&&typeof ark==='function'){
+      const A=ark();
+      if(A)paxGuard=A.paxNow||0;
+    }
   }catch(e){}
   const r=orig.apply(this,args);
+  try{
+    if(paxGuard!=null&&day1.on&&typeof ark==='function'){
+      const A=ark();
+      if(A&&(A.paxNow||0)<paxGuard-0.001)A.paxNow=paxGuard;
+    }
+  }catch(e){}
   try{
     for(let i=0;i<pins.length;i+=2){
       const n=pins[i];
@@ -7166,7 +7217,9 @@ wrap('hurtEnemy',function(orig,args){
   if(e&&e.v21camp&&!e.dead)return;
   if(e&&e.v21skiff&&!e.dead){
     const shot=args[3];
+    const hx=e.v21hx!=null?e.v21hx:e.x, hy=e.v21hy!=null?e.v21hy:e.y;
     if(!(shot&&shot.dmg>0))return;
+    if(!(F&&Math.hypot((F.x||0)-hx,(F.y||0)-hy)<130))return;
   }
   if(isV21&&e&&args.length>1&&typeof args[1]==='number'){
     let mul=rich.armMul(e)*rich.campMul(e)*meta.dmgMul()*rich.atkFromTier();
