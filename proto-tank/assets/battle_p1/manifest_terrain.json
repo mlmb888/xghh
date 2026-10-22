@@ -1,0 +1,568 @@
+{
+ "tile_px": 100,
+ "tile_pt": 40,
+ "scale": 2.5,
+ "tiles": {
+  "ground_0": {
+   "px": [
+    100,
+    100
+   ],
+   "pt": [
+    40,
+    40
+   ],
+   "seamless": true,
+   "note": "废城地面变体，任意混铺"
+  },
+  "ground_1": {
+   "px": [
+    100,
+    100
+   ],
+   "pt": [
+    40,
+    40
+   ],
+   "seamless": true,
+   "note": "废城地面变体，任意混铺"
+  },
+  "ground_2": {
+   "px": [
+    100,
+    100
+   ],
+   "pt": [
+    40,
+    40
+   ],
+   "seamless": true,
+   "note": "废城地面变体，任意混铺"
+  },
+  "ground_3": {
+   "px": [
+    100,
+    100
+   ],
+   "pt": [
+    40,
+    40
+   ],
+   "seamless": true,
+   "note": "废城地面变体，任意混铺"
+  },
+  "asphalt_0": {
+   "px": [
+    100,
+    100
+   ],
+   "pt": [
+    40,
+    40
+   ],
+   "seamless": true,
+   "note": "柏油路面"
+  },
+  "asphalt_1": {
+   "px": [
+    100,
+    100
+   ],
+   "pt": [
+    40,
+    40
+   ],
+   "seamless": true,
+   "note": "柏油路面"
+  },
+  "asphalt_lane_v": {
+   "px": [
+    100,
+    100
+   ],
+   "pt": [
+    40,
+    40
+   ],
+   "seamless": true,
+   "note": "中线虚线(竖向)，旋转90°得横向"
+  },
+  "asphalt_crosswalk_v": {
+   "px": [
+    100,
+    100
+   ],
+   "pt": [
+    40,
+    40
+   ],
+   "seamless": true,
+   "note": "斑马线(竖条)，横向旋转90°"
+  },
+  "asphalt_rut_v": {
+   "px": [
+    100,
+    100
+   ],
+   "pt": [
+    40,
+    40
+   ],
+   "seamless": true,
+   "note": "车辙(竖向)"
+  },
+  "curb_edge_n": {
+   "px": [
+    100,
+    100
+   ],
+   "pt": [
+    40,
+    40
+   ],
+   "seamless": true,
+   "note": "路沿：上方人行道/下方路面；旋转0/90/180/270"
+  },
+  "curb_corner_outer": {
+   "px": [
+    100,
+    100
+   ],
+   "pt": [
+    40,
+    40
+   ],
+   "seamless": true,
+   "note": "路沿外角(弯道)，旋转4向"
+  },
+  "curb_corner_inner": {
+   "px": [
+    100,
+    100
+   ],
+   "pt": [
+    40,
+    40
+   ],
+   "seamless": true,
+   "note": "路沿内角(T/十字口)，旋转4向"
+  },
+  "plaza_0": {
+   "px": [
+    100,
+    100
+   ],
+   "pt": [
+    40,
+    40
+   ],
+   "seamless": true,
+   "note": "广场石板(Boss场)"
+  },
+  "plaza_1": {
+   "px": [
+    100,
+    100
+   ],
+   "pt": [
+    40,
+    40
+   ],
+   "seamless": true,
+   "note": "广场石板(Boss场)"
+  },
+  "plaza_2": {
+   "px": [
+    100,
+    100
+   ],
+   "pt": [
+    40,
+    40
+   ],
+   "seamless": true,
+   "note": "广场石板(Boss场)"
+  },
+  "water_0": {
+   "px": [
+    100,
+    100
+   ],
+   "pt": [
+    40,
+    40
+   ],
+   "seamless": true,
+   "note": "河水，2帧循环 4fps，向右流"
+  },
+  "water_1": {
+   "px": [
+    100,
+    100
+   ],
+   "pt": [
+    40,
+    40
+   ],
+   "seamless": true,
+   "note": "河水，2帧循环 4fps，向右流"
+  },
+  "bank_edge_n": {
+   "px": [
+    100,
+    100
+   ],
+   "pt": [
+    40,
+    40
+   ],
+   "seamless": true,
+   "note": "河岸：上岸下水；旋转4向=4边"
+  },
+  "bank_corner_outer": {
+   "px": [
+    100,
+    100
+   ],
+   "pt": [
+    40,
+    40
+   ],
+   "seamless": true,
+   "note": "河岸外角，旋转4向"
+  },
+  "bank_corner_inner": {
+   "px": [
+    100,
+    100
+   ],
+   "pt": [
+    40,
+    40
+   ],
+   "seamless": true,
+   "note": "河岸内角，旋转4向（共8方向+2水）"
+  }
+ },
+ "props": {
+  "car_wreck_red": {
+   "px": [
+    212,
+    134
+   ],
+   "pt": [
+    84.8,
+    53.6
+   ],
+   "design_footprint_pt": [
+    80,
+    40
+   ],
+   "anchor_px": [
+    106,
+    124
+   ],
+   "anchor": "footprint_bottom_center",
+   "collider_px": [
+    17,
+    50,
+    178,
+    74
+   ],
+   "collider_note": "[x,y,w,h] 建议碰撞框(底部占地面,不含顶部立面)",
+   "note": "废轿车红"
+  },
+  "car_wreck_taxi": {
+   "px": [
+    212,
+    134
+   ],
+   "pt": [
+    84.8,
+    53.6
+   ],
+   "design_footprint_pt": [
+    80,
+    40
+   ],
+   "anchor_px": [
+    106,
+    124
+   ],
+   "anchor": "footprint_bottom_center",
+   "collider_px": [
+    17,
+    50,
+    178,
+    74
+   ],
+   "collider_note": "[x,y,w,h] 建议碰撞框(底部占地面,不含顶部立面)",
+   "note": "废轿车黄(第2色)"
+  },
+  "bus_wreck": {
+   "px": [
+    312,
+    211
+   ],
+   "pt": [
+    124.8,
+    84.4
+   ],
+   "design_footprint_pt": [
+    120,
+    40
+   ],
+   "anchor_px": [
+    156,
+    201
+   ],
+   "anchor": "footprint_bottom_center",
+   "collider_px": [
+    25,
+    85,
+    262,
+    116
+   ],
+   "collider_note": "[x,y,w,h] 建议碰撞框(底部占地面,不含顶部立面)",
+   "note": "废大巴"
+  },
+  "roadblock_intact": {
+   "px": [
+    512,
+    283
+   ],
+   "pt": [
+    204.8,
+    113.2
+   ],
+   "design_footprint_pt": [
+    200,
+    40
+   ],
+   "anchor_px": [
+    256,
+    273
+   ],
+   "anchor": "footprint_bottom_center",
+   "collider_px": [
+    41,
+    117,
+    430,
+    156
+   ],
+   "collider_note": "[x,y,w,h] 建议碰撞框(底部占地面,不含顶部立面)",
+   "note": "路障完好，可摧毁"
+  },
+  "roadblock_broken": {
+   "px": [
+    512,
+    315
+   ],
+   "pt": [
+    204.8,
+    126.0
+   ],
+   "design_footprint_pt": [
+    200,
+    40
+   ],
+   "anchor_px": [
+    256,
+    305
+   ],
+   "anchor": "footprint_bottom_center",
+   "collider_px": [
+    41,
+    132,
+    430,
+    173
+   ],
+   "collider_note": "[x,y,w,h] 建议碰撞框(底部占地面,不含顶部立面)",
+   "note": "路障破碎态(中段可通行)"
+  },
+  "sandbags": {
+   "px": [
+    212,
+    132
+   ],
+   "pt": [
+    84.8,
+    52.8
+   ],
+   "design_footprint_pt": [
+    80,
+    40
+   ],
+   "anchor_px": [
+    106,
+    122
+   ],
+   "anchor": "footprint_bottom_center",
+   "collider_px": [
+    17,
+    49,
+    178,
+    73
+   ],
+   "collider_note": "[x,y,w,h] 建议碰撞框(底部占地面,不含顶部立面)",
+   "note": "沙袋掩体"
+  },
+  "bush": {
+   "px": [
+    162,
+    110
+   ],
+   "pt": [
+    64.8,
+    44.0
+   ],
+   "design_footprint_pt": [
+    60,
+    40
+   ],
+   "anchor_px": [
+    81,
+    100
+   ],
+   "anchor": "footprint_bottom_center",
+   "collider_px": [
+    13,
+    56,
+    136,
+    44
+   ],
+   "collider_note": "[x,y,w,h] 建议碰撞框(底部占地面,不含顶部立面)",
+   "note": "树丛(可穿越/遮挡，碰撞可选)"
+  },
+  "oil_barrel": {
+   "px": [
+    82,
+    107
+   ],
+   "pt": [
+    32.8,
+    42.8
+   ],
+   "design_footprint_pt": [
+    40,
+    40
+   ],
+   "anchor_px": [
+    41,
+    97
+   ],
+   "anchor": "footprint_bottom_center",
+   "collider_px": [
+    7,
+    60,
+    69,
+    37
+   ],
+   "collider_note": "[x,y,w,h] 建议碰撞框(底部占地面,不含顶部立面)",
+   "note": "油桶(爆炸序列待出)"
+  },
+  "wall_ruin_0": {
+   "px": [
+    172,
+    123
+   ],
+   "pt": [
+    68.8,
+    49.2
+   ],
+   "design_footprint_pt": [
+    80,
+    40
+   ],
+   "anchor_px": [
+    86,
+    113
+   ],
+   "anchor": "footprint_bottom_center",
+   "collider_px": [
+    14,
+    45,
+    144,
+    68
+   ],
+   "collider_note": "[x,y,w,h] 建议碰撞框(底部占地面,不含顶部立面)",
+   "note": "废墙段(露出立面)"
+  },
+  "wall_ruin_1": {
+   "px": [
+    172,
+    123
+   ],
+   "pt": [
+    68.8,
+    49.2
+   ],
+   "design_footprint_pt": [
+    80,
+    40
+   ],
+   "anchor_px": [
+    86,
+    113
+   ],
+   "anchor": "footprint_bottom_center",
+   "collider_px": [
+    14,
+    45,
+    144,
+    68
+   ],
+   "collider_note": "[x,y,w,h] 建议碰撞框(底部占地面,不含顶部立面)",
+   "note": "废墙段(露出立面)"
+  },
+  "rubble_cover": {
+   "px": [
+    212,
+    153
+   ],
+   "pt": [
+    84.8,
+    61.2
+   ],
+   "design_footprint_pt": [
+    80,
+    80
+   ],
+   "anchor_px": [
+    106,
+    143
+   ],
+   "anchor": "footprint_bottom_center",
+   "collider_px": [
+    17,
+    59,
+    178,
+    84
+   ],
+   "collider_note": "[x,y,w,h] 建议碰撞框(底部占地面,不含顶部立面)",
+   "note": "碎石掩体(Boss场)"
+  },
+  "bridge": {
+   "px": [
+    512,
+    316
+   ],
+   "pt": [
+    204.8,
+    126.4
+   ],
+   "design_footprint_pt": [
+    200,
+    120
+   ],
+   "anchor_px": [
+    256,
+    306
+   ],
+   "anchor": "footprint_bottom_center",
+   "collider_px": null,
+   "collider_note": "桥面可通行；左右护栏各留约 30px 宽碰撞带",
+   "note": "桥 5×3格，竖向通行，下方压河道tile"
+  }
+ }
+}
